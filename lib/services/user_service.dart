@@ -58,9 +58,18 @@ class UserService {
   /// Update user profile
   static Future<void> updateUserProfile(UserProfile profile) async {
     try {
+      // Mapear solo los campos que existen en la tabla users
+      final updateData = {
+        'name': profile.name,
+        'email': profile.email,
+        'phone': profile.phone,
+        'avatar_url': profile.avatarUrl,
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+
       await SupabaseConfig.client
           .from('users')
-          .update(profile.toJson())
+          .update(updateData)
           .eq('id', profile.id);
     } catch (e) {
       debugPrint('❌ [USER_SERVICE] Error updating user profile: $e');
@@ -102,6 +111,17 @@ class UserService {
       final fileName = 'profile_$userId.jpg';
       final path = 'profiles/$fileName';
 
+      // Intentar eliminar archivo existente primero (para evitar error 409)
+      try {
+        await SupabaseConfig.client.storage.from(_storageBucket).remove([path]);
+        debugPrint('🗑️ [USER_SERVICE] Archivo anterior eliminado');
+      } catch (e) {
+        // Si no existe, ignorar el error
+        debugPrint(
+            'ℹ️ [USER_SERVICE] No había archivo anterior o error al eliminar: $e');
+      }
+
+      // Subir nuevo archivo
       await SupabaseConfig.client.storage
           .from(_storageBucket)
           .uploadBinary(path, imageBytes);
@@ -109,6 +129,7 @@ class UserService {
       final publicUrl =
           SupabaseConfig.client.storage.from(_storageBucket).getPublicUrl(path);
 
+      debugPrint('✅ [USER_SERVICE] Imagen subida exitosamente: $publicUrl');
       return publicUrl;
     } on StorageException catch (e) {
       debugPrint(
