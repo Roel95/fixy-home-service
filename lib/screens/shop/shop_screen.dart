@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fixy_home_service/data/product_repository.dart';
@@ -29,6 +30,9 @@ class _ShopScreenState extends State<ShopScreen>
   late List<ProductModel> _onSaleProducts;
   late List<ProductCategoryModel> _categories;
   late AnimationController _animationController;
+  late PageController _dealsPageController;
+  Timer? _autoScrollTimer;
+  int _currentDealPage = 0;
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -45,6 +49,10 @@ class _ShopScreenState extends State<ShopScreen>
       duration: const Duration(milliseconds: 1000),
     );
     _animationController.forward();
+
+    // Inicializar PageController para banners automáticos
+    _dealsPageController = PageController(viewportFraction: 0.9);
+    _startAutoScroll();
 
     // Cargar datos de Supabase
     _loadData();
@@ -85,6 +93,8 @@ class _ShopScreenState extends State<ShopScreen>
 
   @override
   void dispose() {
+    _autoScrollTimer?.cancel();
+    _dealsPageController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -118,9 +128,41 @@ class _ShopScreenState extends State<ShopScreen>
     );
   }
 
+  void _startAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (_onSaleProducts.isEmpty || !_dealsPageController.hasClients) return;
+
+      final maxPage =
+          _onSaleProducts.length > 5 ? 4 : _onSaleProducts.length - 1;
+      if (_currentDealPage < maxPage) {
+        _currentDealPage++;
+      } else {
+        _currentDealPage = 0;
+      }
+
+      _dealsPageController.animateToPage(
+        _currentDealPage,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  void _onPageChanged(int page) {
+    setState(() {
+      _currentDealPage = page;
+    });
+  }
+
   Future<void> _refreshProducts() async {
+    _currentDealPage = 0;
+    if (_dealsPageController.hasClients) {
+      _dealsPageController.jumpToPage(0);
+    }
     // Forzar actualización desde Supabase
     await _loadData(forceRefresh: true);
+    _startAutoScroll();
   }
 
   @override
@@ -345,7 +387,8 @@ class _ShopScreenState extends State<ShopScreen>
                       onTap: () {
                         Navigator.push(
                           context,
-                          SlideRightRoute(const search.SearchProductsScreen()),
+                          SlideRightRoute(
+                              page: const search.SearchProductsScreen()),
                         );
                       },
                       child: Container(
@@ -461,28 +504,53 @@ class _ShopScreenState extends State<ShopScreen>
                         const SizedBox(height: 16),
                         SizedBox(
                           height: 160,
-                          child: ListView.builder(
-                            padding: const EdgeInsets.only(left: 20),
-                            scrollDirection: Axis.horizontal,
+                          child: PageView.builder(
+                            controller: _dealsPageController,
+                            onPageChanged: _onPageChanged,
                             itemCount: _onSaleProducts.length > 5
                                 ? 5
                                 : _onSaleProducts.length,
                             itemBuilder: (context, index) {
                               final product = _onSaleProducts[index];
-                              return DealBanner(
-                                product: product,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    SlideRightRoute(
-                                      page: ProductDetailScreen(
-                                        product: product,
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: DealBanner(
+                                  product: product,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      SlideRightRoute(
+                                        page: ProductDetailScreen(
+                                          product: product,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               );
                             },
+                          ),
+                        ),
+                        // Indicadores de página
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            _onSaleProducts.length > 5
+                                ? 5
+                                : _onSaleProducts.length,
+                            (index) => AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              width: _currentDealPage == index ? 24 : 8,
+                              height: 8,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: _currentDealPage == index
+                                    ? const Color(0xFF0066FF)
+                                    : Colors.grey[300],
+                              ),
+                            ),
                           ),
                         ),
                       ],
