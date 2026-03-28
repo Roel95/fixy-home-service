@@ -20,7 +20,35 @@ class UserService {
           .eq('user_id', userId)
           .single();
 
-      return UserProfile.fromJson(data);
+      // Obtener nombre del metadata de Supabase Auth si el perfil no tiene nombre válido
+      String name = data['name']?.toString() ?? '';
+      if (name.isEmpty ||
+          name.contains('@') ||
+          RegExp(r'^\d+').hasMatch(name)) {
+        // Intentar obtener nombre del metadata de Supabase Auth
+        final authUser = SupabaseConfig.currentUser;
+        final metadataName = authUser?.userMetadata?['name'] as String?;
+
+        if (metadataName != null && metadataName.isNotEmpty) {
+          name = metadataName;
+        } else {
+          // Fallback: extraer del email
+          final email = data['email']?.toString() ?? authUser?.email ?? '';
+          name = _extractNameFromEmail(email);
+        }
+
+        // Actualizar el nombre en la base de datos
+        await SupabaseConfig.client.from('user_profiles').update({
+          'name': name,
+          'updated_at': DateTime.now().toIso8601String()
+        }).eq('user_id', userId);
+      }
+
+      // Crear el perfil con el nombre limpio
+      final cleanedData = Map<String, dynamic>.from(data);
+      cleanedData['name'] = name;
+
+      return UserProfile.fromJson(cleanedData);
     } catch (e) {
       debugPrint('❌ [USER_SERVICE] Error getting user profile: $e');
       return null;
@@ -186,5 +214,31 @@ class UserService {
       debugPrint('❌ [USER_SERVICE] Error removing payment method: $e');
       rethrow;
     }
+  }
+
+  /// Extraer nombre presentable del email
+  static String _extractNameFromEmail(String email) {
+    if (email.isEmpty) return 'Usuario';
+
+    // Obtener parte local del email (antes del @)
+    String localPart = email.split('@').first;
+
+    // Quitar números al inicio (como "20001995")
+    localPart = localPart.replaceAll(RegExp(r'^\d+'), '');
+
+    // Si quedó vacío, usar "Usuario"
+    if (localPart.isEmpty) return 'Usuario';
+
+    // Separar por puntos, guiones bajos o guiones
+    List<String> parts = localPart.split(RegExp(r'[._-]'));
+
+    // Capitalizar cada parte
+    parts = parts.map((part) {
+      if (part.isEmpty) return '';
+      return part[0].toUpperCase() + part.substring(1).toLowerCase();
+    }).toList();
+
+    // Unir con espacios
+    return parts.join(' ').trim();
   }
 }
