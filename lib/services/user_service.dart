@@ -15,9 +15,9 @@ class UserService {
       if (userId == null) return null;
 
       final data = await SupabaseConfig.client
-          .from('user_profiles')
+          .from('users')
           .select()
-          .eq('user_id', userId)
+          .eq('id', userId)
           .single();
 
       // Obtener nombre del metadata de Supabase Auth si el perfil no tiene nombre válido
@@ -38,10 +38,10 @@ class UserService {
         }
 
         // Actualizar el nombre en la base de datos
-        await SupabaseConfig.client.from('user_profiles').update({
+        await SupabaseConfig.client.from('users').update({
           'name': name,
           'updated_at': DateTime.now().toIso8601String()
-        }).eq('user_id', userId);
+        }).eq('id', userId);
       }
 
       // Crear el perfil con el nombre limpio
@@ -59,7 +59,7 @@ class UserService {
   static Future<void> updateUserProfile(UserProfile profile) async {
     try {
       await SupabaseConfig.client
-          .from('user_profiles')
+          .from('users')
           .update(profile.toJson())
           .eq('id', profile.id);
     } catch (e) {
@@ -73,21 +73,16 @@ class UserService {
       {String? name}) async {
     try {
       final newProfile = {
-        'user_id': userId,
+        'id': userId, // En tabla users, el campo es 'id' no 'user_id'
         'email': email,
         'name': name ?? email.split('@').first,
         'phone': '',
-        'address': '',
-        'city': '',
-        'postal_code': '',
-        'avatar_url': '',
-        'preferences': {},
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       };
 
       final data = await SupabaseConfig.client
-          .from('user_profiles')
+          .from('users')
           .insert(newProfile)
           .select()
           .single();
