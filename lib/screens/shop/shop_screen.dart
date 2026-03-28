@@ -30,7 +30,7 @@ class _ShopScreenState extends State<ShopScreen>
   late List<ProductModel> _onSaleProducts;
   late List<ProductCategoryModel> _categories;
   late AnimationController _animationController;
-  late PageController _dealsPageController;
+  PageController? _dealsPageController;
   Timer? _autoScrollTimer;
   int _currentDealPage = 0;
   bool _isLoading = true;
@@ -52,7 +52,9 @@ class _ShopScreenState extends State<ShopScreen>
 
     // Inicializar PageController para banners automáticos
     _dealsPageController = PageController(viewportFraction: 0.9);
-    _startAutoScroll();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startAutoScroll();
+    });
 
     // Cargar datos de Supabase
     _loadData();
@@ -94,7 +96,7 @@ class _ShopScreenState extends State<ShopScreen>
   @override
   void dispose() {
     _autoScrollTimer?.cancel();
-    _dealsPageController.dispose();
+    _dealsPageController?.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -130,8 +132,9 @@ class _ShopScreenState extends State<ShopScreen>
 
   void _startAutoScroll() {
     _autoScrollTimer?.cancel();
+    if (_dealsPageController == null) return;
     _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (_onSaleProducts.isEmpty || !_dealsPageController.hasClients) return;
+      if (_onSaleProducts.isEmpty || !_dealsPageController!.hasClients) return;
 
       final maxPage =
           _onSaleProducts.length > 5 ? 4 : _onSaleProducts.length - 1;
@@ -141,7 +144,7 @@ class _ShopScreenState extends State<ShopScreen>
         _currentDealPage = 0;
       }
 
-      _dealsPageController.animateToPage(
+      _dealsPageController!.animateToPage(
         _currentDealPage,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
@@ -157,8 +160,8 @@ class _ShopScreenState extends State<ShopScreen>
 
   Future<void> _refreshProducts() async {
     _currentDealPage = 0;
-    if (_dealsPageController.hasClients) {
-      _dealsPageController.jumpToPage(0);
+    if (_dealsPageController?.hasClients == true) {
+      _dealsPageController!.jumpToPage(0);
     }
     // Forzar actualización desde Supabase
     await _loadData(forceRefresh: true);
