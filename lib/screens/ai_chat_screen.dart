@@ -3,6 +3,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/services/ai_assistant_service.dart';
 import 'package:fixy_home_service/services/speech_service.dart';
 import 'package:fixy_home_service/services/openai_service.dart';
+import 'package:fixy_home_service/services/order_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:fixy_home_service/models/ai_conversation_model.dart';
@@ -40,6 +41,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
   final ProductRepository _productRepo = ProductRepository();
   List<ServiceModel> _availableServices = [];
   List<ProductModel> _availableProducts = [];
+  List<OrderModel> _userOrders = [];
 
   // Análisis de imágenes con IA
   File? _selectedImage;
@@ -65,6 +67,13 @@ class _AIChatScreenState extends State<AIChatScreen> {
       setState(() {
         _userId = user.id;
       });
+
+      // Cargar perfil del usuario desde ProfileProvider
+      final profileProvider = context.read<ProfileProvider>();
+      await profileProvider.loadUserProfile();
+
+      // 🛒 Cargar historial de compras del usuario
+      await _loadUserOrders();
 
       // Cargar servicios y productos disponibles
       _loadAvailableOptions();
@@ -110,6 +119,21 @@ class _AIChatScreenState extends State<AIChatScreen> {
       }
     } catch (e) {
       debugPrint('⚠️ [CHAT] Error cargando conversaciones: $e');
+    }
+  }
+
+  /// 🛒 Cargar historial de compras del usuario
+  Future<void> _loadUserOrders() async {
+    try {
+      debugPrint('🛒 [CHAT] Cargando historial de compras...');
+      final orderService = OrderService();
+      final orders = await orderService.getUserOrders();
+      setState(() {
+        _userOrders = orders;
+      });
+      debugPrint('✅ [CHAT] ${orders.length} órdenes cargadas');
+    } catch (e) {
+      debugPrint('⚠️ [CHAT] Error cargando órdenes: $e');
     }
   }
 
@@ -189,12 +213,18 @@ class _AIChatScreenState extends State<AIChatScreen> {
       debugPrint(
           '📤 [CHAT] Enviando mensaje con ${_availableProducts.length} productos disponibles');
 
+      // Obtener perfil del usuario actual
+      final profileProvider = context.read<ProfileProvider>();
+      final userProfile = profileProvider.userProfile;
+
       // Procesar mensaje con IA
       final result = await AIAssistantService.processMessage(
         userMessage: message,
         conversationHistory: _messages,
         availableServices: _availableServices,
         availableProducts: _availableProducts,
+        userProfile: userProfile,
+        userOrders: _userOrders,
         onFetchServices: (category) async {
           final services = await _serviceRepo.searchServices(query: category);
           setState(() => _availableServices = services);

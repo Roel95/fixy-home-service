@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fixy_home_service/models/ai_conversation_model.dart';
 import 'package:fixy_home_service/models/service_model.dart';
 import 'package:fixy_home_service/models/product_model.dart';
+import 'package:fixy_home_service/models/profile_models.dart';
+import 'package:fixy_home_service/services/order_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AIAssistantService {
@@ -11,6 +13,8 @@ class AIAssistantService {
     required List<AIConversationMessage> conversationHistory,
     List<ServiceModel>? availableServices,
     List<ProductModel>? availableProducts,
+    UserProfile? userProfile,
+    List<OrderModel>? userOrders,
     Function(String)? onFetchServices,
     Function(String)? onFetchProducts,
   }) async {
@@ -123,10 +127,12 @@ class AIAssistantService {
         }
       }
 
-      // Construir contexto del sistema con resultados de búsqueda
+      // Construir contexto del sistema con resultados de búsqueda, datos del perfil y órdenes
       final systemContext = _buildSystemContext(
         availableServices,
         availableProducts,
+        userProfile: userProfile,
+        userOrders: userOrders,
         searchResults: searchResults,
         searchQuery: searchQuery,
       );
@@ -317,6 +323,8 @@ class AIAssistantService {
   static String _buildSystemContext(
     List<ServiceModel>? services,
     List<ProductModel>? products, {
+    UserProfile? userProfile,
+    List<OrderModel>? userOrders,
     List<dynamic>? searchResults,
     String? searchQuery,
   }) {
@@ -340,6 +348,45 @@ class AIAssistantService {
     } else if (products != null && products.isNotEmpty) {
       productsContext =
           '\n\nProductos disponibles: ${products.take(5).map((p) => '${p.name} (S/ ${p.price})').join(', ')}';
+    }
+
+    // 📋 DATOS DEL USUARIO: Información del perfil para autocompletar
+    String userProfileContext = '';
+    if (userProfile != null) {
+      final hasAddress = userProfile.address.isNotEmpty;
+      final hasPhone = userProfile.phone.isNotEmpty;
+
+      if (hasAddress || hasPhone) {
+        userProfileContext = '\n\n📋 DATOS DEL USUARIO REGISTRADOS:';
+        if (hasAddress) {
+          userProfileContext +=
+              '\n• Dirección: ${userProfile.address}${userProfile.city.isNotEmpty ? ', ${userProfile.city}' : ''}';
+        }
+        if (hasPhone) {
+          userProfileContext += '\n• Teléfono: ${userProfile.phone}';
+        }
+        userProfileContext +=
+            '\n\n📝 REGLA IMPORTANTE: Si el usuario quiere hacer una reserva y ya tiene dirección registrada, USA esa dirección automáticamente. Solo pregunta por fecha y hora. Si el usuario quiere usar una dirección diferente, él te lo dirá.';
+      }
+    }
+
+    // 📦 HISTORIAL DE COMPRAS: Información de órdenes previas
+    String userOrdersContext = '';
+    if (userOrders != null && userOrders.isNotEmpty) {
+      final recentOrders = userOrders.take(3);
+      userOrdersContext = '\n\n📦 HISTORIAL DE COMPRAS RECIENTES:';
+      for (final order in recentOrders) {
+        userOrdersContext +=
+            '\n• Orden #${order.orderNumber} (${order.statusText}): ${order.totalItems} productos, S/ ${order.total.toStringAsFixed(2)}';
+        if (order.items.isNotEmpty) {
+          final itemNames =
+              order.items.take(2).map((i) => i.productName).join(', ');
+          userOrdersContext +=
+              ' - $itemNames${order.items.length > 2 ? '...' : ''}';
+        }
+      }
+      userOrdersContext +=
+          '\n\n💡 REGLA: Si el usuario pregunta por productos similares o recomendaciones, puedes referirte a su historial de compras.';
     }
 
     return '''Eres un asistente virtual de una plataforma de servicios del hogar en Perú. Tu nombre es "Asistente IA".
@@ -366,8 +413,9 @@ Cuando un usuario BUSCA UN PRODUCTO ESPECÍFICO (ej: "quiero cemento", "necesito
 Cuando un usuario quiera reservar un servicio:
 - Si es la PRIMERA VEZ que menciona reservar o si pregunta "¿qué servicios tienen?", responde que le mostrarás opciones e incluye [ACTION:SHOW_SERVICES|categoria]
 - Si el usuario dice "Quiero reservar [nombre del servicio] (ID: xxx)", RECONOCE que ya seleccionó un servicio específico y NO incluyas [ACTION:SHOW_SERVICES]
-- Pregunta: ¿Cuándo lo necesitas? ¿A qué hora? ¿Dónde? (dirección completa)
-- Una vez tengas TODA la info (servicio, fecha, hora, dirección), incluye [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección]
+- Si tienes la dirección del perfil del usuario: Solo pregunta fecha y hora. Luego incluye [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección_del_perfil]
+- Si NO tienes dirección: Pregunta fecha, hora y dirección completa
+- Una vez tengas toda la info, incluye [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección]
 
 Cuando un usuario quiera comprar un producto (sin especificar cuál):
 - Si pregunta "¿qué productos tienen?", incluye [ACTION:SHOW_PRODUCTS|categoria]
@@ -377,7 +425,7 @@ Cuando un usuario quiera comprar un producto (sin especificar cuál):
 
 REGLA CRÍTICA: NO muestres tarjetas visuales genéricas si el usuario ya mencionó un (ID: xxx) o si ya vio opciones antes. Solo muestra tarjetas cuando el usuario pregunta por primera vez o busca algo específico.
 
-Responde de forma amigable, clara y en español peruano. Sé conciso (máximo 3-4 líneas).$servicesContext$productsContext
+Responde de forma amigable, clara y en español peruano. Sé conciso (máximo 3-4 líneas).$servicesContext$productsContext$userProfileContext$userOrdersContext
 
 IMPORTANTE: Cuando tengas toda la información necesaria para una reserva o compra, incluye en tu respuesta:
 - Para reservas: [ACTION:BOOK_SERVICE|service_id|date|time|address]

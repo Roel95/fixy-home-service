@@ -11,6 +11,7 @@ import 'package:fixy_home_service/screens/profile/tabs/preferences_tab.dart';
 import 'package:fixy_home_service/screens/profile/tabs/support_tab.dart';
 import 'package:fixy_home_service/screens/profile/tabs/rewards_tab.dart';
 import 'package:fixy_home_service/screens/profile/tabs/account_tab.dart';
+import 'package:fixy_home_service/screens/profile/saved_addresses_screen.dart';
 import 'package:fixy_home_service/screens/profile/profile_detail_screen.dart';
 import 'package:fixy_home_service/screens/provider/provider_onboarding_screen.dart';
 import 'package:fixy_home_service/screens/provider_dashboard/provider_dashboard_screen.dart';
@@ -730,80 +731,7 @@ class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
     Navigator.push(
       context,
       SlideRightRoute(
-        page: Scaffold(
-          appBar: AppBar(
-            title: const Text('Direcciones Guardadas'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Agregar nueva dirección')),
-                  );
-                },
-              ),
-            ],
-          ),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              _buildAddressCard(
-                context,
-                'Casa',
-                'Calle Principal 123, Ciudad',
-                Icons.home,
-                true,
-              ),
-              const SizedBox(height: 12),
-              _buildAddressCard(
-                context,
-                'Trabajo',
-                'Av. Empresarial 456, Oficina 301',
-                Icons.business,
-                false,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAddressCard(BuildContext context, String name, String address,
-      IconData icon, bool isDefault) {
-    return Card(
-      child: ListTile(
-        leading: Icon(icon, color: AppTheme.primaryColor),
-        title: Row(
-          children: [
-            Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-            if (isDefault) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Text(
-                  'Principal',
-                  style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ],
-        ),
-        subtitle: Text(address),
-        trailing: PopupMenuButton(
-          icon: const Icon(Icons.more_vert),
-          itemBuilder: (context) => [
-            const PopupMenuItem(value: 'edit', child: Text('Editar')),
-            const PopupMenuItem(value: 'delete', child: Text('Eliminar')),
-          ],
-        ),
+        page: const SavedAddressesScreen(),
       ),
     );
   }
