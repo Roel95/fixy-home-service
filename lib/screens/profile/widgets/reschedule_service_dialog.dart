@@ -108,7 +108,6 @@ class _RescheduleServiceDialogState extends State<RescheduleServiceDialog> {
                 itemCount: _availableTimes.length,
                 itemBuilder: (context, index) {
                   final time = _availableTimes[index];
-                  final isSelected = time == _selectedTime;
 
                   return RadioListTile<String>(
                     title: Text(time),

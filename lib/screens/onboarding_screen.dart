@@ -13,7 +13,6 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen>
     with TickerProviderStateMixin {
   final PageController _pageController = PageController();
-  int _currentPage = 0;
   double _pageOffset = 0.0;
 
   late AnimationController _textAnimationController;
@@ -94,7 +93,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   void _onPageChanged(int index) {
-    setState(() => _currentPage = index);
     _textAnimationController.reset();
     _textAnimationController.forward();
   }

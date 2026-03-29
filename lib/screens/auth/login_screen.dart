@@ -104,19 +104,11 @@ class _LoginScreenState extends State<LoginScreen> {
       debugPrint('🔑 [LOGIN] Iniciando Google Sign-In...');
 
       // Google Sign-In not implemented with SupabaseConfig
-      final success = false;
       debugPrint('🔑 [LOGIN] Google Sign-In no implementado aún');
 
       if (!mounted) return;
 
-      if (success) {
-        debugPrint(
-            '✅ [LOGIN] Flujo OAuth iniciado - esperando autenticación...');
-        // El AuthWrapper detectará automáticamente cuando el usuario se autentique
-        // y redirigirá a la pantalla principal
-      } else {
-        _showError('No se pudo iniciar el flujo de autenticación con Google');
-      }
+      _showError('No se pudo iniciar el flujo de autenticación con Google');
     } catch (e) {
       debugPrint('❌ [LOGIN] Error en Google Sign-In: $e');
       if (e.toString().contains('Error de conexión')) {

@@ -18,7 +18,6 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
-  bool _onboardingCompleted = false;
   bool _isProcessingOAuthCallback = false;
 
   @override
@@ -146,7 +145,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
     final completed = prefs.getBool('onboarding_completed') ?? false;
     debugPrint('🏁 [AUTH_WRAPPER] Onboarding completed: $completed');
-    if (mounted) setState(() => _onboardingCompleted = completed);
+    if (mounted) setState(() {});
   }
 
   void _listenToAuthChanges() {

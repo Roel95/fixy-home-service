@@ -48,12 +48,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
   bool _isAnalyzingImage = false;
   final OpenAIService _openAIService = OpenAIService();
 
-  // Datos temporales para crear reserva
-  String? _pendingServiceId;
-  String? _pendingDate;
-  String? _pendingTime;
-  String? _pendingAddress;
-
   @override
   void initState() {
     super.initState();
@@ -114,6 +108,9 @@ class _AIChatScreenState extends State<AIChatScreen> {
         });
         debugPrint('✅ [CHAT] Conversación cargada: ${lastConversation.id}');
         debugPrint('   - Mensajes: ${_messages.length}');
+
+        // 📜 Scroll al final para mostrar donde quedó la conversación
+        _scrollToBottom();
       } else {
         debugPrint('ℹ️ [CHAT] No hay conversaciones previas');
       }
@@ -250,6 +247,31 @@ class _AIChatScreenState extends State<AIChatScreen> {
       aiResponse =
           aiResponse.replaceAll(RegExp(r'\[ACTION:[^\]]+\]'), '').trim();
 
+      // 🔄 POST-PROCESAMIENTO: Si el usuario preguntó por su dirección, reemplazar con datos reales
+      if (userProfile != null) {
+        final lowerMessage = message.toLowerCase();
+        final isAskingForAddress = lowerMessage.contains('dirección') ||
+            lowerMessage.contains('direccion') ||
+            lowerMessage.contains('tienes mi direccion') ||
+            lowerMessage.contains('tienes mi dirección') ||
+            lowerMessage.contains('acceso a mi direccion') ||
+            lowerMessage.contains('mi direccion guardada') ||
+            lowerMessage.contains('mi dirección guardada') ||
+            lowerMessage.contains('donde vivo') ||
+            lowerMessage.contains('mi ubicacion') ||
+            lowerMessage.contains('mi ubicación');
+
+        if (isAskingForAddress && userProfile.address.isNotEmpty) {
+          final address = userProfile.address;
+          final city =
+              userProfile.city.isNotEmpty ? ', ${userProfile.city}' : '';
+          aiResponse =
+              'Sí, tengo tu dirección guardada: **$address$city**. Puedo usar esta dirección automáticamente cuando hagas reservas de servicios. ¿Te gustaría hacer una reserva ahora?';
+          debugPrint(
+              '✅ [CHAT] Reemplazando respuesta con dirección real: $address$city');
+        }
+      }
+
       // Agregar respuesta de IA
       final aiMessage = AIConversationMessage(
         id: const Uuid().v4(),
@@ -297,10 +319,10 @@ class _AIChatScreenState extends State<AIChatScreen> {
   Future<void> _handleAIIntent(Map<String, dynamic> intent) async {
     final type = intent['type'];
 
+    debugPrint('🎯 [HANDLE_INTENT] Tipo de acción recibida: $type');
+    debugPrint('🎯 [HANDLE_INTENT] Datos completos del intent: $intent');
+
     switch (type) {
-      case 'book_service':
-        await _createServiceReservation(intent);
-        break;
       case 'add_to_cart':
         await _addProductToCart(intent);
         break;
@@ -316,94 +338,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
       case 'shopping':
         debugPrint('🎯 Mostrando productos en el chat');
         break;
-    }
-  }
-
-  Future<void> _createServiceReservation(Map<String, dynamic> intent) async {
-    try {
-      // Extraer el ID del último mensaje del usuario (si está entre paréntesis)
-      String? serviceId = intent['service_id'];
-
-      // Si no viene en el intent, buscar en el último mensaje del usuario
-      if (serviceId == null && _messages.isNotEmpty) {
-        final lastUserMessage = _messages.lastWhere(
-          (m) => m.role == 'user',
-          orElse: () => _messages.last,
-        );
-        final idMatch =
-            RegExp(r'\(ID:\s*([^)]+)\)').firstMatch(lastUserMessage.content);
-        if (idMatch != null) {
-          serviceId = idMatch.group(1);
-        }
-      }
-
-      final date = intent['date'];
-      final time = intent['time'];
-      final address = intent['address'];
-
-      if (serviceId == null ||
-          date == null ||
-          time == null ||
-          address == null) {
-        debugPrint('⚠️ Faltan datos para crear la reserva');
-        return;
-      }
-
-      // Buscar el servicio
-      final service = _availableServices.firstWhere(
-        (s) => s.id == serviceId,
-        orElse: () => _availableServices.first,
-      );
-
-      // Crear reserva en Supabase (usar campos desnormalizados)
-      final reservationId = const Uuid().v4();
-      await Supabase.instance.client.from('reservations').insert({
-        'id': reservationId,
-        'user_id': _userId,
-        'service_id': serviceId,
-        // Campos desnormalizados del servicio
-        'service_name': service.title,
-        'service_image_url': service.imageUrl,
-        // Campos desnormalizados del proveedor (desde service)
-        'provider_name': service.providerName ?? 'Proveedor Asignado',
-        'provider_phone': service.providerPhone ?? '+51 999 999 999',
-        'provider_image_url': service.providerImageUrl ??
-            'https://ui-avatars.com/api/?name=Provider&background=667EEA&color=fff',
-        // Datos de la reserva
-        'scheduled_date': date,
-        'scheduled_time': time,
-        'address': address,
-        'status': 'confirmed',
-        'amount': service.price,
-        'currency': service.currency,
-        'is_paid': false,
-        'booking_method': 'ai_chat',
-        'created_at': DateTime.now().toIso8601String(),
-      });
-
-      debugPrint('✅ Reserva creada exitosamente: $reservationId');
-
-      // Mensaje de confirmación con botón de acción
-      _addMessage(AIConversationMessage(
-        id: const Uuid().v4(),
-        role: 'assistant',
-        content:
-            '¡Listo! ✅ He creado tu reserva de "${service.title}" para el $date a las $time.\n\n📅 Total: ${service.currency}${service.price}\n\n¿Quieres revisar tus reservas o necesitas algo más?',
-        timestamp: DateTime.now(),
-        metadata: {
-          'action': 'reservation_created',
-          'reservation_id': reservationId
-        },
-      ));
-    } catch (e) {
-      debugPrint('❌ Error creando reserva: $e');
-      _addMessage(AIConversationMessage(
-        id: const Uuid().v4(),
-        role: 'assistant',
-        content:
-            'Lo siento, hubo un error al crear tu reserva. Por favor inténtalo de nuevo.',
-        timestamp: DateTime.now(),
-      ));
     }
   }
 

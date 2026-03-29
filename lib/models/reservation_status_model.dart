@@ -52,8 +52,6 @@ class ReservationStatusModel {
         return 'Completado';
       case ReservationStatus.cancelled:
         return 'Cancelado';
-      default:
-        return 'Desconocido';
     }
   }
 
@@ -70,14 +68,12 @@ class ReservationStatusModel {
         return Colors.green;
       case ReservationStatus.cancelled:
         return Colors.red;
-      default:
-        return Colors.grey;
     }
   }
 
   // Get background color for status pill
   Color getStatusBackgroundColor() {
-    return getStatusColor().withOpacity(0.1);
+    return getStatusColor().withAlpha(26);
   }
 
   // Get icon for status
@@ -93,8 +89,6 @@ class ReservationStatusModel {
         return Icons.task_alt_outlined;
       case ReservationStatus.cancelled:
         return Icons.cancel_outlined;
-      default:
-        return Icons.help_outline;
     }
   }
 

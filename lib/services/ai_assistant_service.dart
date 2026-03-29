@@ -157,6 +157,7 @@ class AIAssistantService {
           'messages': messages,
           'temperature': 0.7,
           'max_tokens': 500,
+          'user_id': supabase.auth.currentUser?.id,
         },
       );
 
@@ -356,18 +357,27 @@ class AIAssistantService {
       final hasAddress = userProfile.address.isNotEmpty;
       final hasPhone = userProfile.phone.isNotEmpty;
 
+      debugPrint(
+          '👤 [AI_ASSISTANT] Perfil usuario: address=${userProfile.address}, phone=${userProfile.phone}, hasAddress=$hasAddress, hasPhone=$hasPhone');
+
       if (hasAddress || hasPhone) {
-        userProfileContext = '\n\n📋 DATOS DEL USUARIO REGISTRADOS:';
+        userProfileContext =
+            '\n\n📋 DATOS DEL USUARIO REGISTRADOS (Tienes permiso para usar estos datos):';
         if (hasAddress) {
           userProfileContext +=
-              '\n• Dirección: ${userProfile.address}${userProfile.city.isNotEmpty ? ', ${userProfile.city}' : ''}';
+              '\n• Dirección guardada: ${userProfile.address}${userProfile.city.isNotEmpty ? ', ${userProfile.city}' : ''}';
         }
         if (hasPhone) {
-          userProfileContext += '\n• Teléfono: ${userProfile.phone}';
+          userProfileContext += '\n• Teléfono registrado: ${userProfile.phone}';
         }
         userProfileContext +=
-            '\n\n📝 REGLA IMPORTANTE: Si el usuario quiere hacer una reserva y ya tiene dirección registrada, USA esa dirección automáticamente. Solo pregunta por fecha y hora. Si el usuario quiere usar una dirección diferente, él te lo dirá.';
+            '\n\n📝 REGLA OBLIGATORIA: Cuando el usuario pregunte "¿tienes mi dirección?" o similar, DEBES responder "Sí, tengo tu dirección: [dirección del perfil]". NO digas que no tienes acceso por privacidad.';
+        userProfileContext +=
+            '\n📝 REGLA OBLIGATORIA: Si el usuario quiere hacer una reserva y ya tiene dirección registrada arriba, USA esa dirección automáticamente. Solo pregunta por fecha y hora.';
       }
+    } else {
+      debugPrint(
+          '⚠️ [AI_ASSISTANT] userProfile es NULL - no hay datos del usuario');
     }
 
     // 📦 HISTORIAL DE COMPRAS: Información de órdenes previas
@@ -398,12 +408,15 @@ Tu trabajo es ayudar a los usuarios a:
 4. Responder preguntas sobre servicios y productos
 5. Dar recomendaciones personalizadas
 
-Cuando un usuario envía una IMAGEN:
+📋 DATOS DEL USUARIO:
+Tienes acceso a los datos del perfil del usuario que se muestran arriba. Cuando el usuario pregunte por su información (dirección, teléfono, nombre), USA ESOS DATOS directamente. NO digas que no tienes acceso por privacidad - ya tienes los datos en el contexto.
+
+Cuando el usuario envía una IMAGEN:
 - La imagen se analiza automáticamente con IA de visión
 - Recibirás un análisis detallado del problema
 - Tu rol es explicar las soluciones de forma clara y recomendar productos/servicios relacionados
 
-Cuando un usuario BUSCA UN PRODUCTO ESPECÍFICO (ej: "quiero cemento", "necesito pintura"):
+Cuando el usuario BUSCA UN PRODUCTO ESPECÍFICO (ej: "quiero cemento", "necesito pintura"):
 - Revisa los "RESULTADOS DE BÚSQUEDA" arriba si existen
 - Di cuántos productos encontraste (usa el número exacto de resultados)
 - Menciona brevemente los 2 principales productos con nombre y precio
@@ -411,14 +424,15 @@ Cuando un usuario BUSCA UN PRODUCTO ESPECÍFICO (ej: "quiero cemento", "necesito
 - Ejemplo: "¡Hola! Te ayudo con el cemento para tu casa. Encontré 2 opciones disponibles:\n\n- Cemento Portland (S/ 25.50)\n- Cemento Gris (S/ 23.00)\n\nTambién te pueden interesar otros productos similares para tu proyecto."
 
 Cuando un usuario quiera reservar un servicio:
-- Si es la PRIMERA VEZ que menciona reservar o si pregunta "¿qué servicios tienen?", responde que le mostrarás opciones e incluye [ACTION:SHOW_SERVICES|categoria]
+- Si es la PRIMERA VEZ que menciona reservar o si pregunta "¿qué servicios tienes?", responde que le mostrarás opciones e incluye [ACTION:SHOW_SERVICES|categoria]
 - Si el usuario dice "Quiero reservar [nombre del servicio] (ID: xxx)", RECONOCE que ya seleccionó un servicio específico y NO incluyas [ACTION:SHOW_SERVICES]
-- Si tienes la dirección del perfil del usuario: Solo pregunta fecha y hora. Luego incluye [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección_del_perfil]
-- Si NO tienes dirección: Pregunta fecha, hora y dirección completa
+- Si tienes la dirección del perfil del usuario en "📋 DATOS DEL USUARIO REGISTRADOS": Solo pregunta fecha y hora, USA esa dirección automáticamente. Luego incluye [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección_del_perfil]
+- Si NO tienes dirección en el perfil: Pregunta fecha, hora y dirección completa
 - Una vez tengas toda la info, incluye [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección]
+- ⚠️ IMPORTANTE: El sistema backend procesará automáticamente esta acción y creará la reserva real en la base de datos. No necesitas confirmar manualmente.
 
 Cuando un usuario quiera comprar un producto (sin especificar cuál):
-- Si pregunta "¿qué productos tienen?", incluye [ACTION:SHOW_PRODUCTS|categoria]
+- Si pregunta "¿qué productos tienes?", incluye [ACTION:SHOW_PRODUCTS|categoria]
 - Si el usuario dice "Quiero comprar [nombre del producto] (ID: xxx)", RECONOCE que ya seleccionó un producto y NO incluyas [ACTION:SHOW_PRODUCTS]
 - Pregunta cuántos necesita (si no lo menciona)
 - Una vez confirmado, incluye [ACTION:ADD_TO_CART|product_id|cantidad]

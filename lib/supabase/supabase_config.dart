@@ -25,7 +25,7 @@ class SupabaseConfig {
   static Future<bool> testConnection() async {
     try {
       debugPrint('🔍 [SUPABASE] Testing connection...');
-      await client.from('profiles').select('count').count();
+      await client.from('users').select('count').count();
       debugPrint('✅ [SUPABASE] Connection successful');
       return true;
     } catch (e) {
