@@ -223,11 +223,14 @@ class AIAssistantService {
         }
 
         final aiResponse = message['content'].toString().trim();
+        debugPrint('✅ [AI_ASSISTANT] Respuesta COMPLETA: $aiResponse');
         debugPrint(
-            '✅ [AI_ASSISTANT] Respuesta generada: ${aiResponse.substring(0, aiResponse.length > 50 ? 50 : aiResponse.length)}...');
+            '🔍 [AI_ASSISTANT] ¿Contiene ACTION?: ${aiResponse.contains('[ACTION:')}');
 
         // Analizar intención del usuario
         final intent = _analyzeIntent(userMessage, aiResponse);
+        debugPrint('🎯 [AI_ASSISTANT] Intent detectado: ${intent['type']}');
+        debugPrint('🎯 [AI_ASSISTANT] Datos del intent: $intent');
 
         // Obtener opciones visuales basadas en búsqueda o intención
         List<dynamic>? visualOptions;
@@ -426,10 +429,16 @@ Cuando el usuario BUSCA UN PRODUCTO ESPECÍFICO (ej: "quiero cemento", "necesito
 Cuando un usuario quiera reservar un servicio:
 - Si es la PRIMERA VEZ que menciona reservar o si pregunta "¿qué servicios tienes?", responde que le mostrarás opciones e incluye [ACTION:SHOW_SERVICES|categoria]
 - Si el usuario dice "Quiero reservar [nombre del servicio] (ID: xxx)", RECONOCE que ya seleccionó un servicio específico y NO incluyas [ACTION:SHOW_SERVICES]
-- Si tienes la dirección del perfil del usuario en "📋 DATOS DEL USUARIO REGISTRADOS": Solo pregunta fecha y hora, USA esa dirección automáticamente. Luego incluye [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección_del_perfil]
+- Si tienes la dirección del perfil del usuario en "📋 DATOS DEL USUARIO REGISTRADOS": Solo pregunta fecha y hora, USA esa dirección automáticamente
 - Si NO tienes dirección en el perfil: Pregunta fecha, hora y dirección completa
-- Una vez tengas toda la info, incluye [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección]
-- ⚠️ IMPORTANTE: El sistema backend procesará automáticamente esta acción y creará la reserva real en la base de datos. No necesitas confirmar manualmente.
+
+🚨 REGLA ABSOLUTAMENTE CRÍTICA - CREACIÓN DE RESERVAS:
+Cuando tengas TODA la información necesaria (service_id, fecha, hora, dirección), DEBES:
+1. Responder con un mensaje amigable confirmando la reserva
+2. INCLUIR OBLIGATORIAMENTE al final de tu respuesta: [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección]
+3. Ejemplo: "¡Perfecto! Tu reserva de Limpieza Profunda está confirmada para mañana 30/03/2026 a las 15:00 en Av. Arequipa 123, Miraflores, Lima. [ACTION:BOOK_SERVICE|uuid-del-servicio|2026-03-30|15:00|Av. Arequipa 123, Miraflores, Lima]"
+
+⚠️ SIN EXCEPCIONES: Si no incluyes el token [ACTION:BOOK_SERVICE|...], la reserva NO se creará en el sistema. Este token es OBLIGATORIO.
 
 Cuando un usuario quiera comprar un producto (sin especificar cuál):
 - Si pregunta "¿qué productos tienes?", incluye [ACTION:SHOW_PRODUCTS|categoria]
@@ -454,13 +463,21 @@ IMPORTANTE: Cuando tengas toda la información necesaria para una reserva o comp
     final lowerMessage = userMessage.toLowerCase();
     final lowerResponse = aiResponse.toLowerCase();
 
+    debugPrint('🔍 [_analyzeIntent] Analizando respuesta AI...');
+    debugPrint(
+        '🔍 [_analyzeIntent] ¿Contiene [ACTION:?: ${aiResponse.contains('[ACTION:')}');
+
     // Detectar acciones en la respuesta de IA
     if (aiResponse.contains('[ACTION:')) {
       final actionRegex = RegExp(r'\[ACTION:([^\]]+)\]');
       final match = actionRegex.firstMatch(aiResponse);
+      debugPrint('🔍 [_analyzeIntent] Match encontrado: ${match != null}');
+
       if (match != null) {
         final actionParts = match.group(1)!.split('|');
         final actionType = actionParts[0];
+        debugPrint('🔍 [_analyzeIntent] Tipo de acción: $actionType');
+        debugPrint('🔍 [_analyzeIntent] Partes: $actionParts');
 
         switch (actionType) {
           case 'SHOW_SEARCH_RESULTS':
@@ -468,6 +485,7 @@ IMPORTANTE: Cuando tengas toda la información necesaria para una reserva o comp
               'type': 'show_search_results',
             };
           case 'BOOK_SERVICE':
+            debugPrint('✅ [_analyzeIntent] Detectado BOOK_SERVICE');
             return {
               'type': 'book_service',
               'service_id': actionParts.length > 1 ? actionParts[1] : null,

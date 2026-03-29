@@ -18,6 +18,7 @@ class CurrentServiceStatusScreen extends StatefulWidget {
 class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isRefreshing = false;
 
   @override
   void initState() {

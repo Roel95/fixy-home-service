@@ -5,17 +5,27 @@ import 'package:flutter/foundation.dart';
 /// Service history service for handling service history operations
 class ServiceHistoryService {
   /// Get user service history
-  static Future<List<ServiceHistory>> getUserServiceHistory(String userId) async {
+  static Future<List<ServiceHistory>> getUserServiceHistory(
+      String userId) async {
     try {
-      final data = await SupabaseConfig.client
-          .from('service_history')
-          .select()
-          .eq('user_id', userId)
-          .order('completed_at', ascending: false);
+      final data =
+          await SupabaseConfig.client.from('service_history').select('''
+            id,
+            service_id,
+            service_name,
+            amount,
+            currency,
+            status,
+            scheduled_date,
+            provider_name,
+            rating,
+            review
+          ''').eq('user_id', userId).order('scheduled_date', ascending: false);
 
       return data.map((json) => ServiceHistory.fromJson(json)).toList();
     } catch (e) {
-      debugPrint('❌ [SERVICE_HISTORY_SERVICE] Error getting service history: $e');
+      debugPrint(
+          '❌ [SERVICE_HISTORY_SERVICE] Error getting service history: $e');
       return [];
     }
   }
@@ -27,7 +37,8 @@ class ServiceHistoryService {
           .from('service_history')
           .insert(history.toJson());
     } catch (e) {
-      debugPrint('❌ [SERVICE_HISTORY_SERVICE] Error adding service history: $e');
+      debugPrint(
+          '❌ [SERVICE_HISTORY_SERVICE] Error adding service history: $e');
       rethrow;
     }
   }
@@ -40,7 +51,8 @@ class ServiceHistoryService {
           .update(history.toJson())
           .eq('id', history.id);
     } catch (e) {
-      debugPrint('❌ [SERVICE_HISTORY_SERVICE] Error updating service history: $e');
+      debugPrint(
+          '❌ [SERVICE_HISTORY_SERVICE] Error updating service history: $e');
       rethrow;
     }
   }

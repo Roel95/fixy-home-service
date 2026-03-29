@@ -13,6 +13,7 @@ import 'package:fixy_home_service/screens/shop/cart_screen.dart';
 import 'package:fixy_home_service/data/service_repository.dart';
 import 'package:fixy_home_service/data/product_repository.dart';
 import 'package:fixy_home_service/providers/cart_provider.dart';
+import 'package:fixy_home_service/providers/reservation_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:provider/provider.dart';
@@ -326,6 +327,9 @@ class _AIChatScreenState extends State<AIChatScreen> {
       case 'add_to_cart':
         await _addProductToCart(intent);
         break;
+      case 'book_service':
+        await _bookService(intent);
+        break;
       case 'show_search_results':
         debugPrint('🔍 Mostrando resultados de búsqueda en el chat');
         break;
@@ -391,6 +395,158 @@ class _AIChatScreenState extends State<AIChatScreen> {
         id: const Uuid().v4(),
         role: 'assistant',
         content: 'Lo siento, hubo un error al agregar el producto al carrito.',
+        timestamp: DateTime.now(),
+      ));
+    }
+  }
+
+  Future<void> _bookService(Map<String, dynamic> intent) async {
+    try {
+      debugPrint('🚀 [BOOK_SERVICE] Iniciando creación de reserva...');
+      debugPrint('🚀 [BOOK_SERVICE] Datos del intent: $intent');
+
+      final serviceId = intent['service_id'];
+      final date = intent['date'];
+      final time = intent['time'];
+      final address = intent['address'];
+
+      debugPrint('🚀 [BOOK_SERVICE] service_id: $serviceId');
+      debugPrint('🚀 [BOOK_SERVICE] date: $date');
+      debugPrint('🚀 [BOOK_SERVICE] time: $time');
+      debugPrint('🚀 [BOOK_SERVICE] address: $address');
+
+      if (serviceId == null ||
+          date == null ||
+          time == null ||
+          address == null) {
+        debugPrint('⚠️ [BOOK_SERVICE] Faltan datos para crear la reserva');
+        _addMessage(AIConversationMessage(
+          id: const Uuid().v4(),
+          role: 'assistant',
+          content:
+              'Necesito más información para completar tu reserva. Por favor, indica el servicio, fecha, hora y dirección.',
+          timestamp: DateTime.now(),
+        ));
+        return;
+      }
+
+      // Validar si el service_id es un UUID válido o un placeholder
+      String validServiceId = serviceId;
+      final uuidRegex = RegExp(
+          r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+          caseSensitive: false);
+
+      if (!uuidRegex.hasMatch(serviceId)) {
+        debugPrint(
+            '⚠️ [BOOK_SERVICE] service_id no es UUID válido: $serviceId');
+        debugPrint(
+            '🔍 [BOOK_SERVICE] Buscando UUID real en mensajes anteriores...');
+
+        // Buscar el último mensaje del usuario que contenga "(ID: uuid)"
+        final userMessageWithId = _messages.lastWhere(
+          (m) => m.role == 'user' && m.content.contains('(ID:'),
+          orElse: () => _messages.first,
+        );
+
+        final idMatch = RegExp(
+                r'\(ID:\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\)',
+                caseSensitive: false)
+            .firstMatch(userMessageWithId.content);
+
+        if (idMatch != null) {
+          validServiceId = idMatch.group(1)!;
+          debugPrint(
+              '✅ [BOOK_SERVICE] UUID extraído del mensaje: $validServiceId');
+        } else {
+          debugPrint(
+              '❌ [BOOK_SERVICE] No se pudo extraer UUID válido del mensaje');
+          _addMessage(AIConversationMessage(
+            id: const Uuid().v4(),
+            role: 'assistant',
+            content:
+                'Por favor selecciona un servicio específico de la lista haciendo clic en él.',
+            timestamp: DateTime.now(),
+          ));
+          return;
+        }
+      }
+
+      // Obtener el servicio de los disponibles
+      final service = _availableServices.firstWhere(
+        (s) => s.id == validServiceId,
+        orElse: () => ServiceModel(
+          id: validServiceId,
+          title: 'Servicio',
+          description: '',
+          category: '',
+          price: 0,
+          currency: 'S/',
+          timeUnit: 'hora',
+          imageUrl: '',
+          rating: 0,
+          reviews: 0,
+          location: '',
+          availableDays: [],
+          timeFrom: '',
+          timeTo: '',
+        ),
+      );
+
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) {
+        debugPrint('⚠️ [BOOK_SERVICE] Usuario no autenticado');
+        return;
+      }
+
+      debugPrint('🚀 [BOOK_SERVICE] Creando reserva en Supabase...');
+
+      // Crear la reserva en Supabase
+      final response = await Supabase.instance.client
+          .from('reservations')
+          .insert({
+            'user_id': user.id,
+            'service_id': validServiceId,
+            'service_name': service.title,
+            'service_image_url': service.imageUrl,
+            'provider_name': 'Proveedor asignado',
+            'provider_phone': '',
+            'provider_image_url': '',
+            'scheduled_date': date,
+            'scheduled_time': time,
+            'address': address,
+            'status': 'confirmed',
+            'amount': service.price,
+            'currency': service.currency,
+            'is_paid': false,
+            'booking_method': 'ai_chat',
+            'notes': 'Reserva creada desde el chat con el asistente IA',
+          })
+          .select()
+          .single();
+
+      debugPrint(
+          '✅ [BOOK_SERVICE] Reserva creada exitosamente: ${response['id']}');
+
+      // Mostrar mensaje de confirmación
+      _addMessage(AIConversationMessage(
+        id: const Uuid().v4(),
+        role: 'assistant',
+        content:
+            '¡Perfecto! ✅ Tu reserva para "${service.title}" ha sido confirmada.\n\n📅 Fecha: $date\n⏰ Hora: $time\n📍 Dirección: $address\n\nPuedes ver el progreso de tu reserva en "Mis Reservaciones".',
+        timestamp: DateTime.now(),
+        metadata: {'action': 'reservation_created'},
+      ));
+
+      // Notificar al provider
+      final reservationProvider = context.read<ReservationProvider>();
+      await reservationProvider.loadReservations();
+    } catch (e) {
+      debugPrint('❌ [BOOK_SERVICE] Error creando reserva: $e');
+      _addMessage(AIConversationMessage(
+        id: const Uuid().v4(),
+        role: 'assistant',
+        content:
+            'Lo siento, hubo un error al crear tu reserva. Por favor intenta de nuevo.',
         timestamp: DateTime.now(),
       ));
     }
