@@ -14,14 +14,11 @@ import 'package:fixy_home_service/services/notification_service.dart';
 import 'package:fixy_home_service/screens/search_screen.dart';
 import 'package:fixy_home_service/screens/ai_chat_screen.dart';
 import 'package:fixy_home_service/screens/service_detail_screen.dart';
-import 'package:fixy_home_service/screens/service_reservation_screen.dart';
 import 'package:fixy_home_service/screens/notifications_screen.dart';
 import 'package:fixy_home_service/screens/profile/profile_screen.dart';
 import 'package:fixy_home_service/screens/reels_screen.dart';
-import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/widgets/category_card.dart';
 import 'package:fixy_home_service/widgets/section_header.dart';
-import 'package:fixy_home_service/widgets/service_card.dart';
 import 'package:fixy_home_service/widgets/banner_carousel.dart';
 import 'package:fixy_home_service/widgets/video_reel_card.dart';
 import 'package:fixy_home_service/widgets/unified_deal_card.dart';
@@ -52,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen>
   late AnimationController _animationController;
 
   // Futures for data
-  late Future<List<ServiceModel>> _popularServicesFuture;
   late Future<List<CategoryModel>> _categoriesFuture;
   late Future<List<BannerModel>> _bannersFuture;
   late Future<List<VideoModel>> _trendingVideosFuture;
@@ -79,7 +75,6 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _loadData() {
-    _popularServicesFuture = _repository.getPopularServices();
     _categoriesFuture = _repository.getServiceCategories();
     _bannersFuture = _bannerRepository.getActiveBanners();
     _trendingVideosFuture = _videoRepository.getTrendingVideos();

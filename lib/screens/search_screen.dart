@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fixy_home_service/data/service_repository.dart';
 import 'package:fixy_home_service/models/service_model.dart';
 import 'package:fixy_home_service/screens/service_detail_screen.dart';
-import 'package:fixy_home_service/screens/service_reservation_screen.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/widgets/custom_search_bar.dart';
 import 'package:fixy_home_service/widgets/filter_chip.dart' as custom_chip;
@@ -408,7 +407,7 @@ class _SearchScreenState extends State<SearchScreen>
                           Navigator.push(
                             context,
                             SlideUpRoute(
-                              page: ServiceReservationScreen(
+                              page: ServiceDetailScreen(
                                 service: _searchResults[index],
                               ),
                             ),

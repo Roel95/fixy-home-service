@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fixy_home_service/screens/splash_screen.dart';
 import 'package:fixy_home_service/screens/provider_dashboard/provider_dashboard_screen.dart';
+import 'package:fixy_home_service/screens/admin/admin_dashboard_screen.dart';
 import 'package:fixy_home_service/screens/app_shell.dart';
 import 'package:fixy_home_service/screens/auth/reset_password_screen.dart';
 import 'package:fixy_home_service/theme.dart';
@@ -93,6 +94,7 @@ class _MyAppState extends State<MyApp> {
             final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
             return ProviderDashboardScreen(userId: userId);
           },
+          '/admin': (context) => const AdminDashboardScreen(),
           '/reset-password': (context) => const ResetPasswordScreen(),
         },
       ),

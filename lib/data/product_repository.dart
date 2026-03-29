@@ -7,7 +7,7 @@ class ProductRepository {
   final ProductService _productService = ProductService();
 
   // ============================================
-  // CATEGORÍAS
+  // CATEGORÍAS - MÉTODOS ADMIN
   // ============================================
 
   Future<List<ProductCategoryModel>> getProductCategories(
@@ -16,12 +16,54 @@ class ProductRepository {
         forceRefresh: forceRefresh);
   }
 
+  /// Obtener todas las categorías (alias para admin)
+  Future<List<ProductCategoryModel>> getCategories() async {
+    return await _productService.getProductCategories();
+  }
+
+  /// Crear nueva categoría
+  Future<ProductCategoryModel> createCategory(
+      ProductCategoryModel category) async {
+    return await _productService.createCategory(category);
+  }
+
+  /// Actualizar categoría
+  Future<ProductCategoryModel> updateCategory(
+      ProductCategoryModel category) async {
+    return await _productService.updateCategory(category);
+  }
+
+  /// Eliminar categoría
+  Future<void> deleteCategory(String categoryId) async {
+    return await _productService.deleteCategory(categoryId);
+  }
+
   // ============================================
-  // PRODUCTOS
+  // PRODUCTOS - MÉTODOS ADMIN
   // ============================================
 
   Future<List<ProductModel>> getAllProducts({bool forceRefresh = false}) async {
     return await _productService.getAllProducts(forceRefresh: forceRefresh);
+  }
+
+  /// Obtener todos los productos (alias para admin)
+  Future<List<ProductModel>> getProducts() async {
+    return await _productService.getAllProducts();
+  }
+
+  /// Crear nuevo producto
+  Future<ProductModel> createProduct(ProductModel product) async {
+    return await _productService.createProduct(product);
+  }
+
+  /// Actualizar producto
+  Future<ProductModel> updateProduct(ProductModel product) async {
+    return await _productService.updateProduct(product);
+  }
+
+  /// Eliminar producto
+  Future<void> deleteProduct(String productId) async {
+    return await _productService.deleteProduct(productId);
   }
 
   Future<List<ProductModel>> getFeaturedProducts(

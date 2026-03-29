@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fixy_home_service/models/service_model.dart';
-import 'package:fixy_home_service/screens/service_reservation_screen.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/widgets/voice_booking_dialog.dart';
-import 'package:fixy_home_service/utils/page_transitions.dart';
 
 class ServiceDetailScreen extends StatelessWidget {
   final ServiceModel service;
@@ -444,79 +442,74 @@ class ServiceDetailScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // Traditional booking button
-              Row(
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Total',
-                        style: AppTheme.textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textSecondary,
-                        ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            '${service.currency}${service.price}',
-                            style: AppTheme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryColor,
-                            ),
-                          ),
-                          Text(
-                            '/${service.timeUnit}',
-                            style: AppTheme.textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+              // Total price display
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: Colors.grey.withValues(alpha: 0.2),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          SlideUpRoute(
-                            page: ServiceReservationScreen(
-                              service: service,
-                            ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Total',
+                          style: AppTheme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.textSecondary,
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
                         ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              '${service.currency}${service.price}',
+                              style: AppTheme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.primaryColor,
+                              ),
+                            ),
+                            Text(
+                              '/${service.timeUnit}',
+                              style: AppTheme.textTheme.bodyMedium?.copyWith(
+                                color: AppTheme.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.calendar_today, size: 20),
-                          const SizedBox(width: 8),
+                          Icon(Icons.auto_awesome,
+                              size: 16, color: AppTheme.primaryColor),
+                          const SizedBox(width: 4),
                           Text(
-                            'Reservar Manual',
-                            style: AppTheme.textTheme.titleMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                            'Reserva con IA',
+                            style: TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

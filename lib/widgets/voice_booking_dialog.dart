@@ -4,7 +4,6 @@ import 'package:fixy_home_service/services/ai_assistant_service.dart';
 import 'package:fixy_home_service/services/speech_service.dart';
 import 'package:fixy_home_service/models/ai_conversation_model.dart';
 import 'package:fixy_home_service/models/service_model.dart';
-import 'package:fixy_home_service/screens/service_reservation_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class VoiceBookingDialog extends StatefulWidget {
@@ -122,26 +121,8 @@ Ejemplos: [BUSCAR:plomero], [BUSCAR:electricista], [BUSCAR:limpieza]''';
 
       String aiResponse = result['response'];
 
-      // Si tiene servicio específico y confirma toda la info
-      if (widget.service != null && aiResponse.contains('[CONFIRMAR]')) {
-        aiResponse = aiResponse.replaceAll('[CONFIRMAR]', '').trim();
-        _addAssistantMessage(aiResponse);
-
-        await Future.delayed(const Duration(seconds: 2));
-
-        if (mounted) {
-          Navigator.pop(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  ServiceReservationScreen(service: widget.service!),
-            ),
-          );
-        }
-      }
       // Si NO tiene servicio y detecta búsqueda
-      else if (widget.service == null && aiResponse.contains('[BUSCAR:')) {
+      if (widget.service == null && aiResponse.contains('[BUSCAR:')) {
         final searchMatch =
             RegExp(r'\[BUSCAR:([^\]]+)\]').firstMatch(aiResponse);
         if (searchMatch != null) {
@@ -177,21 +158,6 @@ Ejemplos: [BUSCAR:plomero], [BUSCAR:electricista], [BUSCAR:limpieza]''';
       _speechService.stopListening();
     } else {
       _speechService.startListening();
-    }
-  }
-
-  void _skipToManualBooking() {
-    Navigator.pop(context);
-    if (widget.service != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              ServiceReservationScreen(service: widget.service!),
-        ),
-      );
-    } else {
-      Navigator.pushNamed(context, '/search');
     }
   }
 
@@ -408,17 +374,6 @@ Ejemplos: [BUSCAR:plomero], [BUSCAR:electricista], [BUSCAR:limpieza]''';
             ),
 
             const SizedBox(height: 16),
-
-            // Manual booking option
-            TextButton(
-              onPressed: _skipToManualBooking,
-              child: Text(
-                widget.service != null
-                    ? 'Prefiero reservar manualmente'
-                    : 'Prefiero buscar manualmente',
-                style: const TextStyle(fontSize: 12),
-              ),
-            ),
           ],
         ),
       ),
