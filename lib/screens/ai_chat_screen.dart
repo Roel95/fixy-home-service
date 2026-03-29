@@ -15,6 +15,7 @@ import 'package:fixy_home_service/providers/cart_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:provider/provider.dart';
+import 'package:fixy_home_service/providers/profile_provider.dart';
 import 'package:fixy_home_service/utils/page_transitions.dart';
 
 class AIChatScreen extends StatefulWidget {
@@ -63,20 +64,52 @@ class _AIChatScreenState extends State<AIChatScreen> {
     if (user != null) {
       setState(() {
         _userId = user.id;
-        _conversationId = const Uuid().v4();
       });
 
       // Cargar servicios y productos disponibles
       _loadAvailableOptions();
 
-      // Mensaje de bienvenida
-      _addMessage(AIConversationMessage(
-        id: const Uuid().v4(),
-        role: 'assistant',
-        content:
-            '¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?\n\nPuedo ayudarte a:\n• Reservar servicios (limpieza, fontanería, electricidad, etc.)\n• Comprar productos de la tienda\n• Responder tus preguntas',
-        timestamp: DateTime.now(),
-      ));
+      // 🔄 Cargar conversaciones previas del usuario
+      await _loadPreviousConversations();
+
+      // Si no hay conversación previa, crear nueva con mensaje de bienvenida
+      if (_conversationId == null) {
+        setState(() {
+          _conversationId = const Uuid().v4();
+        });
+        _addMessage(AIConversationMessage(
+          id: const Uuid().v4(),
+          role: 'assistant',
+          content:
+              '¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?\n\nPuedo ayudarte a:\n• Reservar servicios (limpieza, fontanería, electricidad, etc.)\n• Comprar productos de la tienda\n• Responder tus preguntas',
+          timestamp: DateTime.now(),
+        ));
+      }
+    }
+  }
+
+  /// Cargar conversaciones previas del usuario desde Supabase
+  Future<void> _loadPreviousConversations() async {
+    try {
+      debugPrint('🔄 [CHAT] Cargando conversaciones previas...');
+      final conversations =
+          await AIAssistantService.loadUserConversations(_userId!);
+
+      if (conversations.isNotEmpty) {
+        // Cargar la conversación más reciente
+        final lastConversation = conversations.first;
+        setState(() {
+          _conversationId = lastConversation.id;
+          _messages =
+              List<AIConversationMessage>.from(lastConversation.messages);
+        });
+        debugPrint('✅ [CHAT] Conversación cargada: ${lastConversation.id}');
+        debugPrint('   - Mensajes: ${_messages.length}');
+      } else {
+        debugPrint('ℹ️ [CHAT] No hay conversaciones previas');
+      }
+    } catch (e) {
+      debugPrint('⚠️ [CHAT] Error cargando conversaciones: $e');
     }
   }
 
@@ -986,14 +1019,46 @@ $analysisText
           ),
           if (isUser) const SizedBox(width: 8),
           if (isUser)
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey.shade300,
-              ),
-              child: Icon(Icons.person, color: Colors.grey.shade700, size: 18),
+            Consumer<ProfileProvider>(
+              builder: (context, profileProvider, child) {
+                final avatarUrl = profileProvider.userProfile?.avatarUrl;
+                final userName = profileProvider.userProfile?.name ?? 'U';
+
+                return Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey.shade300,
+                    image: avatarUrl != null &&
+                            avatarUrl.isNotEmpty &&
+                            !avatarUrl.contains('placeholder') &&
+                            !avatarUrl.contains('ui-avatars')
+                        ? DecorationImage(
+                            image: NetworkImage(avatarUrl),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: avatarUrl == null ||
+                          avatarUrl.isEmpty ||
+                          avatarUrl.contains('placeholder') ||
+                          avatarUrl.contains('ui-avatars')
+                      ? Center(
+                          child: Text(
+                            userName.isNotEmpty
+                                ? userName[0].toUpperCase()
+                                : 'U',
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      : null,
+                );
+              },
             ),
         ],
       ),
