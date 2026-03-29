@@ -168,7 +168,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                 ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Color(0xFF2D3748), size: 20),
+                icon: const Icon(Icons.arrow_back,
+                    color: Color(0xFF2D3748), size: 20),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -190,7 +191,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                             spreadRadius: 0,
                           ),
                           BoxShadow(
-                            color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+                            color:
+                                const Color(0xFF2D3748).withValues(alpha: 0.15),
                             offset: const Offset(2, 2),
                             blurRadius: 4,
                             spreadRadius: 0,
@@ -224,77 +226,81 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 color: const Color(0xFFE8ECF3),
-                child: PageView.builder(
-                  itemCount: widget.product.images.length,
-                  onPageChanged: (index) {
-                    setState(() => _currentImageIndex = index);
-                  },
-                  itemBuilder: (context, index) {
-                    final imageUrl = widget.product.images[index];
-                    return GestureDetector(
-                      onTap: () => _showImageZoom(imageUrl),
-                      child: Hero(
-                        tag: index == 0
-                            ? 'product-${widget.product.id}'
-                            : 'product-${widget.product.id}-$index',
-                        child: Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.image_not_supported,
-                                size: 80),
+                child: Stack(
+                  children: [
+                    PageView.builder(
+                      itemCount: widget.product.images.length,
+                      onPageChanged: (index) {
+                        setState(() => _currentImageIndex = index);
+                      },
+                      itemBuilder: (context, index) {
+                        final imageUrl = widget.product.images[index];
+                        return GestureDetector(
+                          onTap: () => _showImageZoom(imageUrl),
+                          child: Hero(
+                            tag: index == 0
+                                ? 'product-${widget.product.id}'
+                                : 'product-${widget.product.id}-$index',
+                            child: Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.image_not_supported,
+                                    size: 80),
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                  if (widget.product.images.length > 1)
-                    Positioned(
-                      bottom: 16,
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          widget.product.images.length,
-                          (index) => Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _currentImageIndex == index
-                                  ? Colors.white
-                                  : Colors.white.withValues(alpha: 0.5),
+                        );
+                      },
+                    ),
+                    if (widget.product.images.length > 1)
+                      Positioned(
+                        bottom: 16,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            widget.product.images.length,
+                            (index) => Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _currentImageIndex == index
+                                    ? Colors.white
+                                    : Colors.white.withValues(alpha: 0.5),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  if (widget.product.isOnSale)
-                    Positioned(
-                      top: 60,
-                      left: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFF3B30),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '-${widget.product.discountPercentage.toStringAsFixed(0)}% OFF',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
+                    if (widget.product.isOnSale)
+                      Positioned(
+                        top: 60,
+                        left: 16,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF3B30),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '-${widget.product.discountPercentage.toStringAsFixed(0)}% OFF',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
