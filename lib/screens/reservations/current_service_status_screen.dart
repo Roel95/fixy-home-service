@@ -138,49 +138,44 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: const Color(0xFFE8ECF3),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Hidden Hero for tab bar animation
-            Hero(
-              tag: 'tab_icon_2',
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  width: 0,
-                  height: 0,
-                  color: Colors.transparent,
-                ),
-              ),
-            ),
-            Text(
-              'Mis Reservaciones',
-              style: AppTheme.textTheme.titleLarge?.copyWith(
-                color: AppTheme.textPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        backgroundColor: const Color(0xFFE8ECF3),
+        title: Text(
+          'Mis Reservaciones',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF2D3748),
+            letterSpacing: -0.3,
+          ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(64),
           child: Container(
-            color: Colors.white,
+            color: const Color(0xFFE8ECF3),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.backgroundColor,
+                color: const Color(0xFFE8ECF3),
                 borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  const BoxShadow(
+                    color: Color(0xFFFFFFFF),
+                    offset: Offset(-3, -3),
+                    blurRadius: 6,
+                    spreadRadius: 0,
+                  ),
+                  BoxShadow(
+                    color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+                    offset: const Offset(3, 3),
+                    blurRadius: 6,
+                    spreadRadius: 0,
+                  ),
+                ],
               ),
               child: TabBar(
                 controller: _tabController,
@@ -188,8 +183,22 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicator: BoxDecoration(
-                  color: AppTheme.primaryColor,
+                  color: const Color(0xFFE8ECF3),
                   borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    const BoxShadow(
+                      color: Color(0xFFFFFFFF),
+                      offset: Offset(-2, -2),
+                      blurRadius: 4,
+                      spreadRadius: 0,
+                    ),
+                    BoxShadow(
+                      color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+                      offset: const Offset(2, 2),
+                      blurRadius: 4,
+                      spreadRadius: 0,
+                    ),
+                  ],
                 ),
                 dividerColor: Colors.transparent,
                 tabs: [
@@ -240,8 +249,9 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
                     ),
                   ),
                 ],
-                labelColor: Colors.white,
-                unselectedLabelColor: AppTheme.textSecondary,
+                labelColor: const Color(0xFF667EEA),
+                unselectedLabelColor:
+                    const Color(0xFF2D3748).withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -249,7 +259,8 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
       ),
       body: RefreshIndicator(
         onRefresh: _refreshReservations,
-        color: AppTheme.primaryColor,
+        color: const Color(0xFF667EEA),
+        backgroundColor: const Color(0xFFE8ECF3),
         child: Consumer<ReservationProvider>(
           builder: (context, provider, child) {
             if (provider.isLoading) {
@@ -378,11 +389,6 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 80,
-                color: Colors.grey[400],
-              ),
               const SizedBox(height: 24),
               Text(
                 title,
@@ -407,18 +413,24 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
   }
 
   Widget _buildLiveTrackingSection(ReservationStatusModel reservation) {
-    // This would be replaced with an actual map in a real app
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFFE8ECF3),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
+          const BoxShadow(
+            color: Color(0xFFFFFFFF),
+            offset: Offset(-4, -4),
+            blurRadius: 8,
+            spreadRadius: 0,
+          ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+            offset: const Offset(4, 4),
+            blurRadius: 8,
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -530,13 +542,20 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFFE8ECF3),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
+          const BoxShadow(
+            color: Color(0xFFFFFFFF),
+            offset: Offset(-4, -4),
+            blurRadius: 8,
+            spreadRadius: 0,
+          ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+            offset: const Offset(4, 4),
+            blurRadius: 8,
+            spreadRadius: 0,
           ),
         ],
       ),

@@ -70,7 +70,6 @@ class _CustomBottomNavState extends State<CustomBottomNav>
               widget.currentIndex),
           _buildNavItem(
               1, 'assets/images/carrito.svg', 'Tienda', widget.currentIndex),
-          _buildAICenterButton(),
           _buildNavItemWithBadge(
               2, 'assets/images/reservas.svg', 'Reservas', widget.currentIndex,
               showBadge: false),

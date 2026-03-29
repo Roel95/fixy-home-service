@@ -138,32 +138,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFE8ECF3),
       body: CustomScrollView(
         slivers: [
-          // App bar with image gallery
           SliverAppBar(
             expandedHeight: 350,
+            floating: false,
             pinned: true,
-            backgroundColor: Colors.white,
+            backgroundColor: const Color(0xFFE8ECF3),
             elevation: 0,
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                    ),
-                  ],
-                ),
-                child: Icon(Icons.arrow_back,
-                    color: AppTheme.textPrimary, size: 20),
+            leading: Container(
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8ECF3),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  const BoxShadow(
+                    color: Color(0xFFFFFFFF),
+                    offset: Offset(-2, -2),
+                    blurRadius: 4,
+                    spreadRadius: 0,
+                  ),
+                  BoxShadow(
+                    color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+                    offset: const Offset(2, 2),
+                    blurRadius: 4,
+                    spreadRadius: 0,
+                  ),
+                ],
               ),
-              onPressed: () => Navigator.pop(context),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Color(0xFF2D3748), size: 20),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
             actions: [
               Consumer<FavoritesProvider>(
@@ -173,18 +180,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     icon: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: const Color(0xFFE8ECF3),
                         shape: BoxShape.circle,
                         boxShadow: [
+                          const BoxShadow(
+                            color: Color(0xFFFFFFFF),
+                            offset: Offset(-2, -2),
+                            blurRadius: 4,
+                            spreadRadius: 0,
+                          ),
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 8,
+                            color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+                            offset: const Offset(2, 2),
+                            blurRadius: 4,
+                            spreadRadius: 0,
                           ),
                         ],
                       ),
                       child: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : AppTheme.textPrimary,
+                        color: isFavorite ? Colors.red : Color(0xFF2D3748),
                         size: 20,
                       ),
                     ),
@@ -207,30 +222,29 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                children: [
-                  PageView.builder(
-                    itemCount: widget.product.images.length,
-                    onPageChanged: (index) {
-                      setState(() => _currentImageIndex = index);
-                    },
-                    itemBuilder: (context, index) {
-                      final imageUrl = widget.product.images[index];
-                      return GestureDetector(
-                        onTap: () => _showImageZoom(imageUrl),
-                        child: Hero(
-                          tag: index == 0
-                              ? 'product-${widget.product.id}'
-                              : 'product-${widget.product.id}-$index',
-                          child: Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(
-                              color: Colors.grey[200],
-                              child: const Icon(Icons.image_not_supported,
-                                  size: 80),
-                            ),
+              background: Container(
+                color: const Color(0xFFE8ECF3),
+                child: PageView.builder(
+                  itemCount: widget.product.images.length,
+                  onPageChanged: (index) {
+                    setState(() => _currentImageIndex = index);
+                  },
+                  itemBuilder: (context, index) {
+                    final imageUrl = widget.product.images[index];
+                    return GestureDetector(
+                      onTap: () => _showImageZoom(imageUrl),
+                      child: Hero(
+                        tag: index == 0
+                            ? 'product-${widget.product.id}'
+                            : 'product-${widget.product.id}-$index',
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                            color: Colors.grey[200],
+                            child: const Icon(Icons.image_not_supported,
+                                size: 80),
                           ),
                         ),
                       );

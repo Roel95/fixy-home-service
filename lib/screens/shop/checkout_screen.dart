@@ -12,13 +12,35 @@ class CheckoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: const Color(0xFFE8ECF3),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFE8ECF3),
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppTheme.textPrimary),
-          onPressed: () => Navigator.pop(context),
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE8ECF3),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              const BoxShadow(
+                color: Color(0xFFFFFFFF),
+                offset: Offset(-2, -2),
+                blurRadius: 4,
+                spreadRadius: 0,
+              ),
+              BoxShadow(
+                color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+                offset: const Offset(2, 2),
+                blurRadius: 4,
+                spreadRadius: 0,
+              ),
+            ],
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back,
+                color: Color(0xFF2D3748), size: 20),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
         title: Row(
           children: [

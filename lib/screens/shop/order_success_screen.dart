@@ -56,7 +56,7 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: const Color(0xFFE8ECF3),
       body: Stack(
         children: [
           SafeArea(

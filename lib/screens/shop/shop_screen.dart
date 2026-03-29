@@ -246,11 +246,12 @@ class _ShopScreenState extends State<ShopScreen>
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: const Color(0xFFE8ECF3),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _refreshProducts,
-          color: AppTheme.primaryColor,
+          color: const Color(0xFF667EEA),
+          backgroundColor: const Color(0xFFE8ECF3),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
@@ -304,7 +305,7 @@ class _ShopScreenState extends State<ShopScreen>
                             ],
                           ),
                         ),
-                        // Carrito con estilo moderno
+                        // Carrito con estilo neumorphism
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -315,26 +316,29 @@ class _ShopScreenState extends State<ShopScreen>
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF0066FF), Color(0xFF0052CC)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
+                              color: const Color(0xFFE8ECF3),
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
+                                const BoxShadow(
+                                  color: Color(0xFFFFFFFF),
+                                  offset: Offset(-3, -3),
+                                  blurRadius: 6,
+                                  spreadRadius: 0,
+                                ),
                                 BoxShadow(
-                                  color: const Color(0xFF0066FF)
-                                      .withValues(alpha: 0.3),
-                                  offset: const Offset(0, 4),
-                                  blurRadius: 12,
+                                  color: const Color(0xFF2D3748)
+                                      .withValues(alpha: 0.15),
+                                  offset: const Offset(3, 3),
+                                  blurRadius: 6,
+                                  spreadRadius: 0,
                                 ),
                               ],
                             ),
                             child: Stack(
                               clipBehavior: Clip.none,
                               children: [
-                                const Icon(Icons.shopping_cart,
-                                    color: Colors.white, size: 24),
+                                Icon(Icons.shopping_cart,
+                                    color: const Color(0xFF667EEA), size: 24),
                                 if (context.watch<CartProvider>().itemCount > 0)
                                   Positioned(
                                     right: -4,

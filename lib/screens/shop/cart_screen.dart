@@ -13,12 +13,12 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: const Color(0xFFE8ECF3),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFE8ECF3),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppTheme.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF2D3748)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -27,7 +27,7 @@ class CartScreen extends StatelessWidget {
               tag: 'cart-icon',
               child: Icon(
                 Icons.shopping_cart,
-                color: AppTheme.primaryColor,
+                color: const Color(0xFF667EEA),
                 size: 24,
               ),
             ),
@@ -35,9 +35,10 @@ class CartScreen extends StatelessWidget {
             Text(
               'Carrito de Compras',
               style: TextStyle(
-                color: AppTheme.textPrimary,
+                color: const Color(0xFF2D3748),
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.3,
               ),
             ),
           ],

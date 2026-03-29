@@ -25,13 +25,20 @@ class ReservationStatusCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFFE8ECF3),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
+          const BoxShadow(
+            color: Color(0xFFFFFFFF),
+            offset: Offset(-4, -4),
+            blurRadius: 8,
+            spreadRadius: 0,
+          ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.15),
+            offset: const Offset(4, 4),
+            blurRadius: 8,
+            spreadRadius: 0,
           ),
         ],
       ),
