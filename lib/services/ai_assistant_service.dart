@@ -246,9 +246,12 @@ class AIAssistantService {
           if (availableServices != null && availableServices.isNotEmpty) {
             visualOptions = availableServices.take(6).toList();
           }
-        } else if (intent['type'] == 'show_products') {
+        } else if (intent['type'] == 'show_products' ||
+            intent['type'] == 'shopping') {
           if (availableProducts != null && availableProducts.isNotEmpty) {
             visualOptions = availableProducts.take(8).toList();
+            debugPrint(
+                '📦 Mostrando ${visualOptions.length} productos disponibles');
           }
         }
 

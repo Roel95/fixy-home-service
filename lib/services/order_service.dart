@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fixy_home_service/models/product_model.dart';
+import 'package:fixy_home_service/models/order_model.dart';
 
 class OrderService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -227,6 +228,52 @@ class OrderService {
       rethrow;
     }
   }
+
+  /// Obtener estadísticas de pedidos por rango de fechas
+  Future<Map<String, dynamic>> getOrderStats({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    try {
+      final response = await _supabase
+          .from('orders')
+          .select()
+          .gte('created_at', startDate.toIso8601String())
+          .lte('created_at', endDate.toIso8601String());
+
+      final orders = (response as List);
+      double totalSales = 0;
+      for (final order in orders) {
+        totalSales += (order['total'] as num?)?.toDouble() ?? 0;
+      }
+
+      return {
+        'total_orders': orders.length,
+        'total_sales': totalSales,
+      };
+    } catch (e) {
+      print('❌ Error obteniendo estadísticas: $e');
+      return {'total_orders': 0, 'total_sales': 0.0};
+    }
+  }
+
+  /// Obtener pedidos recientes
+  Future<List<OrderModel>> getRecentOrders({int limit = 5}) async {
+    try {
+      final response = await _supabase
+          .from('orders')
+          .select()
+          .order('created_at', ascending: false)
+          .limit(limit);
+
+      return (response as List)
+          .map((json) => OrderModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print('❌ Error obteniendo pedidos recientes: $e');
+      return [];
+    }
+  }
 }
 
 // ============================================
@@ -237,6 +284,8 @@ class OrderModel {
   final String id;
   final String orderNumber;
   final String userId;
+  final String? userName;
+  final String? userEmail;
   final String status;
   final double subtotal;
   final double shipping;
@@ -258,6 +307,8 @@ class OrderModel {
     required this.id,
     required this.orderNumber,
     required this.userId,
+    this.userName,
+    this.userEmail,
     required this.status,
     required this.subtotal,
     required this.shipping,
@@ -279,6 +330,8 @@ class OrderModel {
       id: json['id'],
       orderNumber: json['order_number'],
       userId: json['user_id'],
+      userName: json['user_name'],
+      userEmail: json['user_email'],
       status: json['status'],
       subtotal: (json['subtotal'] as num).toDouble(),
       shipping: (json['shipping'] as num).toDouble(),

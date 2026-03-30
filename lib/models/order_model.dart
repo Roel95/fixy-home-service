@@ -1,5 +1,3 @@
-import 'package:fixy_home_service/models/product_model.dart';
-
 /// Modelo para representar items dentro de un pedido
 class OrderItem {
   final String productId;
@@ -130,6 +128,7 @@ class ShippingAddress {
 /// Modelo principal para pedidos/órdenes
 class Order {
   final String id;
+  final String? orderNumber;
   final String? userId;
   final String? userEmail;
   final String? userName;
@@ -152,6 +151,7 @@ class Order {
 
   Order({
     required this.id,
+    this.orderNumber,
     this.userId,
     this.userEmail,
     this.userName,
@@ -175,9 +175,47 @@ class Order {
 
   int get totalItems => items.fold(0, (sum, item) => sum + item.quantity);
 
+  /// Getter para texto del estado
+  String get statusText {
+    switch (status) {
+      case OrderStatus.pending:
+        return 'Pendiente';
+      case OrderStatus.processing:
+        return 'Procesando';
+      case OrderStatus.shipped:
+        return 'Enviado';
+      case OrderStatus.delivered:
+        return 'Entregado';
+      case OrderStatus.cancelled:
+        return 'Cancelado';
+      default:
+        return 'Desconocido';
+    }
+  }
+
+  /// Getter para texto del estado de pago
+  String get paymentStatusText {
+    switch (paymentStatus?.toLowerCase()) {
+      case 'paid':
+        return 'Pagado';
+      case 'pending':
+        return 'Pendiente';
+      case 'failed':
+        return 'Fallido';
+      case 'refunded':
+        return 'Reembolsado';
+      default:
+        return paymentStatus ?? 'Desconocido';
+    }
+  }
+
+  /// Alias para shippingCost
+  double get shipping => shippingCost;
+
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
       id: json['id'] ?? '',
+      orderNumber: json['order_number'],
       userId: json['user_id'],
       userEmail: json['user_email'],
       userName: json['user_name'],
@@ -185,8 +223,7 @@ class Order {
               ?.map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      shippingAddress: ShippingAddress.fromJson(
-          json['shipping_address'] ?? {}),
+      shippingAddress: ShippingAddress.fromJson(json['shipping_address'] ?? {}),
       status: OrderStatus.fromString(json['status']),
       subtotal: (json['subtotal'] as num?)?.toDouble() ?? 0.0,
       shippingCost: (json['shipping_cost'] as num?)?.toDouble() ?? 0.0,
@@ -207,6 +244,7 @@ class Order {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'order_number': orderNumber,
       'user_id': userId,
       'user_email': userEmail,
       'user_name': userName,
@@ -231,6 +269,7 @@ class Order {
 
   Order copyWith({
     String? id,
+    String? orderNumber,
     String? userId,
     String? userEmail,
     String? userName,
@@ -253,6 +292,7 @@ class Order {
   }) {
     return Order(
       id: id ?? this.id,
+      orderNumber: orderNumber ?? this.orderNumber,
       userId: userId ?? this.userId,
       userEmail: userEmail ?? this.userEmail,
       userName: userName ?? this.userName,

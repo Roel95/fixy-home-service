@@ -334,4 +334,112 @@ class ProductService {
     _lastFetch = null;
     print('🗑️ Cache de productos limpiado');
   }
+
+  Future<ProductModel> createProduct(ProductModel product) async {
+    try {
+      final response = await _supabase
+          .from('products')
+          .insert(product.toJson())
+          .select()
+          .single();
+      clearCache();
+      return ProductModel.fromJson(response);
+    } catch (e) {
+      print('❌ Error creando producto: $e');
+      rethrow;
+    }
+  }
+
+  Future<ProductModel> updateProduct(ProductModel product) async {
+    try {
+      final response = await _supabase
+          .from('products')
+          .update(product.toJson())
+          .eq('id', product.id)
+          .select()
+          .single();
+      clearCache();
+      return ProductModel.fromJson(response);
+    } catch (e) {
+      print('❌ Error actualizando producto: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    try {
+      await _supabase.from('products').delete().eq('id', productId);
+      clearCache();
+    } catch (e) {
+      print('❌ Error eliminando producto: $e');
+      rethrow;
+    }
+  }
+
+  Future<ProductCategoryModel> createCategory(
+      ProductCategoryModel category) async {
+    try {
+      final response = await _supabase
+          .from('product_categories')
+          .insert({
+            'name': category.name,
+            'icon': category.icon,
+            'color': category.color,
+            'image_url': category.imageUrl,
+          })
+          .select()
+          .single();
+      _cachedCategories = null;
+      return ProductCategoryModel(
+        id: response['id'],
+        name: response['name'],
+        icon: response['icon'] ?? '📦',
+        color: response['color'] ?? '#0066FF',
+        productCount: response['product_count'] ?? 0,
+        imageUrl: response['image_url'],
+      );
+    } catch (e) {
+      print('❌ Error creando categoría: $e');
+      rethrow;
+    }
+  }
+
+  Future<ProductCategoryModel> updateCategory(
+      ProductCategoryModel category) async {
+    try {
+      final response = await _supabase
+          .from('product_categories')
+          .update({
+            'name': category.name,
+            'icon': category.icon,
+            'color': category.color,
+            'image_url': category.imageUrl,
+          })
+          .eq('id', category.id)
+          .select()
+          .single();
+      _cachedCategories = null;
+      return ProductCategoryModel(
+        id: response['id'],
+        name: response['name'],
+        icon: response['icon'] ?? '📦',
+        color: response['color'] ?? '#0066FF',
+        productCount: response['product_count'] ?? 0,
+        imageUrl: response['image_url'],
+      );
+    } catch (e) {
+      print('❌ Error actualizando categoría: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteCategory(String categoryId) async {
+    try {
+      await _supabase.from('product_categories').delete().eq('id', categoryId);
+      _cachedCategories = null;
+    } catch (e) {
+      print('❌ Error eliminando categoría: $e');
+      rethrow;
+    }
+  }
 }

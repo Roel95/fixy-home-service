@@ -15,7 +15,9 @@ import 'package:fixy_home_service/screens/profile/saved_addresses_screen.dart';
 import 'package:fixy_home_service/screens/profile/profile_detail_screen.dart';
 import 'package:fixy_home_service/screens/provider/provider_onboarding_screen.dart';
 import 'package:fixy_home_service/screens/provider_dashboard/provider_dashboard_screen.dart';
+import 'package:fixy_home_service/screens/admin/admin_dashboard_screen.dart';
 import 'package:fixy_home_service/services/provider_service.dart';
+import 'package:fixy_home_service/services/admin_service.dart';
 import 'package:fixy_home_service/utils/page_transitions.dart';
 import 'package:fixy_home_service/supabase/supabase_config.dart';
 import 'package:fixy_home_service/screens/auth_wrapper.dart';
@@ -29,6 +31,7 @@ class ProfileOptionsScreen extends StatefulWidget {
 
 class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
   bool _isProvider = false;
+  bool _isAdmin = false;
   bool _isLoading = true;
 
   // Controlar la expansión de cada sección
@@ -37,6 +40,7 @@ class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
     'services': false,
     'payment': false,
     'provider': false,
+    'admin': false,
     'settings': false,
     'rewards': false,
     'support': false,
@@ -47,6 +51,7 @@ class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
   void initState() {
     super.initState();
     _checkProviderStatus();
+    _checkAdminStatus();
   }
 
   Future<void> _checkProviderStatus() async {
@@ -63,6 +68,26 @@ class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
         setState(() {
           _isProvider = false;
           _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _checkAdminStatus() async {
+    try {
+      final adminService = AdminService();
+      final isAdmin = await adminService.isCurrentUserAdmin();
+
+      if (mounted) {
+        setState(() {
+          _isAdmin = isAdmin;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error verificando estado admin: $e');
+      if (mounted) {
+        setState(() {
+          _isAdmin = false;
         });
       }
     }
@@ -245,6 +270,26 @@ class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
                     onTap: () {
                       _showProviderInfoDialog(context);
                     },
+                  ),
+                ],
+              ),
+
+            // Sección Admin - solo visible para administradores
+            if (_isAdmin)
+              _buildExpandableCard(
+                context,
+                'admin',
+                'Panel de Administración',
+                'Gestiona la plataforma y usuarios',
+                Icons.admin_panel_settings,
+                [
+                  OptionItem(
+                    title: 'Dashboard Admin',
+                    icon: Icons.dashboard_outlined,
+                    onTap: () => _navigateToAdminPanel(context),
+                    badge: 'Admin',
+                    badgeColor: Colors.red,
+                    highlighted: true,
                   ),
                 ],
               ),
@@ -723,6 +768,15 @@ class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
             child: const Text('Empezar'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _navigateToAdminPanel(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AdminDashboardScreen(),
       ),
     );
   }

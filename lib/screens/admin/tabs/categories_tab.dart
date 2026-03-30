@@ -13,8 +13,8 @@ class CategoriesTab extends StatefulWidget {
 
 class _CategoriesTabState extends State<CategoriesTab> {
   final ProductRepository _repository = ProductRepository();
-  
-  List<ProductCategory> _categories = [];
+
+  List<ProductCategoryModel> _categories = [];
   bool _isLoading = true;
 
   @override
@@ -59,7 +59,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
             ],
           ),
         ),
-        
+
         // Categories list
         Expanded(
           child: _isLoading
@@ -72,7 +72,8 @@ class _CategoriesTabState extends State<CategoriesTab> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -173,7 +174,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
     );
   }
 
-  Widget _buildCategoryCard(ProductCategory category) {
+  Widget _buildCategoryCard(ProductCategoryModel category) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -217,13 +218,15 @@ class _CategoriesTabState extends State<CategoriesTab> {
                             category.imageUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.category, color: Color(0xFF667EEA)),
+                                const Icon(Icons.category,
+                                    color: Color(0xFF667EEA)),
                           ),
                         )
-                      : const Icon(Icons.category, color: Color(0xFF667EEA), size: 28),
+                      : const Icon(Icons.category,
+                          color: Color(0xFF667EEA), size: 28),
                 ),
                 const SizedBox(width: 16),
-                
+
                 // Category info
                 Expanded(
                   child: Column(
@@ -251,7 +254,8 @@ class _CategoriesTabState extends State<CategoriesTab> {
                       ],
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: const Color(0xFF667EEA).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
@@ -268,7 +272,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
                     ],
                   ),
                 ),
-                
+
                 // Actions
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -354,7 +358,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
     );
   }
 
-  void _showCategoryForm({ProductCategory? category}) {
+  void _showCategoryForm({ProductCategoryModel? category}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -364,19 +368,21 @@ class _CategoriesTabState extends State<CategoriesTab> {
         onSave: (savedCategory) async {
           await _loadCategories();
           Navigator.pop(context);
-          _showSuccess(category == null ? 'Categoría creada' : 'Categoría actualizada');
+          _showSuccess(
+              category == null ? 'Categoría creada' : 'Categoría actualizada');
         },
       ),
     );
   }
 
-  void _confirmDelete(ProductCategory category) {
+  void _confirmDelete(ProductCategoryModel category) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFFE8ECF3),
         title: const Text('Eliminar Categoría'),
-        content: Text('¿Estás seguro de eliminar "${category.name}"?\n\nEsta acción no se puede deshacer.'),
+        content: Text(
+            '¿Estás seguro de eliminar "${category.name}"?\n\nEsta acción no se puede deshacer.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -397,7 +403,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
     );
   }
 
-  Future<void> _deleteCategory(ProductCategory category) async {
+  Future<void> _deleteCategory(ProductCategoryModel category) async {
     try {
       // TODO: Implementar eliminación
       setState(() {
@@ -432,8 +438,8 @@ class _CategoriesTabState extends State<CategoriesTab> {
 
 /// Formulario para crear/editar categorías
 class CategoryFormSheet extends StatefulWidget {
-  final ProductCategory? category;
-  final Function(ProductCategory) onSave;
+  final ProductCategoryModel? category;
+  final Function(ProductCategoryModel) onSave;
 
   const CategoryFormSheet({
     super.key,
@@ -456,8 +462,10 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.category?.name ?? '');
-    _descriptionController = TextEditingController(text: widget.category?.description ?? '');
-    _imageUrlController = TextEditingController(text: widget.category?.imageUrl ?? '');
+    _descriptionController =
+        TextEditingController(text: widget.category?.description ?? '');
+    _imageUrlController =
+        TextEditingController(text: widget.category?.imageUrl ?? '');
   }
 
   @override
@@ -480,7 +488,8 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE8ECF3),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(24)),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF2D3748).withOpacity(0.1),
@@ -493,7 +502,9 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.category == null ? 'Nueva Categoría' : 'Editar Categoría',
+                      widget.category == null
+                          ? 'Nueva Categoría'
+                          : 'Editar Categoría',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -507,7 +518,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                   ],
                 ),
               ),
-              
+
               // Form
               Expanded(
                 child: SingleChildScrollView(
@@ -532,7 +543,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                               ),
                             ),
                           ),
-                        
+
                         // Image URL
                         _buildTextField(
                           controller: _imageUrlController,
@@ -541,16 +552,17 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                           onChanged: (value) => setState(() {}),
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Name
                         _buildTextField(
                           controller: _nameController,
                           label: 'Nombre de la categoría',
                           icon: Icons.label,
-                          validator: (v) => v?.isEmpty ?? true ? 'Requerido' : null,
+                          validator: (v) =>
+                              v?.isEmpty ?? true ? 'Requerido' : null,
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Description
                         _buildTextField(
                           controller: _descriptionController,
@@ -559,7 +571,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                           maxLines: 3,
                         ),
                         const SizedBox(height: 32),
-                        
+
                         // Save button
                         SizedBox(
                           width: double.infinity,
@@ -574,9 +586,12 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                               ),
                             ),
                             child: _isLoading
-                                ? const CircularProgressIndicator(color: Colors.white)
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white)
                                 : Text(
-                                    widget.category == null ? 'Crear Categoría' : 'Guardar Cambios',
+                                    widget.category == null
+                                        ? 'Crear Categoría'
+                                        : 'Guardar Cambios',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -631,7 +646,8 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
           labelText: label,
           prefixIcon: Icon(icon, color: const Color(0xFF667EEA)),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         ),
       ),
     );
@@ -639,22 +655,22 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
 
   Future<void> _saveCategory() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     setState(() => _isLoading = true);
-    
+
     try {
-      final category = ProductCategory(
-        id: widget.category?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      final category = ProductCategoryModel(
+        id: widget.category?.id ??
+            DateTime.now().millisecondsSinceEpoch.toString(),
         name: _nameController.text,
-        description: _descriptionController.text.isEmpty 
-            ? null 
+        description: _descriptionController.text.isEmpty
+            ? null
             : _descriptionController.text,
-        imageUrl: _imageUrlController.text.isEmpty 
-            ? null 
-            : _imageUrlController.text,
+        imageUrl:
+            _imageUrlController.text.isEmpty ? null : _imageUrlController.text,
         productCount: widget.category?.productCount ?? 0,
       );
-      
+
       widget.onSave(category);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

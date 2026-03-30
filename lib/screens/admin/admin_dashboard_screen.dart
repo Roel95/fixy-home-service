@@ -3,6 +3,7 @@ import 'package:fixy_home_service/screens/admin/tabs/products_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/orders_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/categories_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/analytics_tab.dart';
+import 'package:fixy_home_service/screens/admin/tabs/users_tab.dart';
 
 /// Dashboard principal para administradores de la tienda
 /// Gestiona productos, pedidos, categorías y análisis
@@ -21,7 +22,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _currentIndex = _tabController.index;
@@ -82,6 +83,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           OrdersTab(),
           CategoriesTab(),
           AnalyticsTab(),
+          UsersTab(),
         ],
       ),
       bottomNavigationBar: _buildBottomNavBar(),
@@ -110,6 +112,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
               _buildNavItem(Icons.shopping_bag_outlined, 'Pedidos', 1),
               _buildNavItem(Icons.category_outlined, 'Categorías', 2),
               _buildNavItem(Icons.analytics_outlined, 'Análisis', 3),
+              _buildNavItem(Icons.people_outlined, 'Usuarios', 4),
             ],
           ),
         ),
@@ -119,7 +122,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _currentIndex == index;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -131,7 +134,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected 
+          color: isSelected
               ? const Color(0xFF667EEA).withOpacity(0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
@@ -141,7 +144,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           children: [
             Icon(
               icon,
-              color: isSelected 
+              color: isSelected
                   ? const Color(0xFF667EEA)
                   : const Color(0xFF2D3748).withOpacity(0.6),
               size: 24,
@@ -150,7 +153,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
             Text(
               label,
               style: TextStyle(
-                color: isSelected 
+                color: isSelected
                     ? const Color(0xFF667EEA)
                     : const Color(0xFF2D3748).withOpacity(0.6),
                 fontSize: 11,
@@ -169,7 +172,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFFE8ECF3),
         title: const Text('Cerrar Sesión'),
-        content: const Text('¿Estás seguro de que quieres salir del panel de administrador?'),
+        content: const Text(
+            '¿Estás seguro de que quieres salir del panel de administrador?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

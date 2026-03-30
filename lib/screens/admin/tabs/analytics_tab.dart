@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:fixy_home_service/services/order_service.dart';
-import 'package:fixy_home_service/services/order_service.dart';
 
 /// Pestaña de análisis y estadísticas del admin
 /// Muestra gráficos de ventas, pedidos y métricas clave
@@ -14,14 +13,14 @@ class AnalyticsTab extends StatefulWidget {
 
 class _AnalyticsTabState extends State<AnalyticsTab> {
   final OrderService _orderService = OrderService();
-  
+
   bool _isLoading = true;
   Map<String, dynamic> _stats = {};
   List<OrderModel> _recentOrders = [];
-  
+
   // Período seleccionado
   String _selectedPeriod = '7d'; // 7d, 30d, 90d, 1y
-  
+
   @override
   void initState() {
     super.initState();
@@ -33,7 +32,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
     try {
       final now = DateTime.now();
       DateTime startDate;
-      
+
       switch (_selectedPeriod) {
         case '7d':
           startDate = now.subtract(const Duration(days: 7));
@@ -50,14 +49,14 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
         default:
           startDate = now.subtract(const Duration(days: 30));
       }
-      
+
       final stats = await _orderService.getOrderStats(
         startDate: startDate,
         endDate: now,
       );
-      
+
       final recentOrders = await _orderService.getRecentOrders(limit: 5);
-      
+
       setState(() {
         _stats = stats;
         _recentOrders = recentOrders;
@@ -78,15 +77,15 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
           // Period selector
           _buildPeriodSelector(),
           const SizedBox(height: 20),
-          
+
           // Stats cards
           _buildStatsGrid(),
           const SizedBox(height: 24),
-          
+
           // Sales chart
           _buildSalesChart(),
           const SizedBox(height: 24),
-          
+
           // Recent orders
           _buildRecentOrdersSection(),
         ],
@@ -132,7 +131,8 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF667EEA) : Colors.transparent,
+                  color:
+                      isSelected ? const Color(0xFF667EEA) : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -140,7 +140,8 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
                     color: isSelected ? Colors.white : const Color(0xFF2D3748),
                   ),
                 ),
@@ -155,7 +156,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
   Widget _buildStatsGrid() {
     final totalSales = (_stats['total_sales'] as num?)?.toDouble() ?? 0.0;
     final totalOrders = (_stats['total_orders'] as num?)?.toInt() ?? 0;
-    
+
     // Calcular promedio por pedido
     final avgOrderValue = totalOrders > 0 ? totalSales / totalOrders : 0.0;
 
@@ -216,7 +217,8 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
     return total;
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -339,7 +341,15 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
                       showTitles: true,
                       interval: 1,
                       getTitlesWidget: (value, meta) {
-                        final days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+                        final days = [
+                          'Lun',
+                          'Mar',
+                          'Mié',
+                          'Jue',
+                          'Vie',
+                          'Sáb',
+                          'Dom'
+                        ];
                         if (value.toInt() >= 0 && value.toInt() < days.length) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
@@ -433,7 +443,9 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
         _recentOrders.isEmpty
             ? _buildEmptyRecentOrders()
             : Column(
-                children: _recentOrders.map((order) => _buildOrderItem(order)).toList(),
+                children: _recentOrders
+                    .map((order) => _buildOrderItem(order))
+                    .toList(),
               ),
       ],
     );

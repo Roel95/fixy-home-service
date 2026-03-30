@@ -99,6 +99,7 @@ class ProductModel {
 class ProductCategoryModel {
   final String id;
   final String name;
+  final String? description;
   final String icon;
   final String color;
   final int productCount;
@@ -107,11 +108,34 @@ class ProductCategoryModel {
   ProductCategoryModel({
     required this.id,
     required this.name,
-    required this.icon,
-    required this.color,
-    required this.productCount,
+    this.description,
+    this.icon = '📦',
+    this.color = '#0066FF',
+    this.productCount = 0,
     this.imageUrl,
   });
+
+  factory ProductCategoryModel.fromJson(Map<String, dynamic> json) {
+    return ProductCategoryModel(
+      id: json['id']?.toString() ?? '',
+      name: json['name'] ?? '',
+      description: json['description'],
+      icon: json['icon'] ?? '📦',
+      color: json['color'] ?? '#0066FF',
+      productCount: json['product_count'] ?? 0,
+      imageUrl: json['image_url'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'icon': icon,
+      'color': color,
+      'image_url': imageUrl,
+    };
+  }
 }
 
 class CartItemModel {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fixy_home_service/models/product_category_model.dart';
 import 'package:fixy_home_service/models/product_model.dart';
 import 'package:fixy_home_service/data/product_repository.dart';
 import 'package:fixy_home_service/services/image_upload_service.dart';
@@ -894,7 +893,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         child: ButtonTheme(
           alignedDropdown: true,
           child: DropdownButtonFormField<String>(
-            value: _selectedCategory,
+            initialValue: _selectedCategory,
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.category, color: Color(0xFF667EEA)),
               border: InputBorder.none,
@@ -907,8 +906,8 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
             ),
             items: widget.categories.map((category) {
               return DropdownMenuItem(
-                value: category.id ?? '',
-                child: Text(category.name ?? 'Sin nombre'),
+                value: category.id,
+                child: Text(category.name),
               );
             }).toList(),
             onChanged: (value) => setState(() => _selectedCategory = value),

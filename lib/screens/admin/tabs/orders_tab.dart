@@ -12,12 +12,12 @@ class OrdersTab extends StatefulWidget {
 
 class _OrdersTabState extends State<OrdersTab> {
   final OrderService _orderService = OrderService();
-  
+
   List<OrderModel> _orders = [];
   bool _isLoading = true;
   String _searchQuery = '';
   String? _selectedStatus;
-  
+
   final List<Map<String, dynamic>> _statusFilters = [
     {'value': null, 'label': 'Todos', 'color': 0xFF667EEA},
     {'value': 'pending', 'label': 'Pendientes', 'color': 0xFFFF9500},
@@ -50,13 +50,18 @@ class _OrdersTabState extends State<OrdersTab> {
   List<OrderModel> get _filteredOrders {
     return _orders.where((order) {
       // Filtrar por búsqueda
-      final matchesSearch = _searchQuery.isEmpty ||
-          order.orderNumber.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          (order.userName?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
-      
+      final searchLower = _searchQuery.toLowerCase();
+      final matchesOrderNumber =
+          order.orderNumber?.toLowerCase().contains(searchLower) ?? false;
+      final matchesUserName =
+          order.userName?.toLowerCase().contains(searchLower) ?? false;
+      final matchesSearch =
+          _searchQuery.isEmpty || matchesOrderNumber || matchesUserName;
+
       // Filtrar por estado
-      final matchesStatus = _selectedStatus == null || order.status == _selectedStatus;
-      
+      final matchesStatus =
+          _selectedStatus == null || order.status == _selectedStatus;
+
       return matchesSearch && matchesStatus;
     }).toList();
   }
@@ -106,7 +111,7 @@ class _OrdersTabState extends State<OrdersTab> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Search bar
           Container(
             decoration: BoxDecoration(
@@ -131,7 +136,8 @@ class _OrdersTabState extends State<OrdersTab> {
                 hintText: 'Buscar por número o cliente...',
                 prefixIcon: const Icon(Icons.search, color: Color(0xFF667EEA)),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 hintStyle: TextStyle(
                   color: const Color(0xFF2D3748).withOpacity(0.5),
                 ),
@@ -143,7 +149,8 @@ class _OrdersTabState extends State<OrdersTab> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -211,31 +218,36 @@ class _OrdersTabState extends State<OrdersTab> {
           final filter = _statusFilters[index];
           final isSelected = _selectedStatus == filter['value'];
           final color = Color(filter['color'] as int);
-          
+
           return GestureDetector(
-            onTap: () => setState(() => _selectedStatus = filter['value'] as String?),
+            onTap: () =>
+                setState(() => _selectedStatus = filter['value'] as String?),
             child: Container(
               margin: const EdgeInsets.only(right: 8),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected ? color.withOpacity(0.1) : const Color(0xFFE8ECF3),
+                color: isSelected
+                    ? color.withOpacity(0.1)
+                    : const Color(0xFFE8ECF3),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isSelected ? color : Colors.transparent,
                   width: 1.5,
                 ),
-                boxShadow: isSelected ? null : [
-                  BoxShadow(
-                    color: const Color(0xFF2D3748).withOpacity(0.05),
-                    blurRadius: 2,
-                    offset: const Offset(1, 1),
-                  ),
-                  const BoxShadow(
-                    color: Colors.white,
-                    blurRadius: 2,
-                    offset: Offset(-1, -1),
-                  ),
-                ],
+                boxShadow: isSelected
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: const Color(0xFF2D3748).withOpacity(0.05),
+                          blurRadius: 2,
+                          offset: const Offset(1, 1),
+                        ),
+                        const BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 2,
+                          offset: Offset(-1, -1),
+                        ),
+                      ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -254,8 +266,11 @@ class _OrdersTabState extends State<OrdersTab> {
                     filter['label'] as String,
                     style: TextStyle(
                       fontSize: 13,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? color : const Color(0xFF2D3748).withOpacity(0.7),
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.normal,
+                      color: isSelected
+                          ? color
+                          : const Color(0xFF2D3748).withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -280,7 +295,7 @@ class _OrdersTabState extends State<OrdersTab> {
 
   Widget _buildOrderCard(OrderModel order) {
     final statusColor = _getStatusColor(order.status);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -304,7 +319,7 @@ class _OrdersTabState extends State<OrdersTab> {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () => _showOrderDetails(order),
+          onTap: () => _showOrderModelDetails(order),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -336,7 +351,8 @@ class _OrdersTabState extends State<OrdersTab> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: statusColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -353,7 +369,7 @@ class _OrdersTabState extends State<OrdersTab> {
                   ],
                 ),
                 const Divider(height: 24),
-                
+
                 // Customer info
                 Row(
                   children: [
@@ -397,7 +413,7 @@ class _OrdersTabState extends State<OrdersTab> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Items count and total
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -419,7 +435,7 @@ class _OrdersTabState extends State<OrdersTab> {
                     ),
                   ],
                 ),
-                
+
                 // Actions
                 if (order.status != 'cancelled' && order.status != 'delivered')
                   Padding(
@@ -517,7 +533,7 @@ class _OrdersTabState extends State<OrdersTab> {
     );
   }
 
-  void _showOrderDetails(OrderModel order) {
+  void _showOrderModelDetails(OrderModel order) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -540,7 +556,8 @@ class _OrdersTabState extends State<OrdersTab> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8ECF3),
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(24)),
                     boxShadow: [
                       BoxShadow(
                         color: const Color(0xFF2D3748).withOpacity(0.1),
@@ -567,7 +584,7 @@ class _OrdersTabState extends State<OrdersTab> {
                     ],
                   ),
                 ),
-                
+
                 // Content
                 Expanded(
                   child: SingleChildScrollView(
@@ -581,7 +598,8 @@ class _OrdersTabState extends State<OrdersTab> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: _getStatusColor(order.status).withOpacity(0.1),
+                              color: _getStatusColor(order.status)
+                                  .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -604,75 +622,94 @@ class _OrdersTabState extends State<OrdersTab> {
                             ),
                           ),
                         ]),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Customer
                         _buildDetailSection('Información del Cliente', [
                           _buildDetailRow('Nombre', order.userName ?? 'N/A'),
                           _buildDetailRow('Email', order.userEmail ?? 'N/A'),
-                          _buildDetailRow('Teléfono', 
-                            (order.shippingAddress['phone'] ?? 'N/A').toString()),
+                          _buildDetailRow(
+                              'Teléfono',
+                              (order.shippingAddress['phone'] ?? 'N/A')
+                                  .toString()),
                         ]),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Shipping address
                         _buildDetailSection('Dirección de Envío', [
-                          _buildDetailRow('Dirección', 
-                            (order.shippingAddress['address_line_1'] ?? 'N/A').toString()),
+                          _buildDetailRow(
+                              'Dirección',
+                              (order.shippingAddress['address_line_1'] ?? 'N/A')
+                                  .toString()),
                           if (order.shippingAddress['address_line_2'] != null)
-                            _buildDetailRow('Referencia', 
-                              order.shippingAddress['address_line_2'].toString()),
-                          _buildDetailRow('Ciudad', 
-                            (order.shippingAddress['city'] ?? 'N/A').toString()),
-                          _buildDetailRow('País', 
-                            (order.shippingAddress['country'] ?? 'Perú').toString()),
+                            _buildDetailRow(
+                                'Referencia',
+                                order.shippingAddress['address_line_2']
+                                    .toString()),
+                          _buildDetailRow(
+                              'Ciudad',
+                              (order.shippingAddress['city'] ?? 'N/A')
+                                  .toString()),
+                          _buildDetailRow(
+                              'País',
+                              (order.shippingAddress['country'] ?? 'Perú')
+                                  .toString()),
                         ]),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Items
-                        _buildDetailSection('Productos', 
-                          order.items.map((item) => 
-                            '${item.productName} x${item.quantity}'
-                          ).toList(),
+                        _buildDetailSection(
+                          'Productos',
+                          order.items
+                              .map((item) =>
+                                  '${item.productName} x${item.quantity}')
+                              .toList(),
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Totals
                         _buildDetailSection('Totales', [
-                          _buildDetailRow('Subtotal', 'S/ ${order.subtotal.toStringAsFixed(2)}'),
-                          _buildDetailRow('Envío', 'S/ ${order.shipping.toStringAsFixed(2)}'),
+                          _buildDetailRow('Subtotal',
+                              'S/ ${order.subtotal.toStringAsFixed(2)}'),
+                          _buildDetailRow('Envío',
+                              'S/ ${order.shipping.toStringAsFixed(2)}'),
                           if (order.discount > 0)
-                            _buildDetailRow('Descuento', '-S/ ${order.discount.toStringAsFixed(2)}'),
+                            _buildDetailRow('Descuento',
+                                '-S/ ${order.discount.toStringAsFixed(2)}'),
                           const Divider(),
-                          _buildDetailRow('TOTAL', 'S/ ${order.total.toStringAsFixed(2)}', 
-                            isBold: true, valueColor: const Color(0xFF667EEA)),
+                          _buildDetailRow(
+                              'TOTAL', 'S/ ${order.total.toStringAsFixed(2)}',
+                              isBold: true,
+                              valueColor: const Color(0xFF667EEA)),
                         ]),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Payment info
                         _buildDetailSection('Información de Pago', [
-                          _buildDetailRow('Método', order.paymentMethod ?? 'N/A'),
+                          _buildDetailRow(
+                              'Método', order.paymentMethod ?? 'N/A'),
                           _buildDetailRow('Estado', order.paymentStatusText),
                         ]),
-                        
+
                         if (order.trackingNumber != null) ...[
                           const SizedBox(height: 24),
                           _buildDetailSection('Seguimiento', [
-                            _buildDetailRow('Número de tracking', order.trackingNumber!),
+                            _buildDetailRow(
+                                'Número de tracking', order.trackingNumber!),
                           ]),
                         ],
-                        
+
                         const SizedBox(height: 32),
                       ],
                     ),
                   ),
                 ),
-                
+
                 // Actions
                 if (order.status != 'cancelled' && order.status != 'delivered')
                   Container(
@@ -698,7 +735,8 @@ class _OrdersTabState extends State<OrdersTab> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF007AFF),
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                               ),
                               child: const Text('Procesar Pedido'),
                             ),
@@ -712,7 +750,8 @@ class _OrdersTabState extends State<OrdersTab> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF5856D6),
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                               ),
                               child: const Text('Marcar Enviado'),
                             ),
@@ -727,7 +766,8 @@ class _OrdersTabState extends State<OrdersTab> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF34C759),
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                               ),
                               child: const Text('Marcar Entregado'),
                             ),
@@ -741,7 +781,8 @@ class _OrdersTabState extends State<OrdersTab> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFFF3B30),
-                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 24),
                             ),
                             child: const Text('Cancelar'),
                           ),
@@ -791,13 +832,14 @@ class _OrdersTabState extends State<OrdersTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: items.map((item) {
               if (item is Widget) return item;
-              if (item is String) return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  item,
-                  style: const TextStyle(fontSize: 14),
-                ),
-              );
+              if (item is String)
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    item,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                );
               return const SizedBox.shrink();
             }).toList(),
           ),
@@ -806,7 +848,8 @@ class _OrdersTabState extends State<OrdersTab> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {bool isBold = false, Color? valueColor}) {
+  Widget _buildDetailRow(String label, String value,
+      {bool isBold = false, Color? valueColor}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -859,11 +902,14 @@ class _OrdersTabState extends State<OrdersTab> {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (order.status == 'pending')
-              _buildStatusOption('Procesar Pedido', 'processing', const Color(0xFF007AFF), order),
+              _buildStatusOption('Procesar Pedido', 'processing',
+                  const Color(0xFF007AFF), order),
             if (order.status == 'processing')
-              _buildStatusOption('Marcar Enviado', 'shipped', const Color(0xFF5856D6), order),
+              _buildStatusOption(
+                  'Marcar Enviado', 'shipped', const Color(0xFF5856D6), order),
             if (order.status == 'shipped')
-              _buildStatusOption('Marcar Entregado', 'delivered', const Color(0xFF34C759), order),
+              _buildStatusOption('Marcar Entregado', 'delivered',
+                  const Color(0xFF34C759), order),
           ],
         ),
         actions: [
@@ -876,7 +922,8 @@ class _OrdersTabState extends State<OrdersTab> {
     );
   }
 
-  Widget _buildStatusOption(String label, String status, Color color, OrderModel order) {
+  Widget _buildStatusOption(
+      String label, String status, Color color, OrderModel order) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -920,7 +967,8 @@ class _OrdersTabState extends State<OrdersTab> {
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
-              await _updateOrderStatus(order, 'shipped', trackingNumber: controller.text);
+              await _updateOrderStatus(order, 'shipped',
+                  trackingNumber: controller.text);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF5856D6),
@@ -932,7 +980,8 @@ class _OrdersTabState extends State<OrdersTab> {
     );
   }
 
-  Future<void> _updateOrderStatus(OrderModel order, String newStatus, {String? trackingNumber}) async {
+  Future<void> _updateOrderStatus(OrderModel order, String newStatus,
+      {String? trackingNumber}) async {
     try {
       await _orderService.updateOrderStatus(order.id, newStatus);
       _loadOrders();
