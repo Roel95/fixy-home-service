@@ -84,13 +84,16 @@ class _DayAvailabilityCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: availability.isAvailable
-              ? AppTheme.primaryColor
-              : Colors.grey.shade300,
-          width: 1.5,
-        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: availability.isAvailable
+                ? AppTheme.primaryColor.withOpacity(0.15)
+                : Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [

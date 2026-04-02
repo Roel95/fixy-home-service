@@ -1,6 +1,7 @@
 import 'package:fixy_home_service/models/service_model.dart';
 import 'package:fixy_home_service/models/category_model.dart';
 import 'package:fixy_home_service/models/user_model.dart';
+import 'package:fixy_home_service/models/provider_model.dart';
 import 'package:fixy_home_service/models/flash_deal_item.dart';
 import 'package:fixy_home_service/supabase/supabase_config.dart';
 import 'package:fixy_home_service/data/product_repository.dart';
@@ -253,18 +254,174 @@ class ServiceRepository {
   // Get service categories from Supabase
   Future<List<CategoryModel>> getServiceCategories() async {
     try {
+      print('>>> QUERY: categories table, is_active=true');
       final response = await SupabaseConfig.client
           .from('categories')
           .select()
           .eq('is_active', true)
           .order('name', ascending: true);
 
+      print('>>> RESPONSE: ${response.length} rows');
+      if (response.isNotEmpty) {
+        print('>>> FIRST ROW: ${response.first}');
+      }
+
+      return (response as List)
+          .map((json) => CategoryModel.fromJson(json))
+          .toList();
+    } catch (e, stackTrace) {
+      print('>>> ERROR loading categories: $e');
+      print('>>> STACK: $stackTrace');
+      return [];
+    }
+  }
+
+  // Get all service categories (including inactive) for admin
+  Future<List<CategoryModel>> getAllServiceCategories() async {
+    try {
+      final response = await SupabaseConfig.client
+          .from('categories')
+          .select()
+          .order('name', ascending: true);
+
       return (response as List)
           .map((json) => CategoryModel.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error loading categories: $e');
+      print('Error loading all categories: $e');
       return [];
     }
+  }
+
+  // Create service category
+  Future<CategoryModel?> createServiceCategory(CategoryModel category) async {
+    try {
+      final response = await SupabaseConfig.client
+          .from('categories')
+          .insert({
+            'name': category.name,
+            'image_url': category.imageUrl,
+            'price': category.price,
+            'currency': category.currency,
+            'time_unit': category.timeUnit,
+            'is_active': category.isActive,
+          })
+          .select()
+          .single();
+
+      return CategoryModel.fromJson(response);
+    } catch (e) {
+      print('Error creating category: $e');
+      return null;
+    }
+  }
+
+  // Update service category
+  Future<CategoryModel?> updateServiceCategory(CategoryModel category) async {
+    try {
+      final response = await SupabaseConfig.client
+          .from('categories')
+          .update({
+            'name': category.name,
+            'image_url': category.imageUrl,
+            'price': category.price,
+            'currency': category.currency,
+            'time_unit': category.timeUnit,
+            'is_active': category.isActive,
+          })
+          .eq('id', category.id)
+          .select()
+          .single();
+
+      return CategoryModel.fromJson(response);
+    } catch (e) {
+      print('Error updating category: $e');
+      return null;
+    }
+  }
+
+  // Delete service category
+  Future<bool> deleteServiceCategory(String id) async {
+    try {
+      await SupabaseConfig.client.from('categories').delete().eq('id', id);
+      return true;
+    } catch (e) {
+      print('Error deleting category: $e');
+      return false;
+    }
+  }
+
+  // ==================== PROVIDER MANAGEMENT ====================
+
+  /// Get all providers with optional status filter
+  Future<List<ProviderModel>> getProviders({ProviderStatus? status}) async {
+    try {
+      var query = SupabaseConfig.client.from('providers').select();
+
+      if (status != null) {
+        query = query.eq('status', status.name);
+      }
+
+      final response = await query.order('created_at', ascending: false);
+
+      return (response as List)
+          .map((json) => ProviderModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print('Error fetching providers: $e');
+      return [];
+    }
+  }
+
+  /// Get pending providers (for admin approval)
+  Future<List<ProviderModel>> getPendingProviders() async {
+    return getProviders(status: ProviderStatus.pending);
+  }
+
+  /// Get provider by ID
+  Future<ProviderModel?> getProviderById(String id) async {
+    try {
+      final response = await SupabaseConfig.client
+          .from('providers')
+          .select()
+          .eq('id', id)
+          .single();
+
+      return ProviderModel.fromJson(response);
+    } catch (e) {
+      print('Error fetching provider: $e');
+      return null;
+    }
+  }
+
+  /// Update provider status (approve/reject/suspend)
+  Future<bool> updateProviderStatus(
+      String providerId, ProviderStatus newStatus) async {
+    try {
+      await SupabaseConfig.client
+          .from('providers')
+          .update({'status': newStatus.name}).eq('id', providerId);
+
+      print('✅ Provider $providerId status updated to ${newStatus.name}');
+      return true;
+    } catch (e) {
+      print('Error updating provider status: $e');
+      return false;
+    }
+  }
+
+  /// Approve provider (convenience method)
+  Future<bool> approveProvider(String providerId) async {
+    return updateProviderStatus(providerId, ProviderStatus.active);
+  }
+
+  /// Reject/Suspend provider (convenience method)
+  Future<bool> rejectProvider(String providerId) async {
+    return updateProviderStatus(providerId, ProviderStatus.inactive);
+  }
+
+  /// Get only active providers (for client search)
+  Future<List<ProviderModel>> getActiveProviders() async {
+    return getProviders(status: ProviderStatus.active);
   }
 }

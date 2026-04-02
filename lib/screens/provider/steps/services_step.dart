@@ -14,9 +14,22 @@ class _ServicesStepState extends State<ServicesStep> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProviderOnboardingProvider>().loadCategories();
-    });
+    _loadCategoriesIfActive();
+  }
+
+  @override
+  void didUpdateWidget(ServicesStep oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadCategoriesIfActive();
+  }
+
+  void _loadCategoriesIfActive() {
+    final provider = context.read<ProviderOnboardingProvider>();
+    if (provider.availableCategories.isEmpty && !provider.isLoadingCategories) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        provider.loadCategories();
+      });
+    }
   }
 
   @override
@@ -32,29 +45,68 @@ class _ServicesStepState extends State<ServicesStep> {
       }
 
       if (error != null) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              error,
-              style: AppTheme.textTheme.bodyMedium?.copyWith(color: Colors.red),
-            ),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: () => context
-                  .read<ProviderOnboardingProvider>()
-                  .loadCategories(forceRefresh: true),
-              icon: const Icon(Icons.refresh),
-              label: const Text('Reintentar'),
-            ),
-          ],
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.red.shade200),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.error_outline, color: Colors.red.shade600),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      error,
+                      style:
+                          TextStyle(color: Colors.red.shade700, fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () => context
+                    .read<ProviderOnboardingProvider>()
+                    .loadCategories(forceRefresh: true),
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('Reintentar'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade600,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       }
 
       if (categories.isEmpty) {
-        return Text(
-          'Aún no hay categorías disponibles. Intenta más tarde.',
-          style: AppTheme.textTheme.bodyMedium,
+        return Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: [
+              Icon(Icons.category_outlined,
+                  size: 48, color: Colors.grey.shade400),
+              const SizedBox(height: 12),
+              Text(
+                'Aún no hay categorías disponibles. Intenta más tarde.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              ),
+            ],
+          ),
         );
       }
 
@@ -84,44 +136,82 @@ class _ServicesStepState extends State<ServicesStep> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Servicios que Ofreces', style: AppTheme.textTheme.displayLarge),
-          const SizedBox(height: 8),
-          Text(
-            'Selecciona todos los servicios que puedes proporcionar',
-            style: AppTheme.textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 24),
-          buildCategories(),
-          const SizedBox(height: 16),
-          if (provider.selectedCategories.isNotEmpty) ...[
-            const Divider(),
-            const SizedBox(height: 12),
-            Text('Seleccionados:', style: AppTheme.textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: provider.selectedCategories.map((categoryId) {
-                final match = provider.availableCategories
-                    .where((c) => c.id == categoryId);
-                final label = match.isNotEmpty ? match.first.name : categoryId;
-                return Chip(
-                  label: Text(label),
-                  deleteIcon: const Icon(Icons.close, size: 18),
-                  onDeleted: () => provider.toggleCategory(categoryId),
-                  backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
-                  labelStyle: AppTheme.textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.primaryColor,
-                  ),
-                );
-              }).toList(),
+      child: Builder(builder: (context) {
+        debugPrint(
+            '🔍 ServicesStep: isLoading=$isLoading, categories=${categories.length}, error=$error');
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Servicios que Ofreces',
+              style: AppTheme.textTheme.displayLarge,
             ),
+            const SizedBox(height: 8),
+            Text(
+              'Selecciona todos los servicios que puedes proporcionar',
+              style: AppTheme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 24),
+            buildCategories(),
+            const SizedBox(height: 16),
+            if (provider.selectedCategories.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Seleccionados',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: provider.selectedCategories.map((categoryId) {
+                        final match = provider.availableCategories
+                            .where((c) => c.id == categoryId);
+                        final label =
+                            match.isNotEmpty ? match.first.name : categoryId;
+                        return Chip(
+                          label: Text(label),
+                          deleteIcon: const Icon(Icons.close, size: 16),
+                          onDeleted: () => provider.toggleCategory(categoryId),
+                          backgroundColor:
+                              AppTheme.primaryColor.withOpacity(0.1),
+                          side: BorderSide(
+                              color: AppTheme.primaryColor.withOpacity(0.2)),
+                          labelStyle: TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
-        ],
-      ),
+        );
+      }),
     );
   }
 }
@@ -154,15 +244,20 @@ class _ServiceCategoryCard extends StatelessWidget {
             color: isSelected ? AppTheme.primaryColor : Colors.grey.shade300,
             width: 2,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  )
-                ]
-              : null,
+          boxShadow: [
+            if (!isSelected)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              )
+            else
+              BoxShadow(
+                color: AppTheme.primaryColor.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

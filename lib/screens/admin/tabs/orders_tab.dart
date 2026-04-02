@@ -52,7 +52,7 @@ class _OrdersTabState extends State<OrdersTab> {
       // Filtrar por búsqueda
       final searchLower = _searchQuery.toLowerCase();
       final matchesOrderNumber =
-          order.orderNumber?.toLowerCase().contains(searchLower) ?? false;
+          order.orderNumber.toLowerCase().contains(searchLower) ?? false;
       final matchesUserName =
           order.userName?.toLowerCase().contains(searchLower) ?? false;
       final matchesSearch =

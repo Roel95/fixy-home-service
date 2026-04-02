@@ -660,8 +660,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
 
     try {
       final category = ProductCategoryModel(
-        id: widget.category?.id ??
-            DateTime.now().millisecondsSinceEpoch.toString(),
+        id: widget.category?.id ?? '',
         name: _nameController.text,
         description: _descriptionController.text.isEmpty
             ? null

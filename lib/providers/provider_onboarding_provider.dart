@@ -60,8 +60,7 @@ class ProviderOnboardingProvider extends ChangeNotifier {
       _phone.isNotEmpty &&
       _email.isNotEmpty &&
       _address.isNotEmpty &&
-      _city.isNotEmpty &&
-      _postalCode.isNotEmpty;
+      _city.isNotEmpty;
   bool get isStep2Valid => _selectedCategories.isNotEmpty;
   bool get isStep3Valid => _yearsOfExperience > 0;
 
@@ -121,12 +120,17 @@ class ProviderOnboardingProvider extends ChangeNotifier {
     _categoriesError = null;
     notifyListeners();
     try {
+      debugPrint('🔍 Loading categories from repository...');
       final categories = await _serviceRepository.getServiceCategories();
+      debugPrint(
+          '🔍 Loaded ${categories.length} categories: ${categories.map((c) => c.name).join(', ')}');
       _availableCategories = categories;
       _selectedCategories = _selectedCategories
           .where((id) => categories.any((category) => category.id == id))
           .toList();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error loading categories: $e');
+      debugPrint('❌ Stack trace: $stackTrace');
       _categoriesError =
           'No se pudieron cargar las categorías. Intenta nuevamente.';
     } finally {

@@ -63,27 +63,11 @@ class BasicInfoStep extends StatelessWidget {
             onChanged: provider.setAddress,
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _InputField(
-                  label: 'Ciudad *',
-                  hint: 'Ciudad',
-                  value: provider.city,
-                  onChanged: provider.setCity,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _InputField(
-                  label: 'Código Postal *',
-                  hint: '12345',
-                  value: provider.postalCode,
-                  onChanged: provider.setPostalCode,
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-            ],
+          _InputField(
+            label: 'Ciudad *',
+            hint: 'Ciudad',
+            value: provider.city,
+            onChanged: provider.setCity,
           ),
         ],
       ),
@@ -99,19 +83,27 @@ class _ProfileImagePicker extends StatelessWidget {
     return GestureDetector(
       onTap: () => _pickImage(context, provider),
       child: Container(
-        width: 120,
-        height: 120,
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: AppTheme.primaryColor.withValues(alpha: 0.1),
-          border: Border.all(color: AppTheme.primaryColor, width: 2),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: provider.profileImageBytes != null
-            ? ClipOval(
-                child: Image.memory(provider.profileImageBytes!,
-                    fit: BoxFit.cover))
-            : const Icon(Icons.add_a_photo,
-                size: 40, color: AppTheme.primaryColor),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: provider.profileImageBytes != null
+              ? Image.memory(provider.profileImageBytes!, fit: BoxFit.cover)
+              : Container(
+                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  child: const Icon(Icons.add_a_photo,
+                      size: 40, color: AppTheme.primaryColor),
+                ),
+        ),
       ),
     );
   }
@@ -157,32 +149,56 @@ class _InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: AppTheme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        TextField(
-          controller: TextEditingController(text: value)
-            ..selection = TextSelection.collapsed(offset: value.length),
-          onChanged: onChanged,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: AppTheme.textTheme.bodyMedium
-                ?.copyWith(color: AppTheme.textLight),
-            filled: true,
-            fillColor: Colors.grey.shade100,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-      ],
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textPrimary.withOpacity(0.8),
+              ),
+            ),
+          ),
+          TextField(
+            controller: TextEditingController(text: value)
+              ..selection = TextSelection.collapsed(offset: value.length),
+            onChanged: onChanged,
+            maxLines: maxLines,
+            keyboardType: keyboardType,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 14,
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

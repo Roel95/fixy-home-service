@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fixy_home_service/screens/admin/tabs/products_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/orders_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/categories_tab.dart';
+import 'package:fixy_home_service/screens/admin/tabs/service_categories_tab.dart';
+import 'package:fixy_home_service/screens/admin/tabs/providers_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/analytics_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/users_tab.dart';
 
@@ -22,7 +24,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 7, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _currentIndex = _tabController.index;
@@ -82,6 +84,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           ProductsTab(),
           OrdersTab(),
           CategoriesTab(),
+          ServiceCategoriesTab(),
+          ProvidersTab(),
           AnalyticsTab(),
           UsersTab(),
         ],
@@ -108,11 +112,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.inventory_2_outlined, 'Productos', 0),
-              _buildNavItem(Icons.shopping_bag_outlined, 'Pedidos', 1),
-              _buildNavItem(Icons.category_outlined, 'Categorías', 2),
-              _buildNavItem(Icons.analytics_outlined, 'Análisis', 3),
-              _buildNavItem(Icons.people_outlined, 'Usuarios', 4),
+              _buildNavItem(Icons.shopping_bag, 'Productos', 0),
+              _buildNavItem(Icons.receipt_long, 'Pedidos', 1),
+              _buildNavItem(Icons.category, 'Cat. Productos', 2),
+              _buildNavItem(Icons.home_repair_service, 'Cat. Servicios', 3),
+              _buildNavItem(Icons.engineering, 'Proveedores', 4),
+              _buildNavItem(Icons.analytics, 'Análisis', 5),
+              _buildNavItem(Icons.people, 'Usuarios', 6),
             ],
           ),
         ),

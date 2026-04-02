@@ -73,32 +73,59 @@ class ExperienceStep extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller:
-                      TextEditingController(text: provider.currentCertification)
-                        ..selection = TextSelection.collapsed(
-                            offset: provider.currentCertification.length),
-                  onChanged: provider.setCurrentCertification,
-                  decoration: InputDecoration(
-                    hintText: 'Ej: Certificado de Electricista',
-                    hintStyle: AppTheme.textTheme.bodyMedium
-                        ?.copyWith(color: AppTheme.textLight),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    controller: TextEditingController(
+                        text: provider.currentCertification)
+                      ..selection = TextSelection.collapsed(
+                          offset: provider.currentCertification.length),
+                    onChanged: provider.setCurrentCertification,
+                    decoration: InputDecoration(
+                      hintText: 'Ej: Certificado de Electricista',
+                      hintStyle: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 14,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              IconButton(
-                onPressed: provider.addCertification,
-                icon: const Icon(Icons.add_circle,
-                    color: AppTheme.primaryColor, size: 32),
+              const SizedBox(width: 12),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  onPressed: provider.addCertification,
+                  icon: const Icon(Icons.add, color: Colors.white, size: 24),
+                ),
               ),
             ],
           ),
@@ -116,8 +143,14 @@ class ExperienceStep extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
@@ -169,10 +202,20 @@ class _ExperienceChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryColor : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? AppTheme.primaryColor : Colors.grey.shade300,
-            width: 2,
-          ),
+          boxShadow: [
+            if (!isSelected)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              )
+            else
+              BoxShadow(
+                color: AppTheme.primaryColor.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+          ],
         ),
         child: Text(
           label,

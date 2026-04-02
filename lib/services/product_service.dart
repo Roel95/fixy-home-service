@@ -1,13 +1,40 @@
+import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fixy_home_service/models/product_model.dart';
 
+// Callback para notificar cambios en productos
+typedef ProductChangeCallback = void Function(ProductChangeEvent event);
+
+enum ProductChangeType { insert, update, delete }
+
+class ProductChangeEvent {
+  final ProductChangeType type;
+  final ProductModel? product;
+  final String? productId;
+
+  ProductChangeEvent({
+    required this.type,
+    this.product,
+    this.productId,
+  });
+}
+
 class ProductService {
   final SupabaseClient _supabase = Supabase.instance.client;
+
+  // Suscripción realtime
+  RealtimeChannel? _productsChannel;
+  final List<ProductChangeCallback> _changeCallbacks = [];
 
   // Cache en memoria para performance
   List<ProductModel>? _cachedProducts;
   List<ProductCategoryModel>? _cachedCategories;
   DateTime? _lastFetch;
+
+  // Singleton pattern para compartir estado
+  static final ProductService _instance = ProductService._internal();
+  factory ProductService() => _instance;
+  ProductService._internal();
 
   // Cache válido por 30 segundos (para ver cambios rápido)
   static const _cacheDuration = Duration(seconds: 30);
@@ -15,6 +42,88 @@ class ProductService {
   bool get _isCacheValid {
     if (_lastFetch == null) return false;
     return DateTime.now().difference(_lastFetch!) < _cacheDuration;
+  }
+
+  // ============================================
+  // REALTIME - Sincronización en tiempo real
+  // ============================================
+
+  /// Suscribirse a cambios en productos
+  void subscribeToChanges(ProductChangeCallback callback) {
+    _changeCallbacks.add(callback);
+
+    // Iniciar canal realtime si no está activo
+    if (_productsChannel == null) {
+      _startRealtimeSubscription();
+    }
+  }
+
+  /// Cancelar suscripción a cambios
+  void unsubscribeFromChanges(ProductChangeCallback callback) {
+    _changeCallbacks.remove(callback);
+
+    // Si no hay más listeners, detener la suscripción
+    if (_changeCallbacks.isEmpty) {
+      _stopRealtimeSubscription();
+    }
+  }
+
+  void _startRealtimeSubscription() {
+    print('🔴 Iniciando suscripción realtime a productos...');
+
+    _productsChannel = _supabase
+        .channel('products_changes')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'products',
+          callback: (payload) {
+            print('📡 Cambio detectado en productos: ${payload.eventType}');
+
+            // Limpiar cache para forzar recarga
+            clearCache();
+
+            // Notificar a todos los listeners
+            ProductChangeType type;
+            switch (payload.eventType) {
+              case PostgresChangeEvent.insert:
+                type = ProductChangeType.insert;
+                break;
+              case PostgresChangeEvent.update:
+                type = ProductChangeType.update;
+                break;
+              case PostgresChangeEvent.delete:
+                type = ProductChangeType.delete;
+                break;
+              default:
+                type = ProductChangeType.update;
+            }
+
+            final event = ProductChangeEvent(
+              type: type,
+              product: ProductModel.fromJson(payload.newRecord),
+              productId: payload.oldRecord['id']?.toString() ??
+                  payload.newRecord['id']?.toString(),
+            );
+
+            for (final callback in _changeCallbacks) {
+              callback(event);
+            }
+          },
+        )
+        .subscribe((status, error) {
+      if (error != null) {
+        print('❌ Error en suscripción realtime: $error');
+      } else {
+        print('✅ Suscripción realtime activa: $status');
+      }
+    });
+  }
+
+  void _stopRealtimeSubscription() {
+    print('🛑 Deteniendo suscripción realtime...');
+    _productsChannel?.unsubscribe();
+    _productsChannel = null;
   }
 
   // ============================================
@@ -337,11 +446,10 @@ class ProductService {
 
   Future<ProductModel> createProduct(ProductModel product) async {
     try {
-      final response = await _supabase
-          .from('products')
-          .insert(product.toJson())
-          .select()
-          .single();
+      final data = product.toJson();
+      data.remove('id');
+      final response =
+          await _supabase.from('products').insert(data).select().single();
       clearCache();
       return ProductModel.fromJson(response);
     } catch (e) {

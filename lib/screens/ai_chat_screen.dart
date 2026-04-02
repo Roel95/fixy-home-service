@@ -758,6 +758,211 @@ $analysisText
     );
   }
 
+  void _startNewChat() {
+    setState(() {
+      _messages = [];
+      _conversationId = const Uuid().v4();
+    });
+    _addMessage(AIConversationMessage(
+      id: const Uuid().v4(),
+      role: 'assistant',
+      content:
+          '¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?\n\nPuedo ayudarte a:\n• Reservar servicios (limpieza, fontanería, electricidad, etc.)\n• Comprar productos de la tienda\n• Responder tus preguntas',
+      timestamp: DateTime.now(),
+    ));
+  }
+
+  void _clearHistory() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('¿Eliminar historial?'),
+        content: const Text(
+            'Se eliminarán todos los mensajes de esta conversación.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              setState(() {
+                _messages = [];
+              });
+              // Eliminar de Supabase
+              if (_userId != null && _conversationId != null) {
+                try {
+                  await Supabase.instance.client
+                      .from('ai_conversations')
+                      .delete()
+                      .eq('id', _conversationId!);
+                  debugPrint('✅ Historial eliminado');
+                } catch (e) {
+                  debugPrint('⚠️ Error eliminando historial: $e');
+                }
+              }
+              _startNewChat();
+            },
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showChatPreferences() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Preferencias del Chat',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              title: const Text('Eliminar historial'),
+              subtitle: const Text('Borra todos los mensajes'),
+              onTap: () {
+                Navigator.pop(context);
+                _clearHistory();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add_comment_outlined),
+              title: const Text('Nuevo chat'),
+              subtitle: const Text('Inicia una conversación nueva'),
+              onTap: () {
+                Navigator.pop(context);
+                _startNewChat();
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('Acerca del Asistente'),
+              subtitle: const Text('Versión 1.0 - Powered by AI'),
+              onTap: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showChatOptionsMenu() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Opciones del Chat',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.add_comment, color: Color(0xFF6366F1)),
+              title: const Text('Nuevo chat'),
+              subtitle: const Text('Inicia una conversación nueva'),
+              onTap: () {
+                Navigator.pop(context);
+                _startNewChat();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_sweep, color: Colors.red),
+              title: const Text('Eliminar historial'),
+              subtitle:
+                  const Text('Borra todos los mensajes de esta conversación'),
+              onTap: () {
+                Navigator.pop(context);
+                _clearHistory();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.history),
+              title: const Text('Historial de conversaciones'),
+              subtitle: const Text('Ver chats anteriores'),
+              onTap: () {
+                Navigator.pop(context);
+                _showConversationHistory();
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.settings_outlined),
+              title: const Text('Preferencias'),
+              onTap: () {
+                Navigator.pop(context);
+                _showChatPreferences();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showConversationHistory() async {
+    if (_userId == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Historial de Conversaciones'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: FutureBuilder(
+            future: AIAssistantService.loadUserConversations(_userId!),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Text('No hay conversaciones previas');
+              }
+              final conversations = snapshot.data!;
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: conversations.length,
+                itemBuilder: (context, index) {
+                  final conv = conversations[index];
+                  return ListTile(
+                    title: Text(conv.title),
+                    subtitle: Text('${conv.messages.length} mensajes'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _conversationId = conv.id;
+                        _messages = List.from(conv.messages);
+                      });
+                    },
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
@@ -800,6 +1005,12 @@ $analysisText
         ),
         elevation: 0,
         backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: AppTheme.textPrimary),
+            onPressed: _showChatOptionsMenu,
+          ),
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppTheme.textPrimary),
           onPressed: () => Navigator.pop(context),

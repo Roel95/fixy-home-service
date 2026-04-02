@@ -48,9 +48,7 @@ class ConfirmationStep extends StatelessWidget {
               _InfoRow(label: 'Teléfono', value: provider.phone),
               _InfoRow(label: 'Email', value: provider.email),
               _InfoRow(label: 'Dirección', value: provider.address),
-              _InfoRow(
-                  label: 'Ciudad',
-                  value: '${provider.city}, ${provider.postalCode}'),
+              _InfoRow(label: 'Ciudad', value: provider.city),
             ],
           ),
           const SizedBox(height: 16),
@@ -139,7 +137,7 @@ class ConfirmationStep extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppTheme.primaryColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
@@ -196,7 +194,13 @@ class _SectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

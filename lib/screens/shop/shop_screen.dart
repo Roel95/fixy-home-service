@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fixy_home_service/data/product_repository.dart';
 import 'package:fixy_home_service/models/product_model.dart';
+import 'package:fixy_home_service/services/product_service.dart';
 import 'package:fixy_home_service/providers/cart_provider.dart';
 import 'package:fixy_home_service/screens/shop/product_detail_screen.dart';
 import 'package:fixy_home_service/screens/shop/product_list_screen.dart';
@@ -26,6 +27,7 @@ class ShopScreen extends StatefulWidget {
 class _ShopScreenState extends State<ShopScreen>
     with SingleTickerProviderStateMixin {
   late ProductRepository _repository;
+  late ProductService _productService;
   late List<ProductModel> _featuredProducts;
   late List<ProductModel> _onSaleProducts;
   late List<ProductCategoryModel> _categories;
@@ -40,6 +42,7 @@ class _ShopScreenState extends State<ShopScreen>
   void initState() {
     super.initState();
     _repository = ProductRepository();
+    _productService = ProductService();
     _featuredProducts = [];
     _onSaleProducts = [];
     _categories = [];
@@ -56,8 +59,11 @@ class _ShopScreenState extends State<ShopScreen>
       _startAutoScroll();
     });
 
-    // Cargar datos de Supabase
-    _loadData();
+    // Suscribirse a cambios en tiempo real
+    _productService.subscribeToChanges(_onProductChanged);
+
+    // Cargar datos de Supabase con forceRefresh
+    _loadData(forceRefresh: true);
   }
 
   Future<void> _loadData({bool forceRefresh = false}) async {
@@ -95,6 +101,7 @@ class _ShopScreenState extends State<ShopScreen>
 
   @override
   void dispose() {
+    _productService.unsubscribeFromChanges(_onProductChanged);
     _autoScrollTimer?.cancel();
     _dealsPageController?.dispose();
     _animationController.dispose();
@@ -166,6 +173,14 @@ class _ShopScreenState extends State<ShopScreen>
     // Forzar actualización desde Supabase
     await _loadData(forceRefresh: true);
     _startAutoScroll();
+  }
+
+  void _onProductChanged(ProductChangeEvent event) {
+    print('🔄 Producto cambiado: ${event.type} - ${event.productId}');
+    // Recargar datos cuando hay cambios
+    if (mounted) {
+      _loadData(forceRefresh: true);
+    }
   }
 
   @override

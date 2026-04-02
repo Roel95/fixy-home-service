@@ -6,9 +6,10 @@ import 'package:fixy_home_service/providers/cart_provider.dart';
 import 'package:fixy_home_service/screens/shop/product_detail_screen.dart';
 import 'package:fixy_home_service/screens/shop/cart_screen.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
+import 'package:fixy_home_service/utils/page_transitions.dart';
 import 'package:fixy_home_service/widgets/cart_badge.dart';
 import 'package:fixy_home_service/widgets/advanced_filters_sheet.dart';
-import 'package:fixy_home_service/utils/page_transitions.dart';
+import 'package:fixy_home_service/services/product_service.dart';
 
 class AllProductsScreen extends StatefulWidget {
   const AllProductsScreen({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class AllProductsScreen extends StatefulWidget {
 
 class _AllProductsScreenState extends State<AllProductsScreen> {
   late ProductRepository _repository;
+  late ProductService _productService;
   List<ProductModel> _products = [];
   List<ProductModel> _filteredProducts = [];
   String _sortBy = 'featured';
@@ -29,12 +31,17 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
   void initState() {
     super.initState();
     _repository = ProductRepository();
-    _loadProducts();
+    _productService = ProductService();
+    _loadProducts(forceRefresh: true);
+
+    // Suscribirse a cambios en tiempo real
+    _productService.subscribeToChanges(_onProductChanged);
   }
 
-  Future<void> _loadProducts() async {
+  Future<void> _loadProducts({bool forceRefresh = false}) async {
     try {
-      final products = await _repository.getAllProducts();
+      final products =
+          await _repository.getAllProducts(forceRefresh: forceRefresh);
       if (mounted) {
         setState(() {
           _products = products;
@@ -54,7 +61,20 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
 
   Future<void> _refreshProducts() async {
     await Future.delayed(const Duration(milliseconds: 800));
-    _loadProducts();
+    _loadProducts(forceRefresh: true);
+  }
+
+  void _onProductChanged(ProductChangeEvent event) {
+    print('🔄 Producto cambiado en AllProductsScreen: ${event.type}');
+    if (mounted) {
+      _loadProducts(forceRefresh: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _productService.unsubscribeFromChanges(_onProductChanged);
+    super.dispose();
   }
 
   void _applyFiltersAndSorting() {

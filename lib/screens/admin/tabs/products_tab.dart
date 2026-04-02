@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:fixy_home_service/models/product_model.dart';
 import 'package:fixy_home_service/data/product_repository.dart';
 import 'package:fixy_home_service/services/image_upload_service.dart';
@@ -536,10 +538,22 @@ class _ProductsTabState extends State<ProductsTab> {
         product: product,
         categories: _categories,
         onSave: (savedProduct) async {
-          await _loadData();
-          Navigator.pop(context);
-          _showSuccess(
-              product == null ? 'Producto creado' : 'Producto actualizado');
+          try {
+            if (product == null) {
+              // Crear nuevo producto
+              await _repository.createProduct(savedProduct);
+            } else {
+              // Actualizar producto existente
+              await _repository.updateProduct(savedProduct);
+            }
+            await _loadData();
+            Navigator.pop(context);
+            _showSuccess(product == null
+                ? 'Producto creado exitosamente'
+                : 'Producto actualizado exitosamente');
+          } catch (e) {
+            _showError('Error al guardar: $e');
+          }
         },
       ),
     );
@@ -971,30 +985,73 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
   }
 
   Future<void> _addImage() async {
-    // TODO: Implementar selección y subida de imagen
-    showDialog(
+    final ImagePicker picker = ImagePicker();
+
+    await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Agregar Imagen'),
         content: const Text('Selecciona una opción:'),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Abrir cámara
+            onPressed: () async {
+              Navigator.of(context).pop();
+              // Pequeña espera para que cierre el diálogo
+              await Future.delayed(const Duration(milliseconds: 100));
+
+              try {
+                final XFile? photo = await picker.pickImage(
+                  source: ImageSource.camera,
+                  maxWidth: 1200,
+                  maxHeight: 1200,
+                  imageQuality: 85,
+                );
+
+                if (photo != null && mounted) {
+                  await _uploadAndAddImage(File(photo.path));
+                }
+              } catch (e) {
+                debugPrint('❌ Error cámara: $e');
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error al tomar foto: $e')),
+                  );
+                }
+              }
             },
             child: const Text('Cámara'),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Abrir galería
+            onPressed: () async {
+              Navigator.of(context).pop();
+              // Pequeña espera para que cierre el diálogo
+              await Future.delayed(const Duration(milliseconds: 100));
+
+              try {
+                final XFile? image = await picker.pickImage(
+                  source: ImageSource.gallery,
+                  maxWidth: 1200,
+                  maxHeight: 1200,
+                  imageQuality: 85,
+                );
+
+                if (image != null && mounted) {
+                  await _uploadAndAddImage(File(image.path));
+                }
+              } catch (e) {
+                debugPrint('❌ Error galería: $e');
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error al seleccionar imagen: $e')),
+                  );
+                }
+              }
             },
             child: const Text('Galería'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop();
               _showUrlInputDialog();
             },
             child: const Text('URL'),
@@ -1002,6 +1059,44 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         ],
       ),
     );
+  }
+
+  Future<void> _uploadAndAddImage(File imageFile) async {
+    try {
+      // Mostrar indicador de carga
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      final imageService = ImageUploadService();
+      final url = await imageService.uploadImage(imageFile, folder: 'products');
+
+      // Cerrar indicador de carga
+      if (mounted) Navigator.pop(context);
+
+      if (url != null) {
+        setState(() => _images.add(url));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('✅ Imagen subida exitosamente')),
+          );
+        }
+      } else {
+        throw Exception('No se pudo subir la imagen');
+      }
+    } catch (e) {
+      // Cerrar indicador de carga si está abierto
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Error subiendo imagen: $e')),
+        );
+      }
+    }
   }
 
   void _showUrlInputDialog() {

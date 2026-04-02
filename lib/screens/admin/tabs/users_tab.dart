@@ -155,7 +155,7 @@ class _UsersTabState extends State<UsersTab> {
                                 onChanged: (value) {
                                   _toggleAdminStatus(userId, isAdmin);
                                 },
-                                activeColor: Colors.red,
+                                activeThumbColor: Colors.red,
                               ),
                             ),
                           );
