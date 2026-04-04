@@ -28,7 +28,8 @@ Future<void> main() async {
     final isConnected = await SupabaseConfig.testConnection();
     if (!isConnected) {
       debugPrint(
-          '⚠️ [MAIN] Supabase connection test failed, but app will continue');
+        '⚠️ [MAIN] Supabase connection test failed, but app will continue',
+      );
     }
   } catch (e) {
     debugPrint('❌ [MAIN] Failed to initialize Supabase: $e');
@@ -63,7 +64,8 @@ class _MyAppState extends State<MyApp> {
 
       if (event == AuthChangeEvent.passwordRecovery) {
         debugPrint(
-            '🔐 [DEEP_LINK] Password recovery detected - navigating to reset screen');
+          '🔐 [DEEP_LINK] Password recovery detected - navigating to reset screen',
+        );
         NavigationService.pushAndRemoveAll(
           MaterialPageRoute(builder: (_) => const ResetPasswordScreen()),
         );
@@ -84,7 +86,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         title: 'Fixy Home Service',
-        theme: lightTheme,
+        theme: lightTheme.copyWith(fontFamily: 'Lufga'),
         debugShowCheckedModeBanner: false,
         navigatorKey: NavigationService.navigatorKey,
         home: const SplashScreen(),

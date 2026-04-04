@@ -40,6 +40,54 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Lufga
+      fonts:
+        - asset: assets/fonts/LufgaThin.ttf
+          weight: 100
+        - asset: assets/fonts/LufgaExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/LufgaLight.ttf
+          weight: 300
+        - asset: assets/fonts/LufgaRegular.ttf
+          weight: 400
+        - asset: assets/fonts/LufgaMedium.ttf
+          weight: 500
+        - asset: assets/fonts/LufgaSemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/LufgaBold.ttf
+          weight: 700
+        - asset: assets/fonts/LufgaExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/LufgaBlack.ttf
+          weight: 900
+        - asset: assets/fonts/LufgaThinItalic.ttf
+          style: italic
+          weight: 100
+        - asset: assets/fonts/LufgaExtraLightItalic.ttf
+          style: italic
+          weight: 200
+        - asset: assets/fonts/LufgaLightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: assets/fonts/LufgaItalic.ttf
+          style: italic
+          weight: 400
+        - asset: assets/fonts/LufgaMediumItalic.ttf
+          style: italic
+          weight: 500
+        - asset: assets/fonts/LufgaSemiBoldItalic.ttf
+          style: italic
+          weight: 600
+        - asset: assets/fonts/LufgaBoldItalic.ttf
+          style: italic
+          weight: 700
+        - asset: assets/fonts/LufgaExtraBoldItalic.ttf
+          style: italic
+          weight: 800
+        - asset: assets/fonts/LufgaBlackItalic.ttf
+          style: italic
+          weight: 900
   assets:
     - assets/images/
     - assets/fonts/

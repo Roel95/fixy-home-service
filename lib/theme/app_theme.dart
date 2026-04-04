@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Primary Colors
@@ -27,34 +26,41 @@ class AppTheme {
 
   // Text Styles
   static TextTheme textTheme = TextTheme(
-    displayLarge: GoogleFonts.poppins(
+    displayLarge: TextStyle(
+      fontFamily: 'Lufga',
       fontSize: 24,
       fontWeight: FontWeight.bold,
       color: textPrimary,
     ),
-    titleLarge: GoogleFonts.poppins(
+    titleLarge: TextStyle(
+      fontFamily: 'Lufga',
       fontSize: 18,
       fontWeight: FontWeight.bold,
       color: textPrimary,
     ),
-    titleMedium: GoogleFonts.poppins(
+    titleMedium: TextStyle(
+      fontFamily: 'Lufga',
       fontSize: 16,
       fontWeight: FontWeight.w600,
       color: textPrimary,
     ),
-    bodyLarge: GoogleFonts.poppins(
+    bodyLarge: TextStyle(
+      fontFamily: 'Lufga',
       fontSize: 16,
       color: textPrimary,
     ),
-    bodyMedium: GoogleFonts.poppins(
+    bodyMedium: TextStyle(
+      fontFamily: 'Lufga',
       fontSize: 14,
       color: textSecondary,
     ),
-    bodySmall: GoogleFonts.poppins(
+    bodySmall: TextStyle(
+      fontFamily: 'Lufga',
       fontSize: 12,
       color: textLight,
     ),
-    labelLarge: GoogleFonts.poppins(
+    labelLarge: TextStyle(
+      fontFamily: 'Lufga',
       fontSize: 14,
       fontWeight: FontWeight.w600,
       color: Colors.white,

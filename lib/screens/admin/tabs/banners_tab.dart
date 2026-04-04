@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:fixy_home_service/models/banner_model.dart';
 import 'package:fixy_home_service/repositories/banner_repository.dart';
@@ -13,7 +12,8 @@ class BannersTab extends StatefulWidget {
   State<BannersTab> createState() => _BannersTabState();
 }
 
-class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateMixin {
+class _BannersTabState extends State<BannersTab>
+    with SingleTickerProviderStateMixin {
   final BannerRepository _repository = BannerRepository();
   List<BannerModel> _banners = [];
   bool _isLoading = true;
@@ -68,7 +68,8 @@ class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateM
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Eliminar Banner'),
-        content: Text('¿Estás seguro de que deseas eliminar el banner "${banner.title}"?'),
+        content: Text(
+            '¿Estás seguro de que deseas eliminar el banner "${banner.title}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -77,7 +78,8 @@ class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateM
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Eliminar', style: TextStyle(color: Colors.white)),
+            child:
+                const Text('Eliminar', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -109,7 +111,8 @@ class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateM
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(banner.isActive ? 'Banner desactivado' : 'Banner activado'),
+            content: Text(
+                banner.isActive ? 'Banner desactivado' : 'Banner activado'),
           ),
         );
       }
@@ -244,7 +247,8 @@ class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateM
                                   _banners.insert(newIndex, banner);
                                   // Update order values
                                   for (int i = 0; i < _banners.length; i++) {
-                                    _banners[i] = _banners[i].copyWith(order: i);
+                                    _banners[i] =
+                                        _banners[i].copyWith(order: i);
                                   }
                                 });
                                 await _repository.updateBannerOrder(_banners);
@@ -279,7 +283,8 @@ class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateM
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
                   color: Colors.grey.shade200,
-                  child: Icon(Icons.broken_image, color: Colors.grey.shade400, size: 48),
+                  child: Icon(Icons.broken_image,
+                      color: Colors.grey.shade400, size: 48),
                 ),
               ),
             ),
@@ -315,7 +320,9 @@ class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateM
                         children: [
                           _buildChip(
                             banner.typeLabel,
-                            banner.type == 'app' ? Icons.phone_android : Icons.shopping_bag,
+                            banner.type == 'app'
+                                ? Icons.phone_android
+                                : Icons.shopping_bag,
                             banner.type == 'app' ? Colors.blue : Colors.orange,
                           ),
                           const SizedBox(width: 8),
@@ -342,7 +349,9 @@ class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateM
                   children: [
                     IconButton(
                       icon: Icon(
-                        banner.isActive ? Icons.visibility : Icons.visibility_off,
+                        banner.isActive
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: banner.isActive ? Colors.green : Colors.grey,
                       ),
                       onPressed: () => _toggleBannerActive(banner),
@@ -372,7 +381,7 @@ class _BannersTabState extends State<BannersTab> with SingleTickerProviderStateM
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -415,16 +424,19 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
   final _formKey = GlobalKey<FormState>();
   final _repository = BannerRepository();
   bool _isLoading = false;
-  Uint8List? _imageBytes;
+  ImagePickResult? _imageBytes;
   String? _existingImageUrl;
 
-  late final _titleController = TextEditingController(text: widget.banner?.title ?? '');
-  late final _subtitleController = TextEditingController(text: widget.banner?.subtitle ?? '');
-  late final _actionIdController = TextEditingController(text: widget.banner?.actionId ?? '');
+  late final _titleController =
+      TextEditingController(text: widget.banner?.title ?? '');
+  late final _subtitleController =
+      TextEditingController(text: widget.banner?.subtitle ?? '');
+  late final _actionIdController =
+      TextEditingController(text: widget.banner?.actionId ?? '');
   late final _orderController = TextEditingController(
     text: widget.banner?.order.toString() ?? '0',
   );
-  
+
   late String _type;
   late String _actionType;
   late bool _isActive;
@@ -460,7 +472,7 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
 
   Future<void> _saveBanner() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     if (_existingImageUrl == null && _imageBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Debes seleccionar una imagen')),
@@ -472,14 +484,14 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
 
     try {
       String imageUrl = _existingImageUrl ?? '';
-      
+
       // Subir nueva imagen si se seleccionó una
       if (_imageBytes != null) {
         final fileName = 'banner_${DateTime.now().millisecondsSinceEpoch}.jpg';
         await Supabase.instance.client.storage
             .from('banners')
-            .uploadBinary(fileName, _imageBytes!);
-        
+            .uploadBinary(fileName, _imageBytes!.bytes);
+
         imageUrl = Supabase.instance.client.storage
             .from('banners')
             .getPublicUrl(fileName);
@@ -488,14 +500,14 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
       final banner = BannerModel(
         id: widget.banner?.id ?? '',
         title: _titleController.text.trim(),
-        subtitle: _subtitleController.text.trim().isEmpty 
-            ? null 
+        subtitle: _subtitleController.text.trim().isEmpty
+            ? null
             : _subtitleController.text.trim(),
         imageUrl: imageUrl,
         type: _type,
         actionType: _actionType == 'none' ? null : _actionType,
-        actionId: _actionIdController.text.trim().isEmpty 
-            ? null 
+        actionId: _actionIdController.text.trim().isEmpty
+            ? null
             : _actionIdController.text.trim(),
         order: int.tryParse(_orderController.text) ?? 0,
         isActive: _isActive,
@@ -545,7 +557,8 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
                     child: _imageBytes != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.memory(_imageBytes!, fit: BoxFit.cover),
+                            child: Image.memory(_imageBytes!.bytes,
+                                fit: BoxFit.cover),
                           )
                         : _existingImageUrl != null
                             ? ClipRRect(
@@ -553,17 +566,18 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
                                 child: Image.network(
                                   _existingImageUrl!,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => _buildImagePlaceholder(),
+                                  errorBuilder: (_, __, ___) =>
+                                      _buildImagePlaceholder(),
                                 ),
                               )
                             : _buildImagePlaceholder(),
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Tipo (App/Tienda)
                 DropdownButtonFormField<String>(
-                  value: _type,
+                  initialValue: _type,
                   decoration: const InputDecoration(
                     labelText: 'Tipo',
                     border: OutlineInputBorder(),
@@ -575,7 +589,7 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
                   onChanged: (value) => setState(() => _type = value!),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Título
                 TextFormField(
                   controller: _titleController,
@@ -583,12 +597,12 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
                     labelText: 'Título *',
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) => value?.trim().isEmpty == true 
-                      ? 'El título es requerido' 
+                  validator: (value) => value?.trim().isEmpty == true
+                      ? 'El título es requerido'
                       : null,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Subtítulo
                 TextFormField(
                   controller: _subtitleController,
@@ -598,10 +612,10 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Tipo de acción
                 DropdownButtonFormField<String>(
-                  value: _actionType,
+                  initialValue: _actionType,
                   decoration: const InputDecoration(
                     labelText: 'Acción al tocar',
                     border: OutlineInputBorder(),
@@ -609,25 +623,28 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
                   items: const [
                     DropdownMenuItem(value: 'none', child: Text('Ninguna')),
                     DropdownMenuItem(value: 'product', child: Text('Producto')),
-                    DropdownMenuItem(value: 'category', child: Text('Categoría')),
+                    DropdownMenuItem(
+                        value: 'category', child: Text('Categoría')),
                     DropdownMenuItem(value: 'service', child: Text('Servicio')),
                     DropdownMenuItem(value: 'url', child: Text('URL Externa')),
                   ],
                   onChanged: (value) => setState(() => _actionType = value!),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // ID para la acción
                 if (_actionType != 'none')
                   TextFormField(
                     controller: _actionIdController,
                     decoration: InputDecoration(
-                      labelText: _actionType == 'url' ? 'URL' : 'ID del ${_actionTypeLabel()}',
+                      labelText: _actionType == 'url'
+                          ? 'URL'
+                          : 'ID del ${_actionTypeLabel()}',
                       border: const OutlineInputBorder(),
                     ),
                   ),
                 if (_actionType != 'none') const SizedBox(height: 16),
-                
+
                 // Orden
                 TextFormField(
                   controller: _orderController,
@@ -638,7 +655,7 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Activo/Inactivo
                 SwitchListTile(
                   title: const Text('Banner activo'),
@@ -657,10 +674,10 @@ class _BannerFormDialogState extends State<BannerFormDialog> {
         ),
         ElevatedButton(
           onPressed: _isLoading ? null : _saveBanner,
-          child: _isLoading 
+          child: _isLoading
               ? const SizedBox(
-                  width: 20, 
-                  height: 20, 
+                  width: 20,
+                  height: 20,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : Text(widget.banner == null ? 'Crear' : 'Guardar'),
