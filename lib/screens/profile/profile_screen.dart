@@ -4,8 +4,31 @@ import 'package:fixy_home_service/providers/profile_provider.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/screens/profile/profile_options_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> with RouteAware {
+  final GlobalKey<ProfileOptionsScreenState> _profileOptionsKey =
+      GlobalKey<ProfileOptionsScreenState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> _refreshProfile() async {
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
+    await profileProvider.loadUserProfile();
+    // Refresh provider status in ProfileOptionsScreen
+    if (_profileOptionsKey.currentState != null) {
+      await _profileOptionsKey.currentState!.refreshProviderStatus();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,15 +87,20 @@ class ProfileScreen extends StatelessWidget {
               return const Center(child: Text('No profile data available'));
             }
 
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Profile header
-                  _buildProfileHeader(user),
-
-                  // Options list
-                  const ProfileOptionsScreen(),
-                ],
+            return RefreshIndicator(
+              onRefresh: _refreshProfile,
+              color: const Color(0xFF667EEA),
+              backgroundColor: Colors.white,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    // Profile header
+                    _buildProfileHeader(user),
+                    // Options list
+                    ProfileOptionsScreen(key: _profileOptionsKey),
+                  ],
+                ),
               ),
             );
           },

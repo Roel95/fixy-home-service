@@ -6,6 +6,8 @@ import 'package:fixy_home_service/screens/admin/tabs/service_categories_tab.dart
 import 'package:fixy_home_service/screens/admin/tabs/providers_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/analytics_tab.dart';
 import 'package:fixy_home_service/screens/admin/tabs/users_tab.dart';
+import 'package:fixy_home_service/screens/admin/tabs/banners_tab.dart';
+import 'package:fixy_home_service/supabase/supabase_config.dart';
 
 /// Dashboard principal para administradores de la tienda
 /// Gestiona productos, pedidos, categorías y análisis
@@ -19,17 +21,11 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 7, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        _currentIndex = _tabController.index;
-      });
-    });
+    _tabController = TabController(length: 8, vsync: this);
   }
 
   @override
@@ -76,6 +72,24 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
             onPressed: () => _showLogoutConfirmation(context),
           ),
         ],
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          indicatorColor: const Color(0xFF667EEA),
+          labelColor: const Color(0xFF667EEA),
+          unselectedLabelColor: const Color(0xFF718096),
+          labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+          tabs: const [
+            Tab(icon: Icon(Icons.shopping_bag), text: 'Productos'),
+            Tab(icon: Icon(Icons.receipt_long), text: 'Pedidos'),
+            Tab(icon: Icon(Icons.category), text: 'Cat. Productos'),
+            Tab(icon: Icon(Icons.home_repair_service), text: 'Cat. Servicios'),
+            Tab(icon: Icon(Icons.engineering), text: 'Proveedores'),
+            Tab(icon: Icon(Icons.analytics), text: 'Análisis'),
+            Tab(icon: Icon(Icons.people), text: 'Usuarios'),
+            Tab(icon: Icon(Icons.image), text: 'Banners'),
+          ],
+        ),
       ),
       body: TabBarView(
         controller: _tabController,
@@ -88,86 +102,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           ProvidersTab(),
           AnalyticsTab(),
           UsersTab(),
+          BannersTab(),
         ],
-      ),
-      bottomNavigationBar: _buildBottomNavBar(),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8ECF3),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.shopping_bag, 'Productos', 0),
-              _buildNavItem(Icons.receipt_long, 'Pedidos', 1),
-              _buildNavItem(Icons.category, 'Cat. Productos', 2),
-              _buildNavItem(Icons.home_repair_service, 'Cat. Servicios', 3),
-              _buildNavItem(Icons.engineering, 'Proveedores', 4),
-              _buildNavItem(Icons.analytics, 'Análisis', 5),
-              _buildNavItem(Icons.people, 'Usuarios', 6),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, int index) {
-    final isSelected = _currentIndex == index;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-          _tabController.animateTo(index);
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF667EEA).withOpacity(0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected
-                  ? const Color(0xFF667EEA)
-                  : const Color(0xFF2D3748).withOpacity(0.6),
-              size: 24,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF667EEA)
-                    : const Color(0xFF2D3748).withOpacity(0.6),
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -186,9 +122,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
             child: const Text('Cancelar'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              Navigator.of(context).pushReplacementNamed('/home');
+              // Cerrar sesión en Supabase
+              await SupabaseConfig.client.auth.signOut();
+              // Navegar a login y eliminar historial
+              if (context.mounted) {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login', (route) => false);
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF667EEA),

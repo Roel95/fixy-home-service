@@ -26,10 +26,10 @@ class ProfileOptionsScreen extends StatefulWidget {
   const ProfileOptionsScreen({Key? key}) : super(key: key);
 
   @override
-  State<ProfileOptionsScreen> createState() => _ProfileOptionsScreenState();
+  State<ProfileOptionsScreen> createState() => ProfileOptionsScreenState();
 }
 
-class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
+class ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
   bool _isProvider = false;
   bool _isAdmin = false;
   bool _isLoading = true;
@@ -71,6 +71,24 @@ class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
         });
       }
     }
+  }
+
+  // Método público para refrescar estado de proveedor desde fuera
+  Future<void> refreshProviderStatus() async {
+    debugPrint('🔄 [ProfileOptions] Refrescando estado de proveedor...');
+    await _checkProviderStatus();
+    await _checkAdminStatus();
+    debugPrint(
+        '✅ [ProfileOptions] Estado actualizado - isProvider: $_isProvider');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Auto-refresh when screen becomes visible again
+    debugPrint('👁️ [ProfileOptions] Pantalla visible - refrescando estado...');
+    _checkProviderStatus();
+    _checkAdminStatus();
   }
 
   Future<void> _checkAdminStatus() async {
@@ -639,46 +657,67 @@ class _ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
   }
 
   void _showLogoutConfirmation(BuildContext context) {
+    debugPrint('🔵 [LOGOUT] Mostrando diálogo de confirmación...');
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Cerrar Sesión'),
         content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              debugPrint('❌ [LOGOUT] Cancelado por usuario');
+              Navigator.of(dialogContext).pop();
+            },
             child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context);
+              debugPrint('🟢 [LOGOUT] ===== BOTÓN PRESIONADO =====');
               try {
+                debugPrint('🚪 [LOGOUT] ===== INICIO CIERRE DE SESIÓN =====');
+
+                // Close confirmation dialog
+                Navigator.of(dialogContext).pop();
+
+                // Sign out from Supabase
                 debugPrint(
-                    '🚪 [LOGOUT] Iniciando cierre de sesión desde ProfileOptionsScreen...');
+                    '🔐 [LOGOUT] Llamando a SupabaseConfig.auth.signOut()...');
                 await SupabaseConfig.auth.signOut();
+
+                debugPrint('✅ [LOGOUT] Sesión cerrada exitosamente');
+
+                // CRITICAL: Add delay to let Supabase auth state propagate
                 await Future.delayed(const Duration(milliseconds: 800));
+
+                // Navigate to AuthWrapper and clear all navigation stack
                 if (context.mounted) {
-                  debugPrint('🔄 [LOGOUT] Navegando a AuthWrapper...');
+                  debugPrint(
+                      '🔄 [LOGOUT] Limpiando stack de navegación y volviendo a AuthWrapper...');
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => const AuthWrapper()),
+                    MaterialPageRoute(builder: (_) => const AuthWrapper()),
                     (route) => false,
                   );
-                  debugPrint('✅ [LOGOUT] Cierre de sesión completado');
+                  debugPrint('✅ [LOGOUT] ===== LOGOUT COMPLETADO =====');
                 }
-              } catch (e) {
-                debugPrint('❌ [LOGOUT] Error: $e');
+              } catch (e, stackTrace) {
+                debugPrint('❌ [LOGOUT] ERROR: $e');
+                debugPrint('❌ [LOGOUT] StackTrace: $stackTrace');
+
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content:
-                            Text('Error al cerrar sesión: ${e.toString()}')),
+                      content: Text('Error al cerrar sesión: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(seconds: 5),
+                    ),
                   );
                 }
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.orange,
               foregroundColor: Colors.white,
             ),
             child: const Text('Cerrar Sesión'),

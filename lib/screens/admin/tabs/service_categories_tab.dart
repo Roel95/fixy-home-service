@@ -429,7 +429,7 @@ class _ServiceCategoriesTabState extends State<ServiceCategoriesTab> {
                           isActive = value;
                         });
                       },
-                      activeColor: AppTheme.primaryColor,
+                      activeThumbColor: AppTheme.primaryColor,
                     ),
                   ],
                 ),

@@ -1310,7 +1310,7 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   late ProductRepository _repository;
   late List<ProductModel> _products;
-  late List<ProductModel> _filteredProducts;
+  List<ProductModel> _filteredProducts = [];
   String _sortBy = 'featured';
   ProductFilters _filters = ProductFilters();
 

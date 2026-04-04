@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fixy_home_service/data/service_repository.dart';
 import 'package:fixy_home_service/models/provider_model.dart';
+import 'package:fixy_home_service/supabase/supabase_config.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class ProvidersTab extends StatefulWidget {
@@ -12,10 +13,10 @@ class ProvidersTab extends StatefulWidget {
 
 class _ProvidersTabState extends State<ProvidersTab> {
   final ServiceRepository _repository = ServiceRepository();
-  List<ProviderModel> _providers = [];
+  List<ProviderModel> _pendingProviders = [];
+  List<ProviderModel> _activeProviders = [];
   bool _isLoading = true;
   String? _error;
-  ProviderStatus? _selectedFilter;
 
   @override
   void initState() {
@@ -30,9 +31,11 @@ class _ProvidersTabState extends State<ProvidersTab> {
     });
 
     try {
-      final providers = await _repository.getProviders(status: _selectedFilter);
+      final pending = await _repository.getPendingProviders();
+      final active = await _repository.getActiveProviders();
       setState(() {
-        _providers = providers;
+        _pendingProviders = pending;
+        _activeProviders = active;
         _isLoading = false;
       });
     } catch (e) {
@@ -43,17 +46,13 @@ class _ProvidersTabState extends State<ProvidersTab> {
     }
   }
 
-  Future<void> _updateProviderStatus(
-      ProviderModel provider, ProviderStatus newStatus) async {
+  Future<void> _approveProvider(ProviderModel provider) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
-          newStatus == ProviderStatus.active ? 'Aprobar Proveedor' : 'Rechazar Proveedor',
-        ),
+        title: const Text('Aprobar Proveedor'),
         content: Text(
-          '¿Estás seguro de que deseas ${newStatus == ProviderStatus.active ? 'aprobar' : 'rechazar'} a ${provider.businessName}?',
-        ),
+            '¿Aprobar a ${provider.businessName}? Se marcará como verificado.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -61,10 +60,8 @@ class _ProvidersTabState extends State<ProvidersTab> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: newStatus == ProviderStatus.active ? Colors.green : Colors.red,
-            ),
-            child: Text(newStatus == ProviderStatus.active ? 'Aprobar' : 'Rechazar'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            child: const Text('Aprobar'),
           ),
         ],
       ),
@@ -73,23 +70,25 @@ class _ProvidersTabState extends State<ProvidersTab> {
     if (confirmed == true) {
       setState(() => _isLoading = true);
 
-      final success = await _repository.updateProviderStatus(provider.id, newStatus);
+      try {
+        // Actualizar status a active e is_verified a true
+        await SupabaseConfig.client.from('providers').update({
+          'status': 'active',
+          'is_verified': true,
+        }).eq('id', provider.id);
 
-      if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Proveedor ${newStatus == ProviderStatus.active ? 'aprobado' : 'rechazado'} exitosamente',
-            ),
-            backgroundColor: newStatus == ProviderStatus.active ? Colors.green : Colors.orange,
+            content: Text('${provider.businessName} aprobado exitosamente'),
+            backgroundColor: Colors.green,
           ),
         );
         await _loadProviders();
-      } else {
+      } catch (e) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error al actualizar el estado del proveedor'),
+          SnackBar(
+            content: Text('Error al aprobar: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -97,108 +96,51 @@ class _ProvidersTabState extends State<ProvidersTab> {
     }
   }
 
-  void _showProviderDetails(ProviderModel provider) {
-    showDialog(
+  Future<void> _rejectProvider(ProviderModel provider) async {
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(provider.businessName),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildDetailRow('Email', provider.email),
-              _buildDetailRow('Teléfono', provider.phone),
-              _buildDetailRow('Dirección', provider.address),
-              _buildDetailRow('Ciudad', provider.city),
-              _buildDetailRow('Experiencia', '${provider.yearsOfExperience} años'),
-              _buildDetailRow('Categorías', provider.serviceCategories.join(', ')),
-              if (provider.certifications.isNotEmpty)
-                _buildDetailRow('Certificaciones', provider.certifications.join(', ')),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: _getStatusColor(provider.status).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  _getStatusText(provider.status),
-                  style: TextStyle(
-                    color: _getStatusColor(provider.status),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        title: const Text('Rechazar Proveedor'),
+        content: Text('¿Rechazar a ${provider.businessName}?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
           ),
-          if (provider.status == ProviderStatus.pending)
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-                _updateProviderStatus(provider, ProviderStatus.active);
-              },
-              icon: const Icon(Icons.check),
-              label: const Text('Aprobar'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 14),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Rechazar'),
           ),
         ],
       ),
     );
-  }
 
-  Color _getStatusColor(ProviderStatus status) {
-    switch (status) {
-      case ProviderStatus.pending:
-        return Colors.orange;
-      case ProviderStatus.active:
-        return Colors.green;
-      case ProviderStatus.inactive:
-        return Colors.red;
-      case ProviderStatus.suspended:
-        return Colors.grey;
-    }
-  }
+    if (confirmed == true) {
+      setState(() => _isLoading = true);
 
-  String _getStatusText(ProviderStatus status) {
-    switch (status) {
-      case ProviderStatus.pending:
-        return 'Pendiente';
-      case ProviderStatus.active:
-        return 'Activo';
-      case ProviderStatus.inactive:
-        return 'Inactivo';
-      case ProviderStatus.suspended:
-        return 'Suspendido';
+      try {
+        // Actualizar status a rejected
+        await SupabaseConfig.client
+            .from('providers')
+            .update({'status': 'rejected'}).eq('id', provider.id);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${provider.businessName} rechazado'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        await _loadProviders();
+      } catch (e) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al rechazar: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -207,103 +149,78 @@ class _ProvidersTabState extends State<ProvidersTab> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: _loadProviders,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header con filtros
-              Row(
-                children: [
-                  Text(
-                    'Gestión de Proveedores',
-                    style: AppTheme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _error != null
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline,
+                            size: 48, color: Colors.red.shade300),
+                        const SizedBox(height: 16),
+                        Text(_error!),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _loadProviders,
+                          child: const Text('Reintentar'),
+                        ),
+                      ],
                     ),
-                  ),
-                  const Spacer(),
-                  // Filtro de status
-                  DropdownButton<ProviderStatus?>(
-                    value: _selectedFilter,
-                    hint: const Text('Todos'),
-                    items: [
-                      const DropdownMenuItem(
-                        value: null,
-                        child: Text('Todos'),
-                      ),
-                      ...ProviderStatus.values.map((status) => DropdownMenuItem(
-                        value: status,
-                        child: Text(_getStatusText(status)),
-                      )),
-                    ],
-                    onChanged: (value) {
-                      setState(() => _selectedFilter = value);
-                      _loadProviders();
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '${_providers.length} proveedores ${_selectedFilter != null ? '(${_getStatusText(_selectedFilter!)})' : ''}',
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 16),
-              // Lista de proveedores
-              Expanded(
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _error != null
-                        ? Center(
+                  )
+                : SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Sección: Pendientes de Aprobación
+                        if (_pendingProviders.isNotEmpty) ...[
+                          Text(
+                            'Pendientes de Aprobación (${_pendingProviders.length})',
+                            style: AppTheme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ..._pendingProviders.map(
+                              (p) => _buildProviderCard(p, isPending: true)),
+                          const SizedBox(height: 24),
+                        ],
+
+                        // Sección: Proveedores Activos
+                        Text(
+                          'Proveedores Activos (${_activeProviders.length})',
+                          style: AppTheme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        if (_activeProviders.isEmpty)
+                          Center(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.error_outline,
-                                    size: 48, color: Colors.red.shade300),
+                                Icon(Icons.people_outline,
+                                    size: 64, color: Colors.grey.shade400),
                                 const SizedBox(height: 16),
-                                Text(_error!),
-                                const SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: _loadProviders,
-                                  child: const Text('Reintentar'),
+                                Text(
+                                  'No hay proveedores activos',
+                                  style: TextStyle(color: Colors.grey.shade600),
                                 ),
                               ],
                             ),
                           )
-                        : _providers.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.people_outline,
-                                        size: 64, color: Colors.grey.shade400),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'No hay proveedores ${_selectedFilter != null ? 'con este filtro' : ''}',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade600,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: _providers.length,
-                                itemBuilder: (context, index) {
-                                  final provider = _providers[index];
-                                  return _buildProviderCard(provider);
-                                },
-                              ),
-              ),
-            ],
-          ),
-        ),
+                        else
+                          ..._activeProviders.map(
+                              (p) => _buildProviderCard(p, isPending: false)),
+                      ],
+                    ),
+                  ),
       ),
     );
   }
 
-  Widget _buildProviderCard(ProviderModel provider) {
+  Widget _buildProviderCard(ProviderModel provider, {required bool isPending}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -317,135 +234,94 @@ class _ProvidersTabState extends State<ProvidersTab> {
           ),
         ],
       ),
-      child: InkWell(
-        onTap: () => _showProviderDetails(provider),
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              // Avatar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: provider.profileImageUrl != null
-                    ? Image.network(
-                        provider.profileImageUrl!,
-                        width: 56,
-                        height: 56,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildPlaceholderAvatar(),
-                      )
-                    : _buildPlaceholderAvatar(),
-              ),
-              const SizedBox(width: 16),
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      provider.businessName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      provider.email,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${provider.yearsOfExperience} años de experiencia • ${provider.serviceCategories.length} categorías',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Status badge y acciones
-              Column(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            // Foto de perfil
+            ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: provider.profileImageUrl != null
+                  ? Image.network(
+                      provider.profileImageUrl!,
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _buildPlaceholderAvatar(),
+                    )
+                  : _buildPlaceholderAvatar(),
+            ),
+            const SizedBox(width: 16),
+            // Información
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: _getStatusColor(provider.status).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                  Text(
+                    provider.businessName,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
-                    child: Text(
-                      _getStatusText(provider.status),
-                      style: TextStyle(
-                        color: _getStatusColor(provider.status),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11,
-                      ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    provider.serviceCategories.join(', '),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${provider.yearsOfExperience} años de experiencia • ${provider.phone}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  // Botones de acción
-                  if (provider.status == ProviderStatus.pending)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          onPressed: () => _updateProviderStatus(
-                              provider, ProviderStatus.active),
-                          icon: const Icon(Icons.check_circle,
-                              color: Colors.green, size: 28),
-                          tooltip: 'Aprobar',
-                          padding: EdgeInsets.zero,
-                          constraints:
-                              const BoxConstraints(minWidth: 36, minHeight: 36),
-                        ),
-                        IconButton(
-                          onPressed: () => _updateProviderStatus(
-                              provider, ProviderStatus.inactive),
-                          icon: const Icon(Icons.cancel,
-                              color: Colors.red, size: 28),
-                          tooltip: 'Rechazar',
-                          padding: EdgeInsets.zero,
-                          constraints:
-                              const BoxConstraints(minWidth: 36, minHeight: 36),
-                        ),
-                      ],
-                    )
-                  else if (provider.status == ProviderStatus.active)
-                    IconButton(
-                      onPressed: () => _updateProviderStatus(
-                          provider, ProviderStatus.inactive),
-                      icon: const Icon(Icons.pause_circle,
-                          color: Colors.orange, size: 28),
-                      tooltip: 'Desactivar',
-                      padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 36, minHeight: 36),
-                    )
-                  else
-                    IconButton(
-                      onPressed: () => _updateProviderStatus(
-                          provider, ProviderStatus.active),
-                      icon: const Icon(Icons.play_circle,
-                          color: Colors.green, size: 28),
-                      tooltip: 'Activar',
-                      padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 36, minHeight: 36),
-                    ),
                 ],
               ),
-            ],
-          ),
+            ),
+            // Botones de acción (solo para pendientes)
+            if (isPending)
+              Column(
+                children: [
+                  IconButton(
+                    onPressed: () => _approveProvider(provider),
+                    icon: const Icon(Icons.check_circle,
+                        color: Colors.green, size: 32),
+                    tooltip: 'Aprobar',
+                  ),
+                  IconButton(
+                    onPressed: () => _rejectProvider(provider),
+                    icon: const Icon(Icons.cancel, color: Colors.red, size: 32),
+                    tooltip: 'Rechazar',
+                  ),
+                ],
+              )
+            else
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'Activo',
+                  style: TextStyle(
+                    color: Colors.green.shade700,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -453,8 +329,8 @@ class _ProvidersTabState extends State<ProvidersTab> {
 
   Widget _buildPlaceholderAvatar() {
     return Container(
-      width: 56,
-      height: 56,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(40),

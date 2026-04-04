@@ -96,17 +96,6 @@ class _AccountTabState extends State<AccountTab>
                 'Acciones', Icons.admin_panel_settings_outlined),
             const SizedBox(height: 16),
             _buildAccountActionCard(
-              'Cerrar Sesión',
-              'Salir de tu cuenta',
-              Icons.logout,
-              Colors.orange,
-              () {
-                debugPrint(
-                    '🔴 [LOGOUT] Card presionada - llamando _showLogoutConfirmation()');
-                _showLogoutConfirmation();
-              },
-            ),
-            _buildAccountActionCard(
               'Eliminar Cuenta',
               'Eliminar permanentemente tu cuenta y datos',
               Icons.delete_forever,
