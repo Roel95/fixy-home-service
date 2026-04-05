@@ -163,7 +163,7 @@ class _ServicesStepState extends State<ServicesStep> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -194,9 +194,9 @@ class _ServicesStepState extends State<ServicesStep> {
                           deleteIcon: const Icon(Icons.close, size: 16),
                           onDeleted: () => provider.toggleCategory(categoryId),
                           backgroundColor:
-                              AppTheme.primaryColor.withOpacity(0.1),
+                              AppTheme.primaryColor.withValues(alpha: 0.1),
                           side: BorderSide(
-                              color: AppTheme.primaryColor.withOpacity(0.2)),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.2)),
                           labelStyle: TextStyle(
                             fontSize: 12,
                             color: AppTheme.primaryColor,
@@ -247,13 +247,13 @@ class _ServiceCategoryCard extends StatelessWidget {
           boxShadow: [
             if (!isSelected)
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               )
             else
               BoxShadow(
-                color: AppTheme.primaryColor.withOpacity(0.3),
+                color: AppTheme.primaryColor.withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),

@@ -123,7 +123,7 @@ class _ProductsTabState extends State<ProductsTab> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF2D3748).withOpacity(0.1),
+                        color: const Color(0xFF2D3748).withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(2, 2),
                       ),
@@ -144,7 +144,7 @@ class _ProductsTabState extends State<ProductsTab> {
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 14),
                       hintStyle: TextStyle(
-                        color: const Color(0xFF2D3748).withOpacity(0.5),
+                        color: const Color(0xFF2D3748).withValues(alpha: 0.5),
                       ),
                     ),
                   ),
@@ -168,7 +168,7 @@ class _ProductsTabState extends State<ProductsTab> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -195,7 +195,7 @@ class _ProductsTabState extends State<ProductsTab> {
             label,
             style: TextStyle(
               fontSize: 11,
-              color: const Color(0xFF2D3748).withOpacity(0.7),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -215,7 +215,7 @@ class _ProductsTabState extends State<ProductsTab> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF667EEA).withOpacity(0.3),
+              color: const Color(0xFF667EEA).withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -249,7 +249,7 @@ class _ProductsTabState extends State<ProductsTab> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -281,7 +281,7 @@ class _ProductsTabState extends State<ProductsTab> {
                     errorBuilder: (context, error, stackTrace) => Container(
                       width: 80,
                       height: 80,
-                      color: const Color(0xFF667EEA).withOpacity(0.1),
+                      color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                       child: const Icon(Icons.image, color: Color(0xFF667EEA)),
                     ),
                   ),
@@ -308,7 +308,7 @@ class _ProductsTabState extends State<ProductsTab> {
                         product.brand,
                         style: TextStyle(
                           fontSize: 12,
-                          color: const Color(0xFF2D3748).withOpacity(0.6),
+                          color: const Color(0xFF2D3748).withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -319,7 +319,7 @@ class _ProductsTabState extends State<ProductsTab> {
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: _getStockColor(product.stock)
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -337,7 +337,7 @@ class _ProductsTabState extends State<ProductsTab> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFF3B30).withOpacity(0.1),
+                                color: const Color(0xFFFF3B30).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Text(
@@ -415,7 +415,7 @@ class _ProductsTabState extends State<ProductsTab> {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: color, size: 18),
@@ -431,7 +431,7 @@ class _ProductsTabState extends State<ProductsTab> {
           Icon(
             Icons.inventory_2_outlined,
             size: 80,
-            color: const Color(0xFF2D3748).withOpacity(0.3),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
@@ -439,7 +439,7 @@ class _ProductsTabState extends State<ProductsTab> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF2D3748).withOpacity(0.5),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 8),
@@ -447,7 +447,7 @@ class _ProductsTabState extends State<ProductsTab> {
             'Agrega tu primer producto a la tienda',
             style: TextStyle(
               fontSize: 14,
-              color: const Color(0xFF2D3748).withOpacity(0.4),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(height: 24),
@@ -631,7 +631,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                       const BorderRadius.vertical(top: Radius.circular(24)),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF2D3748).withOpacity(0.1),
+                      color: const Color(0xFF2D3748).withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -820,7 +820,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
           color: const Color(0xFFE8ECF3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: const Color(0xFF667EEA).withOpacity(0.3),
+            color: const Color(0xFF667EEA).withValues(alpha: 0.3),
             style: BorderStyle.solid,
             width: 2,
           ),
@@ -892,7 +892,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -915,7 +915,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               hintText: 'Selecciona una categoría',
               hintStyle: TextStyle(
-                color: const Color(0xFF2D3748).withOpacity(0.5),
+                color: const Color(0xFF2D3748).withValues(alpha: 0.5),
               ),
             ),
             items: widget.categories.map((category) {
@@ -957,7 +957,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),

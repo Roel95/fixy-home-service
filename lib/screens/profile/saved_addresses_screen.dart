@@ -120,7 +120,7 @@ class _SavedAddressesScreenState extends State<SavedAddressesScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -135,7 +135,7 @@ class _SavedAddressesScreenState extends State<SavedAddressesScreen> {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withOpacity(0.1),
+            color: AppTheme.primaryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -161,7 +161,7 @@ class _SavedAddressesScreenState extends State<SavedAddressesScreen> {
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Text(
@@ -573,7 +573,7 @@ class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor.withOpacity(0.1) : Colors.grey[100],
+          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : Colors.grey[100],
           border: Border.all(
             color: isSelected ? AppTheme.primaryColor : Colors.transparent,
             width: 2,

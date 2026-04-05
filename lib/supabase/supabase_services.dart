@@ -64,7 +64,29 @@ class SupabaseServices {
           .insert(notificationData);
 
       debugPrint(
-          '✅ [SUPABASE_SERVICES] Notification sent to provider: $providerId');
+          '✅ [SUPABASE_SERVICES] Notification inserted for provider: $providerId');
+
+      // Send FCM push notification via Edge Function
+      try {
+        await SupabaseConfig.client.functions.invoke(
+          'send-fcm-notification',
+          body: {
+            'user_id': providerId,
+            'title': 'Nueva Reserva',
+            'body': 'Tienes una nueva reserva para: $serviceName',
+            'data': {
+              'reservation_id': reservationId,
+              'service_name': serviceName,
+              'type': 'new_reservation',
+            },
+          },
+        );
+        debugPrint('✅ [SUPABASE_SERVICES] FCM notification sent to provider');
+      } catch (fcmError) {
+        debugPrint(
+            '⚠️ [SUPABASE_SERVICES] FCM send failed (non-critical): $fcmError');
+        // Don't rethrow - FCM failure shouldn't break the reservation flow
+      }
     } catch (e) {
       debugPrint('❌ [SUPABASE_SERVICES] Error sending notification: $e');
       rethrow;

@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:fixy_home_service/models/service_model.dart';
 import 'package:fixy_home_service/services/user_service.dart';
 import 'package:fixy_home_service/services/service_management_service.dart';
+import 'package:fixy_home_service/services/category_service.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class ManageServiceScreen extends StatefulWidget {
@@ -32,7 +33,9 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
   String? _selectedImageName;
   final _imagePicker = ImagePicker();
 
-  String _selectedCategory = 'Limpieza y Mantenimiento';
+  String _selectedCategory = '';
+  List<String> _categories = [];
+  bool _isLoadingCategories = true;
   String _selectedCurrency = 'S/';
   String _selectedTimeUnit = 'hr';
   String _timeFrom = '08:00';
@@ -49,25 +52,13 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
     'Domingo'
   ];
 
-  final List<String> _categories = [
-    'Limpieza y Mantenimiento',
-    'Reparaciones',
-    'Belleza',
-    'Electricidad',
-    'Plomería',
-    'Jardinería',
-    'Pintura',
-    'Carpintería',
-    'Tecnología',
-    'Otros'
-  ];
-
   bool _isLoading = false;
   bool get _isEditing => widget.service != null;
 
   @override
   void initState() {
     super.initState();
+    _loadCategories();
     if (_isEditing) {
       _titleController.text = widget.service!.title;
       _descriptionController.text = widget.service!.description;
@@ -80,6 +71,23 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
       _timeFrom = widget.service!.timeFrom;
       _timeTo = widget.service!.timeTo;
       _selectedDays.addAll(widget.service!.availableDays);
+    }
+  }
+
+  Future<void> _loadCategories() async {
+    setState(() => _isLoadingCategories = true);
+    try {
+      final categories = await CategoryService.getCategories();
+      setState(() {
+        _categories = categories;
+        if (!_isEditing && categories.isNotEmpty) {
+          _selectedCategory = categories.first;
+        }
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      debugPrint('❌ Error cargando categorías: $e');
+      setState(() => _isLoadingCategories = false);
     }
   }
 
@@ -287,13 +295,26 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
                   v?.trim().isEmpty ?? true ? 'Campo requerido' : null,
             ),
             const SizedBox(height: 16),
-            _ModernDropdown(
-              value: _selectedCategory,
-              label: 'Categoría',
-              icon: Icons.category,
-              items: _categories,
-              onChanged: (v) => setState(() => _selectedCategory = v!),
-            ),
+            _isLoadingCategories
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : _categories.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text('No hay categorías disponibles'),
+                      )
+                    : _ModernDropdown(
+                        value: _selectedCategory,
+                        label: 'Categoría',
+                        icon: Icons.category,
+                        items: _categories,
+                        onChanged: (v) =>
+                            setState(() => _selectedCategory = v!),
+                      ),
             const SizedBox(height: 32),
 
             // Precio y Disponibilidad Section
@@ -302,7 +323,7 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
             Row(
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: _ModernTextField(
                     controller: _priceController,
                     label: 'Precio',
@@ -319,11 +340,33 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   flex: 2,
-                  child: _ModernDropdown(
-                    value: _selectedCurrency,
-                    label: 'Moneda',
-                    items: ['S/', 'USD', 'EUR'],
-                    onChanged: (v) => setState(() => _selectedCurrency = v!),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.currency_exchange,
+                            color: AppTheme.primaryColor, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'S/',
+                          style: AppTheme.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),

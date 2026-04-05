@@ -282,8 +282,8 @@ class _AccountTabState extends State<AccountTab>
             height: 40,
             decoration: BoxDecoration(
               color: isCurrentDevice
-                  ? Colors.green.withOpacity(0.1)
-                  : Colors.blue.withOpacity(0.1),
+                  ? Colors.green.withValues(alpha: 0.1)
+                  : Colors.blue.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(

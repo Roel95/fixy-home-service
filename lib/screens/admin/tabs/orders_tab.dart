@@ -119,7 +119,7 @@ class _OrdersTabState extends State<OrdersTab> {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF2D3748).withOpacity(0.1),
+                  color: const Color(0xFF2D3748).withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(2, 2),
                 ),
@@ -139,7 +139,7 @@ class _OrdersTabState extends State<OrdersTab> {
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 hintStyle: TextStyle(
-                  color: const Color(0xFF2D3748).withOpacity(0.5),
+                  color: const Color(0xFF2D3748).withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -158,7 +158,7 @@ class _OrdersTabState extends State<OrdersTab> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -174,7 +174,7 @@ class _OrdersTabState extends State<OrdersTab> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -196,7 +196,7 @@ class _OrdersTabState extends State<OrdersTab> {
                   label,
                   style: TextStyle(
                     fontSize: 11,
-                    color: const Color(0xFF2D3748).withOpacity(0.7),
+                    color: const Color(0xFF2D3748).withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -227,7 +227,7 @@ class _OrdersTabState extends State<OrdersTab> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? color.withOpacity(0.1)
+                    ? color.withValues(alpha: 0.1)
                     : const Color(0xFFE8ECF3),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
@@ -238,7 +238,7 @@ class _OrdersTabState extends State<OrdersTab> {
                     ? null
                     : [
                         BoxShadow(
-                          color: const Color(0xFF2D3748).withOpacity(0.05),
+                          color: const Color(0xFF2D3748).withValues(alpha: 0.05),
                           blurRadius: 2,
                           offset: const Offset(1, 1),
                         ),
@@ -270,7 +270,7 @@ class _OrdersTabState extends State<OrdersTab> {
                           isSelected ? FontWeight.w600 : FontWeight.normal,
                       color: isSelected
                           ? color
-                          : const Color(0xFF2D3748).withOpacity(0.7),
+                          : const Color(0xFF2D3748).withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -303,7 +303,7 @@ class _OrdersTabState extends State<OrdersTab> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -345,7 +345,7 @@ class _OrdersTabState extends State<OrdersTab> {
                           _formatDate(order.createdAt),
                           style: TextStyle(
                             fontSize: 12,
-                            color: const Color(0xFF2D3748).withOpacity(0.6),
+                            color: const Color(0xFF2D3748).withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -354,7 +354,7 @@ class _OrdersTabState extends State<OrdersTab> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
+                        color: statusColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -376,7 +376,7 @@ class _OrdersTabState extends State<OrdersTab> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF667EEA).withOpacity(0.1),
+                        color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -404,7 +404,7 @@ class _OrdersTabState extends State<OrdersTab> {
                               order.userEmail!,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: const Color(0xFF2D3748).withOpacity(0.6),
+                                color: const Color(0xFF2D3748).withValues(alpha: 0.6),
                               ),
                             ),
                         ],
@@ -422,7 +422,7 @@ class _OrdersTabState extends State<OrdersTab> {
                       '${order.totalItems} productos',
                       style: TextStyle(
                         fontSize: 13,
-                        color: const Color(0xFF2D3748).withOpacity(0.7),
+                        color: const Color(0xFF2D3748).withValues(alpha: 0.7),
                       ),
                     ),
                     Text(
@@ -509,7 +509,7 @@ class _OrdersTabState extends State<OrdersTab> {
           Icon(
             Icons.shopping_bag_outlined,
             size: 80,
-            color: const Color(0xFF2D3748).withOpacity(0.3),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
@@ -517,7 +517,7 @@ class _OrdersTabState extends State<OrdersTab> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF2D3748).withOpacity(0.5),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 8),
@@ -525,7 +525,7 @@ class _OrdersTabState extends State<OrdersTab> {
             'Los pedidos aparecerán aquí',
             style: TextStyle(
               fontSize: 14,
-              color: const Color(0xFF2D3748).withOpacity(0.4),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.4),
             ),
           ),
         ],
@@ -560,7 +560,7 @@ class _OrdersTabState extends State<OrdersTab> {
                         const BorderRadius.vertical(top: Radius.circular(24)),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF2D3748).withOpacity(0.1),
+                        color: const Color(0xFF2D3748).withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -599,7 +599,7 @@ class _OrdersTabState extends State<OrdersTab> {
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: _getStatusColor(order.status)
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -718,7 +718,7 @@ class _OrdersTabState extends State<OrdersTab> {
                       color: const Color(0xFFE8ECF3),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF2D3748).withOpacity(0.1),
+                          color: const Color(0xFF2D3748).withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, -2),
                         ),
@@ -817,7 +817,7 @@ class _OrdersTabState extends State<OrdersTab> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF2D3748).withOpacity(0.05),
+                color: const Color(0xFF2D3748).withValues(alpha: 0.05),
                 blurRadius: 4,
                 offset: const Offset(2, 2),
               ),
@@ -859,7 +859,7 @@ class _OrdersTabState extends State<OrdersTab> {
             label,
             style: TextStyle(
               fontSize: 14,
-              color: const Color(0xFF2D3748).withOpacity(0.7),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.7),
             ),
           ),
           Text(
@@ -928,7 +928,7 @@ class _OrdersTabState extends State<OrdersTab> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(_getStatusIcon(status), color: color),

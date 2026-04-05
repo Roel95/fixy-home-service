@@ -8,7 +8,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/widgets/reservation_status_card.dart';
 
 class CurrentServiceStatusScreen extends StatefulWidget {
-  const CurrentServiceStatusScreen({Key? key}) : super(key: key);
+  const CurrentServiceStatusScreen({super.key});
 
   @override
   State<CurrentServiceStatusScreen> createState() =>
@@ -18,7 +18,6 @@ class CurrentServiceStatusScreen extends StatefulWidget {
 class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _isRefreshing = false;
 
   @override
   void initState() {
@@ -38,16 +37,8 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
   }
 
   Future<void> _refreshReservations() async {
-    setState(() {
-      _isRefreshing = true;
-    });
-
     await Provider.of<ReservationProvider>(context, listen: false)
         .loadReservations();
-
-    setState(() {
-      _isRefreshing = false;
-    });
   }
 
   void _showCancelConfirmation(
@@ -488,7 +479,7 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
                   style: AppTheme.textTheme.bodyMedium,
                 ),
                 Text(
-                  '${DateFormat('HH:mm').format(reservation.estimatedArrival!)}',
+                  DateFormat('HH:mm').format(reservation.estimatedArrival!),
                   style: AppTheme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.primaryColor,

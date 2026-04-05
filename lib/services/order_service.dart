@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fixy_home_service/models/product_model.dart';
+import 'package:fixy_home_service/services/notification_service.dart';
+import 'package:fixy_home_service/models/notification_model.dart';
 
 class OrderService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -73,11 +75,23 @@ class OrderService {
 
       print('✅ ${orderItems.length} items agregados a la orden');
 
-      // TODO: Reducir stock de productos
-      // Por ahora lo dejamos comentado para no afectar la demo
-      // for (var item in items) {
-      //   await _reduceProductStock(item.product.id, item.quantity);
-      // }
+      // Crear notificación para el usuario
+      try {
+        final user = _supabase.auth.currentUser;
+        if (user != null) {
+          await NotificationService.createNotification(
+            userId: user.id,
+            title: '🛒 Nueva orden creada',
+            body:
+                'Tu orden #$orderNumber ha sido creada exitosamente. Total: S/$total',
+            type: 'order',
+            data: {'order_id': orderId},
+          );
+          print('✅ Notificación de orden creada');
+        }
+      } catch (e) {
+        print('⚠️ Error creando notificación: $e');
+      }
 
       return orderId;
     } catch (e) {
@@ -194,6 +208,24 @@ class OrderService {
           .update({'status': newStatus}).eq('id', orderId);
 
       print('✅ Estado de orden $orderId actualizado a: $newStatus');
+
+      // Crear notificación para el usuario sobre cambio de estado
+      try {
+        final user = _supabase.auth.currentUser;
+        if (user != null) {
+          final statusMessage = _getStatusMessage(newStatus);
+          await NotificationService.createNotification(
+            userId: user.id,
+            title: '📦 Actualización de orden',
+            body: statusMessage,
+            type: 'order_status',
+            data: {'order_id': orderId, 'status': newStatus},
+          );
+          print('✅ Notificación de estado creada');
+        }
+      } catch (e) {
+        print('⚠️ Error creando notificación de estado: $e');
+      }
     } catch (e) {
       print('❌ Error actualizando estado de orden: $e');
       rethrow;
@@ -253,6 +285,26 @@ class OrderService {
     } catch (e) {
       print('❌ Error obteniendo estadísticas: $e');
       return {'total_orders': 0, 'total_sales': 0.0};
+    }
+  }
+
+  /// Obtener mensaje según estado de orden
+  String _getStatusMessage(String status) {
+    switch (status) {
+      case 'pending':
+        return 'Tu orden está pendiente de confirmación.';
+      case 'processing':
+        return 'Tu orden está siendo procesada.';
+      case 'shipped':
+        return 'Tu orden ha sido enviada y está en camino.';
+      case 'delivered':
+        return 'Tu orden ha sido entregada exitosamente.';
+      case 'cancelled':
+        return 'Tu orden ha sido cancelada.';
+      case 'completed':
+        return 'Tu orden ha sido completada.';
+      default:
+        return 'Tu orden ha sido actualizada.';
     }
   }
 

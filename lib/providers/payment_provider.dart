@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fixy_home_service/models/payment_model.dart';
 import 'package:fixy_home_service/models/service_model.dart';
 import 'package:fixy_home_service/supabase/supabase_services.dart';
+import 'package:fixy_home_service/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -107,6 +109,25 @@ class PaymentProvider extends ChangeNotifier {
             reservationId: reservation['id'],
             serviceName: _reservationData!['serviceName'],
           );
+
+          // Crear notificación para el usuario sobre la nueva reserva
+          try {
+            final user = Supabase.instance.client.auth.currentUser;
+            if (user != null) {
+              await NotificationService.createNotification(
+                userId: user.id,
+                title: '📅 Nueva reserva creada',
+                body:
+                    'Tu reserva para "${_reservationData!['serviceName']}" ha sido confirmada.',
+                type: 'reservation',
+                data: {'reservation_id': reservation['id']},
+              );
+              debugPrint('✅ [PAYMENT] Notificación de reserva creada');
+            }
+          } catch (e) {
+            debugPrint(
+                '⚠️ [PAYMENT] Error creando notificación de reserva: $e');
+          }
         } catch (e) {
           debugPrint('❌ [PAYMENT] Error creando reserva: $e');
         }

@@ -88,8 +88,8 @@ class _DayAvailabilityCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: availability.isAvailable
-                ? AppTheme.primaryColor.withOpacity(0.15)
-                : Colors.black.withOpacity(0.05),
+                ? AppTheme.primaryColor.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

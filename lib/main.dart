@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:fixy_home_service/screens/splash_screen.dart';
 import 'package:fixy_home_service/screens/provider_dashboard/provider_dashboard_screen.dart';
@@ -16,11 +17,24 @@ import 'package:fixy_home_service/providers/favorites_provider.dart';
 import 'package:fixy_home_service/providers/provider_dashboard_provider.dart';
 import 'package:fixy_home_service/supabase/supabase_config.dart';
 import 'package:fixy_home_service/utils/navigation_service.dart';
+import 'package:fixy_home_service/services/fcm_service.dart';
+import 'package:fixy_home_service/utils/notification_diagnostics.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
+    // Initialize Firebase
+    await Firebase.initializeApp();
+    debugPrint('✅ [MAIN] Firebase initialized successfully');
+
+    // Initialize FCM Service
+    await FCMService.initialize();
+    debugPrint('✅ [MAIN] FCM Service initialized');
+
+    // Run diagnostics
+    await NotificationDiagnostics.runFullDiagnostics();
+
     // Initialize Supabase
     await SupabaseConfig.initialize();
 
@@ -32,8 +46,7 @@ Future<void> main() async {
       );
     }
   } catch (e) {
-    debugPrint('❌ [MAIN] Failed to initialize Supabase: $e');
-    // You might want to show an error dialog or handle this gracefully
+    debugPrint('❌ [MAIN] Failed to initialize services: $e');
   }
 
   SystemChrome.setPreferredOrientations([
@@ -44,7 +57,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -86,7 +99,9 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         title: 'Fixy Home Service',
-        theme: lightTheme.copyWith(fontFamily: 'Lufga'),
+        theme: lightTheme.copyWith(
+          textTheme: lightTheme.textTheme.apply(fontFamily: 'Lufga'),
+        ),
         debugShowCheckedModeBanner: false,
         navigatorKey: NavigationService.navigatorKey,
         home: const SplashScreen(),

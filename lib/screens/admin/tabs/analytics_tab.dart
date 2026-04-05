@@ -69,6 +69,10 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -108,7 +112,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -226,7 +230,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -243,7 +247,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -262,7 +266,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: const Color(0xFF2D3748).withOpacity(0.7),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -290,7 +294,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -323,7 +327,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
                   horizontalInterval: 500,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: const Color(0xFF2D3748).withOpacity(0.1),
+                      color: const Color(0xFF2D3748).withValues(alpha: 0.1),
                       strokeWidth: 1,
                     );
                   },
@@ -357,7 +361,8 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
                               days[value.toInt()],
                               style: TextStyle(
                                 fontSize: 11,
-                                color: const Color(0xFF2D3748).withOpacity(0.6),
+                                color: const Color(0xFF2D3748)
+                                    .withValues(alpha: 0.6),
                               ),
                             ),
                           );
@@ -376,7 +381,8 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
                           'S/${value.toInt()}',
                           style: TextStyle(
                             fontSize: 10,
-                            color: const Color(0xFF2D3748).withOpacity(0.6),
+                            color:
+                                const Color(0xFF2D3748).withValues(alpha: 0.6),
                           ),
                         );
                       },
@@ -398,7 +404,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
                     dotData: const FlDotData(show: true),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: const Color(0xFF667EEA).withOpacity(0.1),
+                      color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                     ),
                   ),
                 ],
@@ -459,7 +465,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.05),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -476,13 +482,13 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
             Icon(
               Icons.shopping_bag_outlined,
               size: 48,
-              color: const Color(0xFF2D3748).withOpacity(0.3),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.3),
             ),
             const SizedBox(height: 12),
             Text(
               'No hay pedidos recientes',
               style: TextStyle(
-                color: const Color(0xFF2D3748).withOpacity(0.5),
+                color: const Color(0xFF2D3748).withValues(alpha: 0.5),
               ),
             ),
           ],
@@ -500,7 +506,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.05),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -516,7 +522,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFF667EEA).withOpacity(0.1),
+              color: const Color(0xFF667EEA).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
@@ -542,7 +548,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
                   order.userName ?? 'Cliente desconocido',
                   style: TextStyle(
                     fontSize: 12,
-                    color: const Color(0xFF2D3748).withOpacity(0.6),
+                    color: const Color(0xFF2D3748).withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -564,7 +570,7 @@ class _AnalyticsTabState extends State<AnalyticsTab> {
                 _formatDate(order.createdAt),
                 style: TextStyle(
                   fontSize: 11,
-                  color: const Color(0xFF2D3748).withOpacity(0.5),
+                  color: const Color(0xFF2D3748).withValues(alpha: 0.5),
                 ),
               ),
             ],

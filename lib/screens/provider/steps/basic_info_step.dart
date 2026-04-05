@@ -88,7 +88,7 @@ class _ProfileImagePicker extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -99,7 +99,7 @@ class _ProfileImagePicker extends StatelessWidget {
           child: provider.profileImageBytes != null
               ? Image.memory(provider.profileImageBytes!, fit: BoxFit.cover)
               : Container(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   child: const Icon(Icons.add_a_photo,
                       size: 40, color: AppTheme.primaryColor),
                 ),
@@ -155,7 +155,7 @@ class _InputField extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -171,7 +171,7 @@ class _InputField extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary.withOpacity(0.8),
+                color: AppTheme.textPrimary.withValues(alpha: 0.8),
               ),
             ),
           ),

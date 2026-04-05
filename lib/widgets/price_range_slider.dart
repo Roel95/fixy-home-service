@@ -54,7 +54,7 @@ class PriceRangeSlider extends StatelessWidget {
             activeTrackColor: AppTheme.primaryColor,
             inactiveTrackColor: Colors.grey[300],
             thumbColor: AppTheme.primaryColor,
-            overlayColor: AppTheme.primaryColor.withOpacity(0.2),
+            overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
           ),
           child: RangeSlider(
             values: currentRange,

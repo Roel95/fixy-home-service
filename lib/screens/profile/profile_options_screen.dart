@@ -842,7 +842,7 @@ class ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
               margin: const EdgeInsets.only(bottom: 12),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.orange.withOpacity(0.1),
+                  backgroundColor: Colors.orange.withValues(alpha: 0.1),
                   child:
                       const Icon(Icons.pending_actions, color: Colors.orange),
                 ),
@@ -909,7 +909,7 @@ class ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
               margin: const EdgeInsets.only(bottom: 12),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.green.withOpacity(0.1),
+                  backgroundColor: Colors.green.withValues(alpha: 0.1),
                   child: const Icon(Icons.check_circle, color: Colors.green),
                 ),
                 title: Text('Pago #${1000 + index}'),
@@ -1074,7 +1074,7 @@ class ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppTheme.primaryColor, width: 2),
                   ),
@@ -1154,7 +1154,7 @@ class ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [color.withOpacity(0.1), Colors.white],
+            colors: [color.withValues(alpha: 0.1), Colors.white],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -1165,7 +1165,7 @@ class ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.local_offer, color: color, size: 32),

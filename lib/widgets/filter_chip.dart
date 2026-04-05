@@ -27,13 +27,13 @@ class CustomFilterChip extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? AppTheme.primaryColor
-                : AppTheme.textLight.withOpacity(0.3),
+                : AppTheme.textLight.withValues(alpha: 0.3),
             width: 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppTheme.primaryColor.withOpacity(0.2),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.2),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),

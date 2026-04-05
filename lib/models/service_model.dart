@@ -86,7 +86,7 @@ class ServiceModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      if (id.isNotEmpty) 'id': id,
       'title': title,
       'description': description,
       'rating': rating,

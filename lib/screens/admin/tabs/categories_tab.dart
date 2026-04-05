@@ -81,7 +81,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -97,7 +97,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -118,7 +118,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
                 label,
                 style: TextStyle(
                   fontSize: 13,
-                  color: const Color(0xFF2D3748).withOpacity(0.7),
+                  color: const Color(0xFF2D3748).withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -140,7 +140,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF667EEA).withOpacity(0.3),
+              color: const Color(0xFF667EEA).withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -182,7 +182,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
@@ -208,7 +208,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF667EEA).withOpacity(0.1),
+                    color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: category.imageUrl != null
@@ -246,7 +246,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
                           category.description!,
                           style: TextStyle(
                             fontSize: 13,
-                            color: const Color(0xFF2D3748).withOpacity(0.6),
+                            color: const Color(0xFF2D3748).withValues(alpha: 0.6),
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -257,7 +257,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF667EEA).withOpacity(0.1),
+                          color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -304,7 +304,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, color: color, size: 20),
@@ -320,7 +320,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
           Icon(
             Icons.category_outlined,
             size: 80,
-            color: const Color(0xFF2D3748).withOpacity(0.3),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
@@ -328,7 +328,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF2D3748).withOpacity(0.5),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 8),
@@ -336,7 +336,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
             'Crea tu primera categoría de productos',
             style: TextStyle(
               fontSize: 14,
-              color: const Color(0xFF2D3748).withOpacity(0.4),
+              color: const Color(0xFF2D3748).withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(height: 24),
@@ -492,7 +492,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                       const BorderRadius.vertical(top: Radius.circular(24)),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF2D3748).withOpacity(0.1),
+                      color: const Color(0xFF2D3748).withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -626,7 +626,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2D3748).withOpacity(0.1),
+            color: const Color(0xFF2D3748).withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),

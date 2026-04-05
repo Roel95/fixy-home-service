@@ -95,7 +95,7 @@ class _RewardsTabState extends State<RewardsTab>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6C63FF).withOpacity(0.3),
+            color: const Color(0xFF6C63FF).withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -112,7 +112,7 @@ class _RewardsTabState extends State<RewardsTab>
                   Text(
                     'Tus Puntos',
                     style: AppTheme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -130,7 +130,7 @@ class _RewardsTabState extends State<RewardsTab>
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -144,7 +144,7 @@ class _RewardsTabState extends State<RewardsTab>
           const SizedBox(height: 16),
           LinearProgressIndicator(
             value: user.rewardPoints / 1000, // Assume 1000 is the goal
-            backgroundColor: Colors.white.withOpacity(0.3),
+            backgroundColor: Colors.white.withValues(alpha: 0.3),
             valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
             minHeight: 8,
             borderRadius: BorderRadius.circular(4),
@@ -162,7 +162,7 @@ class _RewardsTabState extends State<RewardsTab>
               Text(
                 '${1000 - (user.rewardPoints % 1000)} puntos para el siguiente nivel',
                 style: AppTheme.textTheme.bodySmall?.copyWith(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
               ),
             ],
@@ -188,7 +188,7 @@ class _RewardsTabState extends State<RewardsTab>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -278,7 +278,7 @@ class _RewardsTabState extends State<RewardsTab>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -312,7 +312,7 @@ class _RewardsTabState extends State<RewardsTab>
                   Container(
                     height: 100,
                     width: double.infinity,
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     child: const Center(
                       child: Text(
                         'CANJEADO',
@@ -328,7 +328,7 @@ class _RewardsTabState extends State<RewardsTab>
                   Container(
                     height: 100,
                     width: double.infinity,
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     child: const Center(
                       child: Text(
                         'EXPIRADO',
@@ -347,7 +347,7 @@ class _RewardsTabState extends State<RewardsTab>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
+                      color: Colors.black.withValues(alpha: 0.7),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -423,7 +423,7 @@ class _RewardsTabState extends State<RewardsTab>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -478,7 +478,7 @@ class _RewardsTabState extends State<RewardsTab>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color),

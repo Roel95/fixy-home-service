@@ -108,7 +108,7 @@ class NotificationService {
       await SupabaseConfig.client.from('notifications').insert({
         'user_id': userId,
         'title': title,
-        'body': body,
+        'message': body,
         'type': type,
         'data': data,
         'read': false,

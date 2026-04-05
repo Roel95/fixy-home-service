@@ -4,7 +4,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/screens/auth/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -13,7 +13,6 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen>
     with TickerProviderStateMixin {
   final PageController _pageController = PageController();
-  double _pageOffset = 0.0;
 
   late AnimationController _textAnimationController;
   late Animation<double> _fadeAnimation;
@@ -26,7 +25,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       description:
           '¡En sólo un minuto tendrás tu propio maestro! Disfruta de los más de 10 servicios que tenemos para ti',
       imagePath: 'assets/images/especialista.png',
-      backgroundColor: Color(0xFF00D4AA),
+      backgroundColor: const Color(0xFF00D4AA),
       useAsset: true,
     ),
     OnboardingPage(
@@ -35,7 +34,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       description:
           'Sube una foto y nuestra IA te dirá qué problema tienes y cuál es la mejor solución',
       imagePath: '',
-      backgroundColor: Color(0xFF6C63FF),
+      backgroundColor: const Color(0xFF6C63FF),
       useAsset: false,
       icon: Icons.psychology_outlined,
     ),
@@ -54,12 +53,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void initState() {
     super.initState();
-    _pageController.addListener(() {
-      setState(() {
-        _pageOffset = _pageController.page ?? 0.0;
-      });
-    });
-
     _textAnimationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -220,7 +213,7 @@ class OnboardingPageWidget extends StatefulWidget {
   final VoidCallback onSkip;
 
   const OnboardingPageWidget({
-    Key? key,
+    super.key,
     required this.page,
     required this.isLastPage,
     required this.pageIndex,
@@ -229,7 +222,7 @@ class OnboardingPageWidget extends StatefulWidget {
     required this.slideAnimation,
     required this.onNext,
     required this.onSkip,
-  }) : super(key: key);
+  });
 
   @override
   State<OnboardingPageWidget> createState() => _OnboardingPageWidgetState();
@@ -282,7 +275,7 @@ class _OnboardingPageWidgetState extends State<OnboardingPageWidget>
               Positioned(
                 top: 24,
                 right: 12,
-                child: _DotPattern(color: Colors.white),
+                child: const _DotPattern(color: Colors.white),
               ),
               // Dot pattern decoration (middle left - smaller)
               Positioned(
@@ -290,7 +283,7 @@ class _OnboardingPageWidgetState extends State<OnboardingPageWidget>
                 left: 28,
                 child: Transform.scale(
                   scale: 0.5,
-                  child: _DotPattern(color: Colors.white),
+                  child: const _DotPattern(color: Colors.white),
                 ),
               ),
               // Main content
@@ -377,13 +370,15 @@ class _OnboardingPageWidgetState extends State<OnboardingPageWidget>
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, -5))
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, -5),
+                    ),
                   ],
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(87),
-                      topRight: Radius.circular(87)),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(87),
+                    topRight: Radius.circular(87),
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(32, 40, 32, 32),

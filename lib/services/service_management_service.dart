@@ -43,16 +43,24 @@ class ServiceManagementService {
     try {
       final json = service.toJson();
       json['provider_id'] = providerId;
+
+      debugPrint('📝 [SERVICE_MANAGEMENT] Creando servicio:');
+      debugPrint('   Provider ID: $providerId');
+      debugPrint('   Datos: $json');
+
       final data = await SupabaseConfig.client
           .from('services')
           .insert(json)
           .select()
           .single();
 
+      debugPrint(
+          '✅ [SERVICE_MANAGEMENT] Servicio creado exitosamente: ${data['id']}');
       return ServiceModel.fromJson(data);
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('❌ [SERVICE_MANAGEMENT] Error creating service: $e');
-      return null;
+      debugPrint('❌ [SERVICE_MANAGEMENT] StackTrace: $stackTrace');
+      rethrow;
     }
   }
 
