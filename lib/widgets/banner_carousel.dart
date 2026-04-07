@@ -8,11 +8,11 @@ class BannerCarousel extends StatefulWidget {
   final Function(BannerModel)? onBannerTap;
 
   const BannerCarousel({
-    Key? key,
+    super.key,
     required this.banners,
     this.autoPlayDuration = const Duration(seconds: 4),
     this.onBannerTap,
-  }) : super(key: key);
+  });
 
   @override
   State<BannerCarousel> createState() => _BannerCarouselState();

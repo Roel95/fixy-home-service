@@ -215,34 +215,34 @@ class ProductCard extends StatelessWidget {
                       product.brand,
                       style: TextStyle(
                         color: AppTheme.textSecondary,
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w500,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       product.name,
                       style: TextStyle(
                         color: AppTheme.textPrimary,
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         height: 1.2,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.star, size: 14, color: Colors.amber[700]),
-                        const SizedBox(width: 4),
+                        Icon(Icons.star, size: 12, color: Colors.amber[700]),
+                        const SizedBox(width: 2),
                         Text(
                           '${product.rating}',
                           style: TextStyle(
                             color: AppTheme.textPrimary,
-                            fontSize: 12,
+                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -250,7 +250,7 @@ class ProductCard extends StatelessWidget {
                           ' (${product.reviewCount})',
                           style: TextStyle(
                             color: AppTheme.textSecondary,
-                            fontSize: 11,
+                            fontSize: 10,
                           ),
                         ),
                       ],
@@ -269,16 +269,19 @@ class ProductCard extends StatelessWidget {
                                   'S/ ${product.originalPrice!.toStringAsFixed(2)}',
                                   style: TextStyle(
                                     color: AppTheme.textSecondary,
-                                    fontSize: 11,
+                                    fontSize: 10,
                                     decoration: TextDecoration.lineThrough,
                                   ),
                                 ),
-                              Text(
-                                'S/ ${product.price.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  color: AppTheme.primaryColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  'S/ ${product.price.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    color: AppTheme.primaryColor,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],

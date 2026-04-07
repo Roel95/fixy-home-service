@@ -9,13 +9,13 @@ class PriceRangeSlider extends StatelessWidget {
   final String currency;
 
   const PriceRangeSlider({
-    Key? key,
+    super.key,
     required this.minValue,
     required this.maxValue,
     required this.currentRange,
     required this.onChanged,
     this.currency = 'S/',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

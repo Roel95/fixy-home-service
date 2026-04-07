@@ -11,11 +11,11 @@ class PaymentMethodCard extends StatelessWidget {
   final VoidCallback onRemove;
 
   const PaymentMethodCard({
-    Key? key,
+    super.key,
     required this.method,
     required this.onSetDefault,
     required this.onRemove,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +154,7 @@ class PaymentMethodCard extends StatelessWidget {
 }
 
 class AddPaymentMethodSheet extends StatefulWidget {
-  const AddPaymentMethodSheet({Key? key}) : super(key: key);
+  const AddPaymentMethodSheet({super.key});
 
   @override
   State<AddPaymentMethodSheet> createState() => _AddPaymentMethodSheetState();

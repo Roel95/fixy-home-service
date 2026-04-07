@@ -14,9 +14,9 @@ class ProductListScreen extends StatefulWidget {
   final ProductCategoryModel category;
 
   const ProductListScreen({
-    Key? key,
+    super.key,
     required this.category,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductListScreen> createState() => _ProductListScreenState();
@@ -56,10 +56,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
     setState(() {
       // Apply filters
       _filteredProducts = _products.where((p) {
-        if (p.price < _filters.minPrice || p.price > _filters.maxPrice)
+        if (p.price < _filters.minPrice || p.price > _filters.maxPrice) {
           return false;
+        }
         if (_filters.selectedBrands.isNotEmpty &&
-            !_filters.selectedBrands.contains(p.brand)) return false;
+            !_filters.selectedBrands.contains(p.brand)) {
+          return false;
+        }
         if (p.rating < _filters.minRating) return false;
         if (_filters.onlyInStock && !p.isInStock) return false;
         if (_filters.onlyOnSale && !p.isOnSale) return false;
@@ -201,7 +204,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           children: [
             Text(
               widget.category.name,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -209,7 +212,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             ),
             Text(
               '${_filteredProducts.length} de ${_products.length} productos',
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.textSecondary,
                 fontSize: 13,
               ),
@@ -268,14 +271,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.filter_list,
+                          const Icon(Icons.filter_list,
                               size: 20, color: AppTheme.primaryColor),
                           const SizedBox(width: 8),
                           Text(
                             _filters.hasActiveFilters
                                 ? 'Filtros (${_getActiveFiltersCount()})'
                                 : 'Filtros',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -298,12 +301,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.sort,
                               size: 20, color: AppTheme.primaryColor),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             'Ordenar',
                             style: TextStyle(
@@ -338,7 +341,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 Icon(Icons.inventory_2_outlined,
                                     size: 80, color: Colors.grey[300]),
                                 const SizedBox(height: 16),
-                                Text(
+                                const Text(
                                   'No hay productos disponibles',
                                   style: TextStyle(
                                     color: AppTheme.textSecondary,
@@ -377,8 +380,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onAddToCart: () {
                             context.read<CartProvider>().addToCart(product);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Row(
+                              const SnackBar(
+                                content: Row(
                                   children: [
                                     Icon(Icons.check_circle,
                                         color: Colors.white),
@@ -389,7 +392,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 ),
                                 backgroundColor: Colors.green,
                                 behavior: SnackBarBehavior.floating,
-                                duration: const Duration(seconds: 2),
+                                duration: Duration(seconds: 2),
                               ),
                             );
                           },
@@ -483,7 +486,7 @@ class _ProductGridItem extends StatelessWidget {
                   children: [
                     Text(
                       product.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppTheme.textPrimary,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -499,7 +502,7 @@ class _ProductGridItem extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           '${product.rating}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.textPrimary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -510,7 +513,7 @@ class _ProductGridItem extends StatelessWidget {
                     const Spacer(),
                     Text(
                       'S/ ${product.price.toStringAsFixed(2)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppTheme.primaryColor,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -553,8 +556,9 @@ class _SortOption extends StatelessWidget {
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
-      trailing:
-          isSelected ? Icon(Icons.check, color: AppTheme.primaryColor) : null,
+      trailing: isSelected
+          ? const Icon(Icons.check, color: AppTheme.primaryColor)
+          : null,
       onTap: onTap,
     );
   }

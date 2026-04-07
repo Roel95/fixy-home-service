@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fixy_home_service/models/product_model.dart';
 import 'package:fixy_home_service/data/product_repository.dart';
-import 'package:fixy_home_service/services/image_upload_service.dart';
 
 /// Pestaña de gestión de productos del admin
 /// Permite crear, editar, eliminar y gestionar productos de la tienda
@@ -16,7 +15,6 @@ class ProductsTab extends StatefulWidget {
 
 class _ProductsTabState extends State<ProductsTab> {
   final ProductRepository _repository = ProductRepository();
-  final ImageUploadService _imageService = ImageUploadService();
 
   List<ProductModel> _products = [];
   List<ProductCategoryModel> _categories = [];
@@ -337,7 +335,8 @@ class _ProductsTabState extends State<ProductsTab> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFF3B30).withValues(alpha: 0.1),
+                                color: const Color(0xFFFF3B30)
+                                    .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Text(

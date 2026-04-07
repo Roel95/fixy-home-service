@@ -11,10 +11,10 @@ class PaymentConfirmationScreen extends StatelessWidget {
   final bool isAdvancePayment;
 
   const PaymentConfirmationScreen({
-    Key? key,
+    super.key,
     required this.service,
     required this.isAdvancePayment,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +180,7 @@ class PaymentConfirmationScreen extends StatelessWidget {
                   onPressed: () {
                     // Navigate to service details or booking history
                   },
-                  child: Text(
+                  child: const Text(
                     'Ver detalles del servicio',
                     style: TextStyle(color: AppTheme.primaryColor),
                   ),

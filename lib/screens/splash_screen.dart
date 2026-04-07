@@ -4,7 +4,7 @@ import 'package:fixy_home_service/screens/auth_wrapper.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();

@@ -59,10 +59,10 @@ class AdvancedFiltersSheet extends StatefulWidget {
   final Function(ProductFilters) onApply;
 
   const AdvancedFiltersSheet({
-    Key? key,
+    super.key,
     required this.initialFilters,
     required this.onApply,
-  }) : super(key: key);
+  });
 
   static void show(
     BuildContext context,
@@ -142,7 +142,7 @@ class _AdvancedFiltersSheetState extends State<AdvancedFiltersSheet> {
                       _filters.reset();
                     });
                   },
-                  child: Text(
+                  child: const Text(
                     'Limpiar',
                     style: TextStyle(
                       color: AppTheme.primaryColor,
@@ -172,7 +172,7 @@ class _AdvancedFiltersSheetState extends State<AdvancedFiltersSheet> {
                     children: [
                       Text(
                         'S/ ${_filters.minPrice.toStringAsFixed(0)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppTheme.textSecondary,
                           fontSize: 14,
                         ),
@@ -195,7 +195,7 @@ class _AdvancedFiltersSheetState extends State<AdvancedFiltersSheet> {
                       ),
                       Text(
                         'S/ ${_filters.maxPrice.toStringAsFixed(0)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppTheme.textSecondary,
                           fontSize: 14,
                         ),

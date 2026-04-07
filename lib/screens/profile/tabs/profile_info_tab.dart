@@ -5,7 +5,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/screens/profile/widgets/profile_info_form.dart';
 
 class ProfileInfoTab extends StatefulWidget {
-  const ProfileInfoTab({Key? key}) : super(key: key);
+  const ProfileInfoTab({super.key});
 
   @override
   State<ProfileInfoTab> createState() => _ProfileInfoTabState();
@@ -17,9 +17,6 @@ class _ProfileInfoTabState extends State<ProfileInfoTab>
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
-  late TextEditingController _addressController;
-  late TextEditingController _cityController;
-  late TextEditingController _postalCodeController;
   bool _isEditing = false;
 
   @override
@@ -31,9 +28,6 @@ class _ProfileInfoTabState extends State<ProfileInfoTab>
     _nameController = TextEditingController();
     _emailController = TextEditingController();
     _phoneController = TextEditingController();
-    _addressController = TextEditingController();
-    _cityController = TextEditingController();
-    _postalCodeController = TextEditingController();
   }
 
   @override
@@ -41,9 +35,6 @@ class _ProfileInfoTabState extends State<ProfileInfoTab>
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _addressController.dispose();
-    _cityController.dispose();
-    _postalCodeController.dispose();
     super.dispose();
   }
 
@@ -63,9 +54,6 @@ class _ProfileInfoTabState extends State<ProfileInfoTab>
           _nameController.text = user.name;
           _emailController.text = user.email;
           _phoneController.text = user.phone;
-          _addressController.text = user.address;
-          _cityController.text = user.city;
-          _postalCodeController.text = user.postalCode;
         }
 
         return Container(
@@ -206,9 +194,6 @@ class _ProfileInfoTabState extends State<ProfileInfoTab>
                           nameController: _nameController,
                           emailController: _emailController,
                           phoneController: _phoneController,
-                          addressController: _addressController,
-                          cityController: _cityController,
-                          postalCodeController: _postalCodeController,
                           isEditing: _isEditing,
                           onSave: _saveProfileInfo,
                           onCancel: _cancelEditing,
@@ -256,28 +241,42 @@ class _ProfileInfoTabState extends State<ProfileInfoTab>
     );
   }
 
-  void _saveProfileInfo() {
+  Future<void> _saveProfileInfo() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       final profileProvider =
           Provider.of<ProfileProvider>(context, listen: false);
-      profileProvider.updateUserProfile(
-        name: _nameController.text,
-        email: _emailController.text,
-        phone: _phoneController.text,
-        address: _addressController.text,
-        city: _cityController.text,
-        postalCode: _postalCodeController.text,
-      );
 
-      setState(() {
-        _isEditing = false;
-      });
+      try {
+        await profileProvider.updateUserProfile(
+          name: _nameController.text,
+          email: _emailController.text,
+          phone: _phoneController.text,
+        );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Perfil actualizado exitosamente')),
-      );
+        setState(() {
+          _isEditing = false;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Perfil actualizado exitosamente'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al actualizar: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -289,9 +288,6 @@ class _ProfileInfoTabState extends State<ProfileInfoTab>
       _nameController.text = user.name;
       _emailController.text = user.email;
       _phoneController.text = user.phone;
-      _addressController.text = user.address;
-      _cityController.text = user.city;
-      _postalCodeController.text = user.postalCode;
 
       _isEditing = false;
     });

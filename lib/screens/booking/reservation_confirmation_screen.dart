@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fixy_home_service/providers/profile_provider.dart';
+import 'package:fixy_home_service/services/notification_service.dart';
 import 'package:fixy_home_service/supabase/supabase_config.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
@@ -83,6 +84,35 @@ class _ReservationConfirmationScreenState
         'reservation_id': data['id'],
         'status': 'pending',
       });
+
+      // Notificar al proveedor que tiene una nueva reserva
+      await NotificationService.createNotification(
+        userId: widget.providerId,
+        title: '🔔 Nueva reserva recibida',
+        body:
+            'Un cliente reservó "${widget.serviceTitle}" para el ${widget.bookingDate.day}/${widget.bookingDate.month}/${widget.bookingDate.year} a las ${widget.timeSlot}',
+        type: 'new_booking',
+        data: {
+          'reservation_id': data['id'],
+          'service_name': widget.serviceTitle,
+          'scheduled_date': widget.bookingDate.toIso8601String(),
+          'scheduled_time': widget.timeSlot,
+          'address': widget.address ?? '',
+        },
+      );
+
+      // Notificar al cliente que su reserva fue creada
+      await NotificationService.createNotification(
+        userId: userId,
+        title: '✅ Reserva confirmada',
+        body:
+            'Tu reserva de "${widget.serviceTitle}" fue creada para el ${widget.bookingDate.day}/${widget.bookingDate.month}/${widget.bookingDate.year} a las ${widget.timeSlot}',
+        type: 'booking_confirmed',
+        data: {
+          'reservation_id': data['id'],
+          'service_name': widget.serviceTitle,
+        },
+      );
 
       setState(() {
         _isConfirmed = true;
@@ -221,8 +251,8 @@ class _ReservationConfirmationScreenState
             decoration: BoxDecoration(
               color: const Color(0xFF6366F1).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
-              border:
-                  Border.all(color: const Color(0xFF6366F1).withValues(alpha: 0.2)),
+              border: Border.all(
+                  color: const Color(0xFF6366F1).withValues(alpha: 0.2)),
             ),
             child: const Row(
               children: [

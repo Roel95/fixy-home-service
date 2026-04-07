@@ -15,15 +15,27 @@ class ReservationProvider extends ChangeNotifier {
     try {
       return _reservations.firstWhere((res) =>
           res.status == ReservationStatus.inProgress ||
-          res.status == ReservationStatus.onTheWay);
+          res.status == ReservationStatus.onTheWay ||
+          res.status == ReservationStatus.confirmed);
     } catch (e) {
       return null;
     }
   }
 
-  List<ReservationStatusModel> get upcomingReservations {
+  List<ReservationStatusModel> get activeReservations {
     return _reservations
-        .where((res) => res.status == ReservationStatus.confirmed)
+        .where((r) =>
+            r.status == ReservationStatus.confirmed ||
+            r.status == ReservationStatus.onTheWay ||
+            r.status == ReservationStatus.inProgress)
+        .toList();
+  }
+
+  List<ReservationStatusModel> get completedReservations {
+    return _reservations
+        .where((r) =>
+            r.status == ReservationStatus.completed ||
+            r.status == ReservationStatus.cancelled)
         .toList();
   }
 
@@ -51,12 +63,18 @@ class ReservationProvider extends ChangeNotifier {
             *,
             services:service_id (
               id, title, image_url, price, currency, time_unit
+            ),
+            provider:provider_id (
+              id, business_name, phone, profile_image_url
             )
           ''').eq('user_id', user.id).order('scheduled_date', ascending: false);
 
       _reservations = (response as List).map((json) {
         ReservationStatus status;
         switch (json['status']) {
+          case 'pending':
+            status = ReservationStatus.confirmed;
+            break;
           case 'confirmed':
             status = ReservationStatus.confirmed;
             break;
@@ -80,9 +98,14 @@ class ReservationProvider extends ChangeNotifier {
           serviceId: json['service_id'],
           serviceName: json['service_name'] ?? 'Servicio desconocido',
           serviceImageUrl: json['service_image_url'] ?? '',
-          providerName: json['provider_name'] ?? 'Proveedor',
-          providerPhone: json['provider_phone'] ?? '',
-          providerImageUrl: json['provider_image_url'] ?? '',
+          providerName: json['provider']?['business_name'] ??
+              json['provider_name'] ??
+              'Proveedor',
+          providerPhone:
+              json['provider']?['phone'] ?? json['provider_phone'] ?? '',
+          providerImageUrl: json['provider']?['profile_image_url'] ??
+              json['provider_image_url'] ??
+              '',
           status: status,
           scheduledDate: DateTime.parse(json['scheduled_date']),
           scheduledTime: json['scheduled_time'],

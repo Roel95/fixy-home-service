@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AITooltip extends StatefulWidget {
   final Widget child;
 
-  const AITooltip({Key? key, required this.child}) : super(key: key);
+  const AITooltip({super.key, required this.child});
 
   @override
   State<AITooltip> createState() => _AITooltipState();

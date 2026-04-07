@@ -7,9 +7,9 @@ class ServiceDetailScreen extends StatelessWidget {
   final ServiceModel service;
 
   const ServiceDetailScreen({
-    Key? key,
+    super.key,
     required this.service,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +261,7 @@ class ServiceDetailScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.access_time_rounded,
                                 size: 20,
                                 color: AppTheme.primaryColor,
@@ -492,11 +492,11 @@ class ServiceDetailScreen extends StatelessWidget {
                         color: AppTheme.primaryColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(Icons.auto_awesome,
                               size: 16, color: AppTheme.primaryColor),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             'Reserva con IA',
                             style: TextStyle(

@@ -14,10 +14,10 @@ class SearchScreen extends StatefulWidget {
   final bool showCategoriesFirst;
 
   const SearchScreen({
-    Key? key,
+    super.key,
     this.initialFilter,
     this.showCategoriesFirst = false,
-  }) : super(key: key);
+  });
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();

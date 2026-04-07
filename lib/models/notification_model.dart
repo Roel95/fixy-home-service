@@ -108,7 +108,8 @@ class NotificationModel {
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     // Support both camelCase and snake_case for Supabase compatibility
     final timestampValue = json['timestamp'] ?? json['created_at'];
-    final isReadValue = json['isRead'] ?? json['is_read'] ?? false;
+    final isReadValue =
+        json['isRead'] ?? json['is_read'] ?? json['read'] ?? false;
     final actionIdValue = json['actionId'] ?? json['action_id'];
     final imageUrlValue = json['imageUrl'] ?? json['image_url'];
 

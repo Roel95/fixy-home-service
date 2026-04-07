@@ -49,7 +49,7 @@ class SupabaseServices {
       final notificationData = {
         'user_id': providerId,
         'title': 'Nueva Reserva',
-        'body': 'Tienes una nueva reserva para: $serviceName',
+        'message': 'Tienes una nueva reserva para: $serviceName',
         'type': 'new_reservation',
         'data': {
           'reservation_id': reservationId,

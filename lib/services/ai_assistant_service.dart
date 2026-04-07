@@ -3,6 +3,7 @@ import 'package:fixy_home_service/models/ai_conversation_model.dart';
 import 'package:fixy_home_service/models/service_model.dart';
 import 'package:fixy_home_service/models/product_model.dart';
 import 'package:fixy_home_service/models/profile_models.dart';
+import 'package:fixy_home_service/models/saved_address_model.dart';
 import 'package:fixy_home_service/services/order_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,6 +16,7 @@ class AIAssistantService {
     List<ProductModel>? availableProducts,
     UserProfile? userProfile,
     List<OrderModel>? userOrders,
+    List<SavedAddress>? savedAddresses,
     Function(String)? onFetchServices,
     Function(String)? onFetchProducts,
   }) async {
@@ -127,12 +129,13 @@ class AIAssistantService {
         }
       }
 
-      // Construir contexto del sistema con resultados de búsqueda, datos del perfil y órdenes
+      // Construir contexto del sistema con resultados de búsqueda, datos del perfil, órdenes y direcciones guardadas
       final systemContext = _buildSystemContext(
         availableServices,
         availableProducts,
         userProfile: userProfile,
         userOrders: userOrders,
+        savedAddresses: savedAddresses,
         searchResults: searchResults,
         searchQuery: searchQuery,
       );
@@ -332,11 +335,22 @@ class AIAssistantService {
     List<ProductModel>? products, {
     UserProfile? userProfile,
     List<OrderModel>? userOrders,
+    List<SavedAddress>? savedAddresses,
     List<dynamic>? searchResults,
     String? searchQuery,
   }) {
+    // Obtener fecha/hora actual en Perú (UTC-5)
+    final nowUtc = DateTime.now().toUtc();
+    final now = nowUtc.subtract(const Duration(hours: 5));
+    final fechaActual = '${now.day}/${now.month}/${now.year}';
+    final horaActual =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    final manana = now.add(const Duration(days: 1));
+    final fechaManana =
+        '${manana.year}-${manana.month.toString().padLeft(2, '0')}-${manana.day.toString().padLeft(2, '0')}';
+
     final servicesContext = services != null && services.isNotEmpty
-        ? '\n\nServicios disponibles: ${services.take(5).map((s) => '${s.title} (${s.currency}${s.price}/${s.timeUnit})').join(', ')}'
+        ? '\n\nServicios disponibles (USAR EXACTAMENTE ESTOS IDs):\n${services.take(5).map((s) => '- ID: "${s.id}" | Nombre: ${s.title} | Precio: ${s.currency}${s.price}/${s.timeUnit} | Categoría: ${s.category}').join('\n')}'
         : '';
 
     // Si hay resultados de búsqueda específicos, mostrarlos en el contexto
@@ -386,7 +400,31 @@ class AIAssistantService {
           '⚠️ [AI_ASSISTANT] userProfile es NULL - no hay datos del usuario');
     }
 
-    // 📦 HISTORIAL DE COMPRAS: Información de órdenes previas
+    // � DIRECCIONES GUARDADAS: Información de direcciones del usuario para reservas
+    String savedAddressesContext = '';
+    if (savedAddresses != null && savedAddresses.isNotEmpty) {
+      final defaultAddress = savedAddresses.firstWhere(
+        (a) => a.isDefault,
+        orElse: () => savedAddresses.first,
+      );
+
+      savedAddressesContext = '\n\n📍 DIRECCIONES GUARDADAS DEL USUARIO:';
+      savedAddressesContext +=
+          '\n• Dirección principal: ${defaultAddress.fullAddress}';
+      if (savedAddresses.length > 1) {
+        savedAddressesContext += '\n• Otras direcciones disponibles:';
+        for (final address in savedAddresses.take(3)) {
+          if (address.id != defaultAddress.id) {
+            savedAddressesContext +=
+                '\n  - ${address.name}: ${address.fullAddress}';
+          }
+        }
+      }
+      savedAddressesContext +=
+          '\n\n📝 REGLA CRÍTICA PARA RESERVAS: Si el usuario quiere hacer una reserva y no especifica una dirección diferente, USA AUTOMÁTICAMENTE la dirección principal (${defaultAddress.fullAddress}). NO pidas la dirección al usuario si ya tiene direcciones guardadas.';
+      savedAddressesContext +=
+          '\n📝 REGLA: Cuando el usuario confirme fecha y hora para una reserva, completa automáticamente la dirección con: ${defaultAddress.fullAddress}';
+    }
     String userOrdersContext = '';
     if (userOrders != null && userOrders.isNotEmpty) {
       final recentOrders = userOrders.take(3);
@@ -406,6 +444,10 @@ class AIAssistantService {
     }
 
     return '''Eres un asistente virtual de una plataforma de servicios del hogar en Perú. Tu nombre es "Asistente IA".
+
+📅 FECHA Y HORA ACTUAL: $fechaActual a las $horaActual
+📅 FECHA DE MAÑANA (para reservas): $fechaManana
+⚠️ REGLA: Cuando el usuario diga "mañana" usa SIEMPRE la fecha $fechaManana en formato YYYY-MM-DD
 
 Tu trabajo es ayudar a los usuarios a:
 1. Analizar problemas del hogar (con o sin imagen) y recomendar soluciones
@@ -436,6 +478,8 @@ Cuando un usuario quiera reservar un servicio:
 - Si el usuario ya dio fecha y hora en su mensaje inicial, recuérdalas para después
 - Una vez tengas service_id, fecha, hora y dirección, incluye OBLIGATORIAMENTE: [ACTION:BOOK_SERVICE|service_id|YYYY-MM-DD|HH:MM|dirección]
 
+⚠️ CRÍTICO: El service_id en [ACTION:BOOK_SERVICE|service_id|...] debe ser EXACTAMENTE el UUID que aparece en "Servicios disponibles" arriba. NUNCA uses el nombre del servicio como ID. SIEMPRE usa el UUID exacto entre comillas.
+
 🚨 REGLA ABSOLUTAMENTE CRÍTICA - CREACIÓN DE RESERVAS:
 Cuando tengas TODA la información necesaria (service_id, fecha, hora, dirección), DEBES:
 1. Responder con un mensaje amigable confirmando la reserva
@@ -452,7 +496,7 @@ Cuando un usuario quiera comprar un producto (sin especificar cuál):
 
 REGLA CRÍTICA: NO muestres tarjetas visuales genéricas si el usuario ya mencionó un (ID: xxx) o si ya vio opciones antes. Solo muestra tarjetas cuando el usuario pregunta por primera vez o busca algo específico.
 
-Responde de forma amigable, clara y en español peruano. Sé conciso (máximo 3-4 líneas).$servicesContext$productsContext$userProfileContext$userOrdersContext
+Responde de forma amigable, clara y en español peruano. Sé conciso (máximo 3-4 líneas).$servicesContext$productsContext$userProfileContext$savedAddressesContext$userOrdersContext
 
 IMPORTANTE: Cuando tengas toda la información necesaria para una reserva o compra, incluye en tu respuesta:
 - Para reservas: [ACTION:BOOK_SERVICE|service_id|date|time|address]
@@ -526,13 +570,16 @@ IMPORTANTE: Cuando tengas toda la información necesaria para una reserva o comp
       if (lowerMessage.contains('reservar') ||
           lowerMessage.contains('necesito') ||
           lowerMessage.contains('contratar')) {
-        if (lowerMessage.contains('limpieza'))
+        if (lowerMessage.contains('limpieza')) {
           return {'type': 'book_service', 'category': 'limpieza'};
+        }
         if (lowerMessage.contains('fontaner') ||
-            lowerMessage.contains('plomer'))
+            lowerMessage.contains('plomer')) {
           return {'type': 'book_service', 'category': 'fontaneria'};
-        if (lowerMessage.contains('electric'))
+        }
+        if (lowerMessage.contains('electric')) {
           return {'type': 'book_service', 'category': 'electricidad'};
+        }
         return {'type': 'book_service', 'category': null};
       }
 

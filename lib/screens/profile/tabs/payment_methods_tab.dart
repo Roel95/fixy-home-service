@@ -6,7 +6,7 @@ import 'package:fixy_home_service/models/profile_models.dart';
 import 'package:fixy_home_service/screens/profile/widgets/payment_method_card.dart';
 
 class PaymentMethodsTab extends StatefulWidget {
-  const PaymentMethodsTab({Key? key}) : super(key: key);
+  const PaymentMethodsTab({super.key});
 
   @override
   State<PaymentMethodsTab> createState() => _PaymentMethodsTabState();

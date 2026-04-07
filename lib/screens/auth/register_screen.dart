@@ -7,7 +7,7 @@ import 'package:fixy_home_service/screens/legal/privacy_policy_screen.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -121,7 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (!mounted) return;
         Navigator.pop(context);
       } else {
-        _showSuccess('¡Registro exitoso! Bienvenido ${name}');
+        _showSuccess('¡Registro exitoso! Bienvenido $name');
         await Future.delayed(const Duration(milliseconds: 800));
         if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
@@ -491,14 +491,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: GestureDetector(
                         onTap: () => _showTermsDialog(),
                         child: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
+                          text: const TextSpan(
+                            style: TextStyle(
                               fontSize: 14,
                               color: Colors.black87,
                               fontWeight: FontWeight.w400,
                             ),
                             children: [
-                              const TextSpan(text: 'Acepto los '),
+                              TextSpan(text: 'Acepto los '),
                               TextSpan(
                                 text: 'Términos y Condiciones',
                                 style: TextStyle(
@@ -507,7 +507,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
-                              const TextSpan(text: ' y la '),
+                              TextSpan(text: ' y la '),
                               TextSpan(
                                 text: 'Política de Privacidad',
                                 style: TextStyle(

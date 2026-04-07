@@ -7,7 +7,7 @@ import 'package:fixy_home_service/screens/profile/widgets/service_history_card.d
 import 'package:fixy_home_service/screens/profile/widgets/reschedule_service_dialog.dart';
 
 class ServiceHistoryTab extends StatefulWidget {
-  const ServiceHistoryTab({Key? key}) : super(key: key);
+  const ServiceHistoryTab({super.key});
 
   @override
   State<ServiceHistoryTab> createState() => _ServiceHistoryTabState();

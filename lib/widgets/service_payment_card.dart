@@ -11,9 +11,9 @@ class ServicePaymentCard extends StatelessWidget {
   final ServiceModel service;
 
   const ServicePaymentCard({
-    Key? key,
+    super.key,
     required this.service,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

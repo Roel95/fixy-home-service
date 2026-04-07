@@ -7,7 +7,7 @@ import 'package:fixy_home_service/models/withdrawal_model.dart';
 import 'package:intl/intl.dart';
 
 class EarningsTab extends StatelessWidget {
-  const EarningsTab();
+  const EarningsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +160,7 @@ class EarningsTab extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.account_balance,
+                    const Icon(Icons.account_balance,
                         size: 16, color: AppTheme.textSecondary),
                     const SizedBox(width: 8),
                     Text(
@@ -172,7 +172,7 @@ class EarningsTab extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.credit_card,
+                    const Icon(Icons.credit_card,
                         size: 16, color: AppTheme.textSecondary),
                     const SizedBox(width: 8),
                     Text(

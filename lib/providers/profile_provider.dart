@@ -129,24 +129,23 @@ class ProfileProvider extends ChangeNotifier {
   }
 
   Future<void> updateUserProfile(
-      {String? name,
-      String? email,
-      String? phone,
-      String? address,
-      String? city,
-      String? postalCode}) async {
+      {String? name, String? email, String? phone}) async {
     if (_userProfile == null) return;
     try {
-      _userProfile = _userProfile!.copyWith(
-          name: name,
-          email: email,
-          phone: phone,
-          address: address,
-          city: city,
-          postalCode: postalCode);
+      debugPrint('📝 [PROFILE_PROVIDER] Actualizando perfil...');
+      debugPrint('   - name: $name');
+      debugPrint('   - email: $email');
+      debugPrint('   - phone: $phone');
+
+      _userProfile =
+          _userProfile!.copyWith(name: name, email: email, phone: phone);
+
       await saveUserProfile();
+      debugPrint('✅ [PROFILE_PROVIDER] Perfil actualizado localmente');
       notifyListeners();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('❌ [PROFILE_PROVIDER] Error updating profile: $e');
+      debugPrint('❌ [PROFILE_PROVIDER] StackTrace: $stackTrace');
       _errorMessage = 'Error updating profile: $e';
       notifyListeners();
     }
@@ -274,12 +273,13 @@ class ProfileProvider extends ChangeNotifier {
   void toggleFaqExpanded(String faqId) {
     try {
       _faqs = _faqs.map((faq) {
-        if (faq.id == faqId)
+        if (faq.id == faqId) {
           return FAQ(
               id: faq.id,
               question: faq.question,
               answer: faq.answer,
               isExpanded: !faq.isExpanded);
+        }
         return faq;
       }).toList();
       notifyListeners();

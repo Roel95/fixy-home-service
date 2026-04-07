@@ -4,7 +4,7 @@ import 'package:fixy_home_service/providers/provider_onboarding_provider.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class ExperienceStep extends StatelessWidget {
-  const ExperienceStep({Key? key}) : super(key: key);
+  const ExperienceStep({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -184,12 +184,11 @@ class _ExperienceChip extends StatelessWidget {
   final Function(int) onSelected;
 
   const _ExperienceChip({
-    Key? key,
     required this.label,
     required this.value,
     required this.selectedValue,
     required this.onSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

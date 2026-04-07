@@ -3,7 +3,7 @@ import 'package:fixy_home_service/models/provider_model.dart';
 import 'package:fixy_home_service/models/transaction_model.dart';
 import 'package:fixy_home_service/models/withdrawal_model.dart';
 import 'package:fixy_home_service/models/review_model.dart';
-import 'package:fixy_home_service/models/provider_booking_model.dart';
+import 'package:fixy_home_service/models/reservation_status_model.dart';
 import 'package:fixy_home_service/supabase/supabase_config.dart';
 
 class ProviderDashboardProvider extends ChangeNotifier {
@@ -11,7 +11,7 @@ class ProviderDashboardProvider extends ChangeNotifier {
   List<TransactionModel> _transactions = [];
   List<WithdrawalRequestModel> _withdrawalRequests = [];
   List<ReviewModel> _reviews = [];
-  List<ProviderBookingModel> _bookings = [];
+  List<ReservationStatusModel> _reservations = [];
   bool _isLoading = false;
   String? _error;
 
@@ -19,7 +19,8 @@ class ProviderDashboardProvider extends ChangeNotifier {
   List<TransactionModel> get transactions => _transactions;
   List<WithdrawalRequestModel> get withdrawalRequests => _withdrawalRequests;
   List<ReviewModel> get reviews => _reviews;
-  List<ProviderBookingModel> get bookings => _bookings;
+  List<ReservationStatusModel> get reservations => _reservations;
+  List<ReservationStatusModel> get bookings => _reservations;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -103,19 +104,83 @@ class ProviderDashboardProvider extends ChangeNotifier {
   }
 
   Future<void> loadBookings() async {
-    if (_provider == null) return;
+    if (_provider == null) {
+      print('❌ [ProviderDashboard] Provider es null');
+      return;
+    }
     try {
+      print(
+          '🔍 [ProviderDashboard] Cargando reservas para provider_id: ${_provider!.id}');
+
       final response = await SupabaseConfig.client
-          .from('provider_bookings')
-          .select()
+          .from('reservations')
+          .select('''
+            *,
+            services:service_id (
+              id, title, image_url, price, currency, time_unit
+            )
+          ''')
           .eq('provider_id', _provider!.id)
-          .order('created_at', ascending: false);
-      _bookings = (response as List)
-          .map((json) => ProviderBookingModel.fromJson(json))
-          .toList();
+          .order('scheduled_date', ascending: false);
+
+      print(
+          '📊 [ProviderDashboard] Respuesta de Supabase: ${response.length} registros');
+      print('📝 [ProviderDashboard] Datos crudos: $response');
+
+      _reservations = (response as List).map((json) {
+        print('🔄 [ProviderDashboard] Mapeando reserva: ${json['id']}');
+        ReservationStatus status;
+        switch (json['status']) {
+          case 'pending':
+            status = ReservationStatus.confirmed;
+            break;
+          case 'confirmed':
+            status = ReservationStatus.confirmed;
+            break;
+          case 'on_the_way':
+            status = ReservationStatus.onTheWay;
+            break;
+          case 'in_progress':
+            status = ReservationStatus.inProgress;
+            break;
+          case 'completed':
+            status = ReservationStatus.completed;
+            break;
+          case 'cancelled':
+            status = ReservationStatus.cancelled;
+            break;
+          default:
+            status = ReservationStatus.confirmed;
+        }
+        return ReservationStatusModel(
+          id: json['id'],
+          serviceId: json['service_id'],
+          serviceName:
+              json['service_name'] ?? json['services']?['title'] ?? 'Servicio',
+          serviceImageUrl:
+              json['service_image_url'] ?? json['services']?['image_url'] ?? '',
+          providerName: json['provider_name'] ?? 'Proveedor',
+          providerPhone: json['provider_phone'] ?? '',
+          providerImageUrl: json['provider_image_url'] ?? '',
+          status: status,
+          scheduledDate: DateTime.parse(json['scheduled_date']),
+          scheduledTime: json['scheduled_time'],
+          address: json['address'] ?? '',
+          amount: double.tryParse(json['amount'].toString()) ?? 0.0,
+          currency: json['currency'] ?? 'S/',
+          isPaid: json['is_paid'] ?? false,
+          notes: json['notes'],
+        );
+      }).toList();
+
+      print(
+          '✅ [ProviderDashboard] ${_reservations.length} reservas cargadas exitosamente');
       notifyListeners();
-    } catch (e) {
-      print('Error loading bookings: $e');
+    } catch (e, stackTrace) {
+      print('❌ [ProviderDashboard] Error loading bookings: $e');
+      print('❌ [ProviderDashboard] Stack trace: $stackTrace');
+      _error = 'Error cargando reservas: $e';
+      notifyListeners();
     }
   }
 
@@ -219,5 +284,22 @@ class ProviderDashboardProvider extends ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  /// Recarga solo los datos del proveedor (útil después de una nueva reseña)
+  Future<void> refreshProviderData() async {
+    if (_provider == null) return;
+    try {
+      final providerData = await SupabaseConfig.client
+          .from('providers')
+          .select()
+          .eq('id', _provider!.id)
+          .single();
+      _provider = ProviderModel.fromJson(providerData);
+      await loadReviews(); // También recargar reseñas
+      notifyListeners();
+    } catch (e) {
+      print('Error refreshing provider data: $e');
+    }
   }
 }

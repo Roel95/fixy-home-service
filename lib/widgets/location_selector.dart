@@ -8,11 +8,11 @@ class LocationSelector extends StatefulWidget {
   final bool autoDetect;
 
   const LocationSelector({
-    Key? key,
+    super.key,
     this.selectedCity,
     this.onCityChanged,
     this.autoDetect = true,
-  }) : super(key: key);
+  });
 
   @override
   State<LocationSelector> createState() => _LocationSelectorState();
@@ -214,7 +214,7 @@ class _LocationSelectorState extends State<LocationSelector> {
                     IconButton(
                       onPressed: _isLoading ? null : _refreshLocation,
                       icon: _isLoading
-                          ? SizedBox(
+                          ? const SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
@@ -224,7 +224,7 @@ class _LocationSelectorState extends State<LocationSelector> {
                                 ),
                               ),
                             )
-                          : Icon(
+                          : const Icon(
                               Icons.refresh,
                               color: AppTheme.primaryColor,
                               size: 20,
@@ -298,7 +298,7 @@ class _LocationSelectorState extends State<LocationSelector> {
                         child: DropdownButton<String>(
                           value: _selectedCity,
                           isExpanded: true,
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.keyboard_arrow_down,
                             color: AppTheme.textPrimary,
                           ),

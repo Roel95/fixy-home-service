@@ -8,10 +8,10 @@ class UnifiedDealCard extends StatefulWidget {
   final VoidCallback onTap;
 
   const UnifiedDealCard({
-    Key? key,
+    super.key,
     required this.deal,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<UnifiedDealCard> createState() => _UnifiedDealCardState();
@@ -254,7 +254,7 @@ class _UnifiedDealCardState extends State<UnifiedDealCard> {
                           widget.deal.hasDiscount) ...[
                         Text(
                           'S/${widget.deal.originalPrice!.toStringAsFixed(0)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.textSecondary,
                             fontSize: 14,
                             decoration: TextDecoration.lineThrough,

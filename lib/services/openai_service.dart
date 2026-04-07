@@ -106,7 +106,7 @@ Proporciona 3-4 soluciones (DIY fácil, DIY medio, profesional). Sé conciso y p
                     'status': 'streaming',
                     'progress': progress,
                     'partial_content': accumulatedContent.length > 100
-                        ? accumulatedContent.substring(0, 100) + '...'
+                        ? '${accumulatedContent.substring(0, 100)}...'
                         : accumulatedContent
                   };
                 }

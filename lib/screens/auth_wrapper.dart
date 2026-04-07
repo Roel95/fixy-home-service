@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// AuthWrapper that listens to Supabase auth state changes
 /// and automatically navigates between authenticated and unauthenticated screens
 class AuthWrapper extends StatefulWidget {
-  const AuthWrapper({Key? key}) : super(key: key);
+  const AuthWrapper({super.key});
 
   @override
   State<AuthWrapper> createState() => _AuthWrapperState();

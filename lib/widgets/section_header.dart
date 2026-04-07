@@ -6,11 +6,11 @@ class SectionHeader extends StatelessWidget {
   final VoidCallback onViewMore;
 
   const SectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.viewMoreText = 'Ver mas',
     required this.onViewMore,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

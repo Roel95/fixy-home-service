@@ -228,7 +228,7 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
                         const SizedBox(width: 6),
                         Flexible(
                           child: Text(
-                            'Programados',
+                            'Completados',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -343,12 +343,12 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
   }
 
   Widget _buildUpcomingReservationsTab(ReservationProvider provider) {
-    final upcomingReservations = provider.upcomingReservations;
+    final completedReservations = provider.completedReservations;
 
-    if (upcomingReservations.isEmpty) {
+    if (completedReservations.isEmpty) {
       return _buildEmptyState(
-        'No hay servicios programados',
-        'Los servicios confirmados aparecerán aquí',
+        'No hay servicios completados',
+        'Los servicios completados y cancelados aparecerán aquí',
         Icons.calendar_today_outlined,
       );
     }
@@ -356,16 +356,16 @@ class _CurrentServiceStatusScreenState extends State<CurrentServiceStatusScreen>
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: 16),
-      itemCount: upcomingReservations.length,
+      itemCount: completedReservations.length,
       itemBuilder: (context, index) {
         return ReservationStatusCard(
-          reservation: upcomingReservations[index],
+          reservation: completedReservations[index],
           onContactProvider: () =>
-              _contactProvider(upcomingReservations[index]),
+              _contactProvider(completedReservations[index]),
           onCancelReservation: () =>
-              _showCancelConfirmation(context, upcomingReservations[index]),
+              _showCancelConfirmation(context, completedReservations[index]),
           onViewDetails: () =>
-              _viewReservationDetails(upcomingReservations[index]),
+              _viewReservationDetails(completedReservations[index]),
         );
       },
     );

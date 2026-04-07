@@ -18,7 +18,7 @@ import 'package:fixy_home_service/widgets/deal_banner.dart';
 import 'package:fixy_home_service/utils/page_transitions.dart';
 
 class ShopScreen extends StatefulWidget {
-  const ShopScreen({Key? key}) : super(key: key);
+  const ShopScreen({super.key});
 
   @override
   State<ShopScreen> createState() => _ShopScreenState();
@@ -194,7 +194,7 @@ class _ShopScreenState extends State<ShopScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(
+                const CircularProgressIndicator(
                   color: AppTheme.primaryColor,
                   strokeWidth: 3,
                 ),
@@ -352,8 +352,8 @@ class _ShopScreenState extends State<ShopScreen>
                             child: Stack(
                               clipBehavior: Clip.none,
                               children: [
-                                Icon(Icons.shopping_cart,
-                                    color: const Color(0xFF667EEA), size: 24),
+                                const Icon(Icons.shopping_cart,
+                                    color: Color(0xFF667EEA), size: 24),
                                 if (context.watch<CartProvider>().itemCount > 0)
                                   Positioned(
                                     right: -4,

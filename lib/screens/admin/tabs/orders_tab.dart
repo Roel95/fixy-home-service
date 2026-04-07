@@ -238,7 +238,8 @@ class _OrdersTabState extends State<OrdersTab> {
                     ? null
                     : [
                         BoxShadow(
-                          color: const Color(0xFF2D3748).withValues(alpha: 0.05),
+                          color:
+                              const Color(0xFF2D3748).withValues(alpha: 0.05),
                           blurRadius: 2,
                           offset: const Offset(1, 1),
                         ),
@@ -345,7 +346,8 @@ class _OrdersTabState extends State<OrdersTab> {
                           _formatDate(order.createdAt),
                           style: TextStyle(
                             fontSize: 12,
-                            color: const Color(0xFF2D3748).withValues(alpha: 0.6),
+                            color:
+                                const Color(0xFF2D3748).withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -404,7 +406,8 @@ class _OrdersTabState extends State<OrdersTab> {
                               order.userEmail!,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: const Color(0xFF2D3748).withValues(alpha: 0.6),
+                                color: const Color(0xFF2D3748)
+                                    .withValues(alpha: 0.6),
                               ),
                             ),
                         ],
@@ -832,7 +835,7 @@ class _OrdersTabState extends State<OrdersTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: items.map((item) {
               if (item is Widget) return item;
-              if (item is String)
+              if (item is String) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
@@ -840,6 +843,7 @@ class _OrdersTabState extends State<OrdersTab> {
                     style: const TextStyle(fontSize: 14),
                   ),
                 );
+              }
               return const SizedBox.shrink();
             }).toList(),
           ),

@@ -6,7 +6,7 @@ import 'package:fixy_home_service/models/transaction_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class AnalyticsTab extends StatelessWidget {
-  const AnalyticsTab();
+  const AnalyticsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +283,7 @@ class AnalyticsTab extends StatelessWidget {
                 provider.bookings.length) *
             100;
 
-    final avgResponseTime = '< 1 hora'; // Placeholder
+    const avgResponseTime = '< 1 hora'; // Placeholder
 
     return Container(
       padding: const EdgeInsets.all(20),

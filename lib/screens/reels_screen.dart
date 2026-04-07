@@ -8,10 +8,10 @@ class ReelsScreen extends StatefulWidget {
   final int initialIndex;
 
   const ReelsScreen({
-    Key? key,
+    super.key,
     required this.videos,
     this.initialIndex = 0,
-  }) : super(key: key);
+  });
 
   @override
   State<ReelsScreen> createState() => _ReelsScreenState();
@@ -109,10 +109,10 @@ class ReelVideoPlayer extends StatefulWidget {
   final bool isActive;
 
   const ReelVideoPlayer({
-    Key? key,
+    super.key,
     required this.video,
     required this.isActive,
-  }) : super(key: key);
+  });
 
   @override
   State<ReelVideoPlayer> createState() => _ReelVideoPlayerState();

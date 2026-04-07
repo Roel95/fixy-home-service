@@ -8,11 +8,11 @@ class ServiceListItem extends StatelessWidget {
   final VoidCallback onReserve;
 
   const ServiceListItem({
-    Key? key,
+    super.key,
     required this.service,
     required this.onTap,
     required this.onReserve,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

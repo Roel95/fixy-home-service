@@ -8,7 +8,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/utils/page_transitions.dart';
 
 class CartScreen extends StatelessWidget {
-  const CartScreen({Key? key}) : super(key: key);
+  const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,21 +21,21 @@ class CartScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2D3748)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
+        title: const Row(
           children: [
             Hero(
               tag: 'cart-icon',
               child: Icon(
                 Icons.shopping_cart,
-                color: const Color(0xFF667EEA),
+                color: Color(0xFF667EEA),
                 size: 24,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Text(
               'Carrito de Compras',
               style: TextStyle(
-                color: const Color(0xFF2D3748),
+                color: Color(0xFF2D3748),
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.3,
@@ -75,7 +75,7 @@ class CartScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: Text(
+                child: const Text(
                   'Vaciar',
                   style: TextStyle(
                     color: Colors.red,
@@ -105,7 +105,7 @@ class CartScreen extends StatelessWidget {
                     color: Colors.grey[300],
                   ),
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     'Tu carrito está vacío',
                     style: TextStyle(
                       color: AppTheme.textSecondary,
@@ -114,7 +114,7 @@ class CartScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Text(
+                  const Text(
                     'Agrega productos para comenzar',
                     style: TextStyle(
                       color: AppTheme.textSecondary,
@@ -178,11 +178,10 @@ class CartScreen extends StatelessWidget {
                         onDismissed: (_) {
                           cart.removeFromCart(item.product.id);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content:
-                                  const Text('Producto eliminado del carrito'),
+                            const SnackBar(
+                              content: Text('Producto eliminado del carrito'),
                               behavior: SnackBarBehavior.floating,
-                              duration: const Duration(seconds: 2),
+                              duration: Duration(seconds: 2),
                             ),
                           );
                         },
@@ -226,7 +225,7 @@ class CartScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               'Subtotal',
                               style: TextStyle(
                                 color: AppTheme.textSecondary,
@@ -235,7 +234,7 @@ class CartScreen extends StatelessWidget {
                             ),
                             Text(
                               'S/ ${cart.cart.subtotal.toStringAsFixed(2)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: AppTheme.textPrimary,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -247,7 +246,7 @@ class CartScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               'Envío',
                               style: TextStyle(
                                 color: AppTheme.textSecondary,
@@ -274,7 +273,7 @@ class CartScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               'Total',
                               style: TextStyle(
                                 color: AppTheme.textPrimary,
@@ -284,7 +283,7 @@ class CartScreen extends StatelessWidget {
                             ),
                             Text(
                               'S/ ${cart.cart.total.toStringAsFixed(2)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: AppTheme.primaryColor,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -329,8 +328,8 @@ class CartScreen extends StatelessWidget {
                           ),
                         ),
                         if (cart.cart.subtotal < 100)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 12),
                             child: Text(
                               'Envío gratis en compras mayores a \$100',
                               style: TextStyle(
@@ -406,7 +405,7 @@ class _CartItemCard extends StatelessWidget {
                 children: [
                   Text(
                     item.product.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppTheme.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -417,7 +416,7 @@ class _CartItemCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     item.product.brand,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppTheme.textSecondary,
                       fontSize: 12,
                     ),
@@ -428,7 +427,7 @@ class _CartItemCard extends StatelessWidget {
                     children: [
                       Text(
                         'S/ ${item.product.price.toStringAsFixed(2)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppTheme.primaryColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

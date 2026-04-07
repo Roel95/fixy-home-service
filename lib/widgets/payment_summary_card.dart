@@ -9,11 +9,11 @@ class PaymentSummaryCard extends StatelessWidget {
   final bool showPaymentStatus;
 
   const PaymentSummaryCard({
-    Key? key,
+    super.key,
     required this.payment,
     required this.service,
     this.showPaymentStatus = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +172,7 @@ class PaymentSummaryCard extends StatelessWidget {
             ),
             if (!isTotal && paymentDate != null) ...[
               const SizedBox(width: 8),
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: Colors.green,
                 size: 16,

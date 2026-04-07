@@ -11,12 +11,12 @@ class YapeQRScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onPaymentSuccess;
 
   const YapeQRScreen({
-    Key? key,
+    super.key,
     required this.amount,
     required this.orderId,
     required this.phoneNumber,
     required this.onPaymentSuccess,
-  }) : super(key: key);
+  });
 
   @override
   State<YapeQRScreen> createState() => _YapeQRScreenState();
@@ -149,10 +149,10 @@ class _YapeQRScreenState extends State<YapeQRScreen> {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2D3748)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           'Pagar con Yape',
           style: TextStyle(
-            color: const Color(0xFF2D3748),
+            color: Color(0xFF2D3748),
             fontSize: 18,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.3,
@@ -382,7 +382,7 @@ class _YapeQRScreenState extends State<YapeQRScreen> {
                       child: OutlinedButton.icon(
                         onPressed: _isChecking ? null : _checkPaymentStatus,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppTheme.primaryColor),
+                          side: const BorderSide(color: AppTheme.primaryColor),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -394,8 +394,9 @@ class _YapeQRScreenState extends State<YapeQRScreen> {
                                 child:
                                     CircularProgressIndicator(strokeWidth: 2),
                               )
-                            : Icon(Icons.refresh, color: AppTheme.primaryColor),
-                        label: Text(
+                            : const Icon(Icons.refresh,
+                                color: AppTheme.primaryColor),
+                        label: const Text(
                           'Verificar estado del pago',
                           style: TextStyle(
                             color: AppTheme.primaryColor,

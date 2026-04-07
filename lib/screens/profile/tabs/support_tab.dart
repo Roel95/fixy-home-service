@@ -5,7 +5,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/models/profile_models.dart';
 
 class SupportTab extends StatefulWidget {
-  const SupportTab({Key? key}) : super(key: key);
+  const SupportTab({super.key});
 
   @override
   State<SupportTab> createState() => _SupportTabState();
@@ -40,7 +40,7 @@ class _SupportTabState extends State<SupportTab>
             const SizedBox(height: 16),
 
             // FAQs list
-            ...faqs.map((faq) => _buildFaqItem(faq, profileProvider)).toList(),
+            ...faqs.map((faq) => _buildFaqItem(faq, profileProvider)),
 
             const SizedBox(height: 24),
 

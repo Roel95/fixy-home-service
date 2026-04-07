@@ -10,12 +10,12 @@ class ProfileImagePicker extends StatelessWidget {
   final VoidCallback? onDeletePhoto;
 
   const ProfileImagePicker({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.onImagePicked,
     this.profileImageBytes,
     this.onDeletePhoto,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

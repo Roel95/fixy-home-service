@@ -67,10 +67,15 @@ class UserService {
         'updated_at': DateTime.now().toIso8601String(),
       };
 
+      debugPrint('📝 [USER_SERVICE] Actualizando perfil: ${profile.id}');
+      debugPrint('📍 [USER_SERVICE] Datos: $updateData');
+
       await SupabaseConfig.client
           .from('users')
           .update(updateData)
           .eq('id', profile.id);
+
+      debugPrint('✅ [USER_SERVICE] Perfil actualizado exitosamente');
     } catch (e) {
       debugPrint('❌ [USER_SERVICE] Error updating user profile: $e');
       rethrow;

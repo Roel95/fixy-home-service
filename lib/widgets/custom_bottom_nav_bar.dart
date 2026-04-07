@@ -9,11 +9,11 @@ class CustomBottomNav extends StatefulWidget {
   final VoidCallback? onAITap;
 
   const CustomBottomNav({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
     this.onAITap,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomBottomNav> createState() => _CustomBottomNavState();

@@ -8,10 +8,10 @@ class RescheduleServiceDialog extends StatefulWidget {
   final Function(DateTime, String) onReschedule;
 
   const RescheduleServiceDialog({
-    Key? key,
+    super.key,
     required this.service,
     required this.onReschedule,
-  }) : super(key: key);
+  });
 
   @override
   State<RescheduleServiceDialog> createState() =>

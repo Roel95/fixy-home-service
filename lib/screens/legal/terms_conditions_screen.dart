@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TermsConditionsScreen extends StatelessWidget {
-  const TermsConditionsScreen({Key? key}) : super(key: key);
+  const TermsConditionsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +175,7 @@ class TermsConditionsScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.blue, size: 32),
+                  const Icon(Icons.info_outline, color: Colors.blue, size: 32),
                   const SizedBox(height: 12),
                   Text(
                     'Acuerdo Importante',

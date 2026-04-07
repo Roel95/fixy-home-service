@@ -7,7 +7,7 @@ import 'package:fixy_home_service/utils/image_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ServiceCategoriesTab extends StatefulWidget {
-  const ServiceCategoriesTab({Key? key}) : super(key: key);
+  const ServiceCategoriesTab({super.key});
 
   @override
   State<ServiceCategoriesTab> createState() => _ServiceCategoriesTabState();

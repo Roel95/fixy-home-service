@@ -272,10 +272,10 @@ class _OnboardingPageWidgetState extends State<OnboardingPageWidget>
           child: Stack(
             children: [
               // Dot pattern decoration (top right - larger)
-              Positioned(
+              const Positioned(
                 top: 24,
                 right: 12,
-                child: const _DotPattern(color: Colors.white),
+                child: _DotPattern(color: Colors.white),
               ),
               // Dot pattern decoration (middle left - smaller)
               Positioned(

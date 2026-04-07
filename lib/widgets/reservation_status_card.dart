@@ -10,76 +10,64 @@ class ReservationStatusCard extends StatelessWidget {
   final VoidCallback onViewDetails;
 
   const ReservationStatusCard({
-    Key? key,
+    super.key,
     required this.reservation,
     required this.onContactProvider,
     required this.onCancelReservation,
     required this.onViewDetails,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8ECF3),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          const BoxShadow(
-            color: Color(0xFFFFFFFF),
-            offset: Offset(-4, -4),
-            blurRadius: 8,
-            spreadRadius: 0,
-          ),
           BoxShadow(
-            color: const Color(0xFF2D3748).withValues(alpha: 0.15),
-            offset: const Offset(4, 4),
-            blurRadius: 8,
-            spreadRadius: 0,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
         children: [
-          // Header with service image
+          // Header con imagen del servicio
           ClipRRect(
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
             ),
             child: Stack(
               children: [
-                // Service image
                 Image.network(
                   reservation.serviceImageUrl,
-                  height: 150,
+                  height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    height: 150,
-                    width: double.infinity,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.image_not_supported,
-                        size: 50, color: Colors.grey),
+                    height: 160,
+                    color: const Color(0xFF1364FF).withOpacity(0.1),
+                    child: const Icon(Icons.home_repair_service,
+                        size: 60, color: Color(0xFF1364FF)),
                   ),
                 ),
-                // Gradient overlay for better text visibility
                 Container(
-                  height: 150,
-                  width: double.infinity,
+                  height: 160,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withValues(alpha: 0.7),
+                        Colors.black.withOpacity(0.75),
                       ],
-                      stops: const [0.6, 1.0],
+                      stops: const [0.5, 1.0],
                     ),
                   ),
                 ),
-                // Service name
                 Positioned(
                   left: 16,
                   bottom: 16,
@@ -90,34 +78,26 @@ class ReservationStatusCard extends StatelessWidget {
                         reservation.serviceName,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                                offset: Offset(0, 1),
-                                blurRadius: 3,
-                                color: Colors.black45),
-                          ],
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        'Fecha: ${DateFormat('dd MMM yyyy').format(reservation.scheduledDate)} · ${reservation.scheduledTime}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          shadows: [
-                            Shadow(
-                                offset: Offset(0, 1),
-                                blurRadius: 3,
-                                color: Colors.black45),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today,
+                              color: Colors.white70, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${DateFormat('dd MMM yyyy').format(reservation.scheduledDate)} · ${reservation.scheduledTime}',
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 13),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                // Status pill
                 Positioned(
                   top: 16,
                   right: 16,
@@ -125,21 +105,18 @@ class ReservationStatusCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.7),
+                      color: reservation.getStatusColor().withOpacity(0.9),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          reservation.getStatusIcon(),
-                          color: reservation.getStatusColor(),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 6),
+                        Icon(reservation.getStatusIcon(),
+                            color: Colors.white, size: 14),
+                        const SizedBox(width: 4),
                         Text(
                           reservation.getStatusDisplayName(),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
@@ -153,163 +130,223 @@ class ReservationStatusCard extends StatelessWidget {
             ),
           ),
 
-          // Provider details
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Provider section
-                Row(
-                  children: [
-                    // Provider image
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: Image.network(
-                          reservation.providerImageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.person,
-                                size: 30, color: Colors.grey),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-
-                    // Provider info
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Profesional:',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            reservation.providerName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Estimated arrival for onTheWay status
-                    if (reservation.status == ReservationStatus.onTheWay &&
-                        reservation.estimatedArrival != null)
+                // Proveedor
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F9FF),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: const Color(0xFF1364FF).withOpacity(0.1)),
+                  ),
+                  child: Row(
+                    children: [
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        width: 50,
+                        height: 50,
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: const Color(0xFF1364FF), width: 2),
                         ),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Llegada estimada',
-                              style: TextStyle(
-                                color: AppTheme.primaryColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(25),
+                          child: Image.network(
+                            reservation.providerImageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: const Color(0xFF1364FF).withOpacity(0.1),
+                              child: const Icon(Icons.person,
+                                  color: Color(0xFF1364FF), size: 28),
                             ),
-                            const SizedBox(height: 4),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Profesional asignado',
+                                style: TextStyle(
+                                    color: Colors.grey, fontSize: 12)),
                             Text(
-                              DateFormat('HH:mm')
-                                  .format(reservation.estimatedArrival!),
-                              style: TextStyle(
-                                color: AppTheme.primaryColor,
+                              reservation.providerName,
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
+                                color: Color(0xFF1A1A2E),
                               ),
                             ),
+                            if (reservation.providerPhone.isNotEmpty)
+                              Text(
+                                reservation.providerPhone,
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 13),
+                              ),
                           ],
                         ),
                       ),
-                  ],
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1364FF),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.verified, color: Colors.white, size: 12),
+                            SizedBox(width: 4),
+                            Text('Verificado',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 16),
 
-                // Address
+                // Dirección
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.location_on_outlined,
-                        color: Colors.grey[600], size: 18),
-                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1364FF).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.location_on,
+                          color: Color(0xFF1364FF), size: 18),
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         reservation.address,
-                        style: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 14,
-                        ),
+                        style: const TextStyle(
+                            color: Color(0xFF1A1A2E), fontSize: 14),
                       ),
                     ),
                   ],
                 ),
 
-                if (reservation.notes != null) ...[
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 12),
+
+                // Desglose de pago
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F9FF),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: const Color(0xFF1364FF).withOpacity(0.1)),
+                  ),
+                  child: Column(
                     children: [
-                      Icon(Icons.notes_outlined,
-                          color: Colors.grey[600], size: 18),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Total del servicio',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 13)),
+                          Text(
+                            '${reservation.currency} ${reservation.amount.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.check_circle,
+                                  color: Colors.green.shade600, size: 16),
+                              const SizedBox(width: 4),
+                              const Text('Adelanto pagado (30%)',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 13)),
+                            ],
+                          ),
+                          Text(
+                            '${reservation.currency} ${(reservation.amount * 0.30).toStringAsFixed(2)}',
+                            style: TextStyle(
+                                color: Colors.green.shade600,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Pendiente al finalizar',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 13)),
+                          Text(
+                            '${reservation.currency} ${(reservation.amount * 0.70).toStringAsFixed(2)}',
+                            style: const TextStyle(
+                                color: Color(0xFF1364FF),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                if (reservation.notes != null &&
+                    reservation.notes!.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.info_outline,
+                          color: Colors.grey, size: 16),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           reservation.notes!,
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontSize: 14,
-                            fontStyle: FontStyle.italic,
-                          ),
+                          style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 13,
+                              fontStyle: FontStyle.italic),
                         ),
                       ),
                     ],
                   ),
                 ],
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
-                // Action buttons
+                // Botones de acción
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: onContactProvider,
-                        icon: const Icon(Icons.phone_outlined, size: 18),
+                        icon: const Icon(Icons.phone, size: 18),
                         label: const Text('Contactar'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
+                          backgroundColor: const Color(0xFF1364FF),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
+                              borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
                     ),
@@ -332,17 +369,17 @@ class ReservationStatusCard extends StatelessWidget {
                         style: OutlinedButton.styleFrom(
                           foregroundColor:
                               reservation.status == ReservationStatus.cancelled
-                                  ? AppTheme.primaryColor
+                                  ? const Color(0xFF1364FF)
                                   : Colors.red,
                           side: BorderSide(
                             color: reservation.status ==
                                     ReservationStatus.cancelled
-                                ? AppTheme.primaryColor
+                                ? const Color(0xFF1364FF)
                                 : Colors.red,
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
+                              borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
                     ),

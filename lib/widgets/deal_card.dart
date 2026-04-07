@@ -8,10 +8,10 @@ class DealCard extends StatefulWidget {
   final VoidCallback onTap;
 
   const DealCard({
-    Key? key,
+    super.key,
     required this.service,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<DealCard> createState() => _DealCardState();
@@ -53,7 +53,9 @@ class _DealCardState extends State<DealCard> {
 
   double get _discountPercentage {
     if (widget.service.originalPrice == null ||
-        widget.service.originalPrice! <= 0) return 0;
+        widget.service.originalPrice! <= 0) {
+      return 0;
+    }
     return ((widget.service.originalPrice! - widget.service.price) /
         widget.service.originalPrice! *
         100);
@@ -214,7 +216,7 @@ class _DealCardState extends State<DealCard> {
                       if (widget.service.originalPrice != null) ...[
                         Text(
                           '${widget.service.currency}${widget.service.originalPrice!.toStringAsFixed(0)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.textSecondary,
                             fontSize: 14,
                             decoration: TextDecoration.lineThrough,

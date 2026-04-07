@@ -10,14 +10,14 @@ class CustomSearchBar extends StatelessWidget {
   final bool autofocus;
 
   const CustomSearchBar({
-    Key? key,
+    super.key,
     required this.placeholder,
     required this.onTap,
     required this.onSearch,
     this.controller,
     this.onChanged,
     this.autofocus = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

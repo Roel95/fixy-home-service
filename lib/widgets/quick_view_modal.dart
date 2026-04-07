@@ -10,7 +10,7 @@ import 'package:fixy_home_service/utils/page_transitions.dart';
 class QuickViewModal extends StatelessWidget {
   final ProductModel product;
 
-  const QuickViewModal({Key? key, required this.product}) : super(key: key);
+  const QuickViewModal({super.key, required this.product});
 
   static void show(BuildContext context, ProductModel product) {
     showModalBottomSheet(
@@ -184,7 +184,7 @@ class QuickViewModal extends StatelessWidget {
                               ),
                               child: Text(
                                 product.brand,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppTheme.primaryColor,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13,
@@ -198,7 +198,7 @@ class QuickViewModal extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   '${product.rating}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppTheme.textPrimary,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -206,7 +206,7 @@ class QuickViewModal extends StatelessWidget {
                                 ),
                                 Text(
                                   ' (${product.reviewCount})',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppTheme.textSecondary,
                                     fontSize: 12,
                                   ),
@@ -236,7 +236,7 @@ class QuickViewModal extends StatelessWidget {
                             if (product.originalPrice != null) ...[
                               Text(
                                 'S/ ${product.originalPrice!.toStringAsFixed(2)}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppTheme.textSecondary,
                                   fontSize: 14,
                                   decoration: TextDecoration.lineThrough,
@@ -246,7 +246,7 @@ class QuickViewModal extends StatelessWidget {
                             ],
                             Text(
                               'S/ ${product.price.toStringAsFixed(2)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: AppTheme.primaryColor,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -293,7 +293,7 @@ class QuickViewModal extends StatelessWidget {
                         // Description
                         Text(
                           product.description,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.textSecondary,
                             fontSize: 14,
                             height: 1.5,
@@ -314,7 +314,7 @@ class QuickViewModal extends StatelessWidget {
                                   page: ProductDetailScreen(product: product)),
                             );
                           },
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
@@ -324,7 +324,7 @@ class QuickViewModal extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Icon(Icons.arrow_forward,
                                   size: 16, color: AppTheme.primaryColor),
                             ],

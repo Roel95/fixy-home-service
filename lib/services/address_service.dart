@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fixy_home_service/models/saved_address_model.dart';
 
@@ -36,6 +37,11 @@ class AddressService {
         throw Exception('Usuario no autenticado');
       }
 
+      debugPrint('📝 [ADDRESS_SERVICE] Agregando dirección...');
+      debugPrint('   - user_id: ${user.id}');
+      debugPrint('   - name: ${address.name}');
+      debugPrint('   - address: ${address.address}');
+
       // Si es la primera dirección o se marca como default, actualizar las demás
       if (address.isDefault) {
         await _unsetDefaultAddresses(user.id);
@@ -44,16 +50,22 @@ class AddressService {
       final data = address.toInsertJson();
       data['user_id'] = user.id;
 
+      debugPrint('   - data a insertar: $data');
+
       final response = await _supabase
           .from('saved_addresses')
           .insert(data)
           .select()
           .single();
 
+      debugPrint('✅ [ADDRESS_SERVICE] Dirección agregada exitosamente');
+      debugPrint('   - response: $response');
+
       return SavedAddress.fromJson(response);
-    } catch (e) {
-      print('❌ Error agregando dirección: $e');
-      return null;
+    } catch (e, stackTrace) {
+      debugPrint('❌ [ADDRESS_SERVICE] Error agregando dirección: $e');
+      debugPrint('   - stackTrace: $stackTrace');
+      rethrow;
     }
   }
 
@@ -140,8 +152,7 @@ class AddressService {
     try {
       var query = _supabase
           .from('saved_addresses')
-          .update({'is_default': false})
-          .eq('user_id', userId);
+          .update({'is_default': false}).eq('user_id', userId);
 
       if (exceptId != null) {
         query = query.neq('id', exceptId);

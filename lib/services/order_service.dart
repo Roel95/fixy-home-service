@@ -1,7 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fixy_home_service/models/product_model.dart';
 import 'package:fixy_home_service/services/notification_service.dart';
-import 'package:fixy_home_service/models/notification_model.dart';
 
 class OrderService {
   final SupabaseClient _supabase = Supabase.instance.client;

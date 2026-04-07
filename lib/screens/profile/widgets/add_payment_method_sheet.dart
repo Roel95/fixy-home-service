@@ -6,7 +6,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/models/profile_models.dart';
 
 class AddPaymentMethodSheet extends StatefulWidget {
-  const AddPaymentMethodSheet({Key? key}) : super(key: key);
+  const AddPaymentMethodSheet({super.key});
 
   @override
   State<AddPaymentMethodSheet> createState() => _AddPaymentMethodSheetState();

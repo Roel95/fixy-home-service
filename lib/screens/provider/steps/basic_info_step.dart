@@ -5,7 +5,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:file_picker/file_picker.dart';
 
 class BasicInfoStep extends StatelessWidget {
-  const BasicInfoStep({Key? key}) : super(key: key);
+  const BasicInfoStep({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -138,14 +138,13 @@ class _InputField extends StatelessWidget {
   final TextInputType keyboardType;
 
   const _InputField({
-    Key? key,
     required this.label,
     required this.hint,
     required this.value,
     required this.onChanged,
     this.maxLines = 1,
     this.keyboardType = TextInputType.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

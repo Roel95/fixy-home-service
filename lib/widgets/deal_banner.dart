@@ -54,44 +54,44 @@ class DealBanner extends StatelessWidget {
                         '¡OFERTA!',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 11,
+                          fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.5,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
                     Text(
                       'Ahorra hasta',
                       style: TextStyle(
                         color: const Color(0xFF667E69).withValues(alpha: 0.7),
-                        fontSize: 14,
+                        fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       '${product.discountPercentage.toStringAsFixed(0)}% OFF',
                       style: const TextStyle(
                         color: Color(0xFF667E69),
-                        fontSize: 28,
+                        fontSize: 22,
                         fontWeight: FontWeight.w900,
                         height: 1,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
                       product.name,
                       style: const TextStyle(
                         color: Color(0xFF667E69),
-                        fontSize: 13,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
                         height: 1.2,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
                         Text(
@@ -99,25 +99,22 @@ class DealBanner extends StatelessWidget {
                           style: TextStyle(
                             color:
                                 const Color(0xFF667E69).withValues(alpha: 0.5),
-                            fontSize: 13,
+                            fontSize: 11,
                             decoration: TextDecoration.lineThrough,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'S/ ',
-                          style: TextStyle(
-                            color: Color(0xFF667E69),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          product.price.toStringAsFixed(2),
-                          style: const TextStyle(
-                            color: Color(0xFF667E69),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'S/ ${product.price.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                color: Color(0xFF667E69),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -130,12 +127,12 @@ class DealBanner extends StatelessWidget {
               Hero(
                 tag: 'product-${product.id}',
                 child: Container(
-                  width: 100,
-                  height: 100,
-                  padding: const EdgeInsets.all(4),
+                  width: 90,
+                  height: 90,
+                  margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8ECF3),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.white,

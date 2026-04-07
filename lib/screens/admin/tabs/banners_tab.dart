@@ -6,7 +6,7 @@ import 'package:fixy_home_service/utils/image_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class BannersTab extends StatefulWidget {
-  const BannersTab({Key? key}) : super(key: key);
+  const BannersTab({super.key});
 
   @override
   State<BannersTab> createState() => _BannersTabState();
@@ -410,11 +410,11 @@ class BannerFormDialog extends StatefulWidget {
   final Function(BannerModel) onSave;
 
   const BannerFormDialog({
-    Key? key,
+    super.key,
     this.banner,
     required this.type,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<BannerFormDialog> createState() => _BannerFormDialogState();

@@ -9,7 +9,7 @@ import 'package:uuid/uuid.dart';
 class VoiceBookingDialog extends StatefulWidget {
   final ServiceModel? service;
 
-  const VoiceBookingDialog({Key? key, this.service}) : super(key: key);
+  const VoiceBookingDialog({super.key, this.service});
 
   @override
   State<VoiceBookingDialog> createState() => _VoiceBookingDialogState();
@@ -184,9 +184,9 @@ Ejemplos: [BUSCAR:plomero], [BUSCAR:electricista], [BUSCAR:limpieza]''';
                 Container(
                   width: 40,
                   height: 40,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
                     ),
                   ),
@@ -205,7 +205,7 @@ Ejemplos: [BUSCAR:plomero], [BUSCAR:electricista], [BUSCAR:limpieza]''';
                       if (widget.service != null)
                         Text(
                           widget.service!.title,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 12, color: AppTheme.textSecondary),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -366,7 +366,7 @@ Ejemplos: [BUSCAR:plomero], [BUSCAR:electricista], [BUSCAR:limpieza]''';
 
             Text(
               _isListening ? 'Escuchando...' : 'Toca para hablar',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 color: AppTheme.textSecondary,
                 fontWeight: FontWeight.w500,

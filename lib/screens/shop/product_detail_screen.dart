@@ -25,12 +25,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   int _currentImageIndex = 0;
   int _quantity = 1;
   final GlobalKey _cartIconKey = GlobalKey();
-  AnimationController? _flyingAnimController;
-  Animation<Offset>? _flyingAnimation;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
 
   @override
   void dispose() {
-    _flyingAnimController?.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 

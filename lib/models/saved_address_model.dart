@@ -4,7 +4,6 @@ class SavedAddress {
   final String name;
   final String address;
   final String? city;
-  final String? postalCode;
   final String? reference;
   final String iconType;
   final bool isDefault;
@@ -16,7 +15,6 @@ class SavedAddress {
     required this.name,
     required this.address,
     this.city,
-    this.postalCode,
     this.reference,
     this.iconType = 'home',
     this.isDefault = false,
@@ -29,7 +27,6 @@ class SavedAddress {
     String? name,
     String? address,
     String? city,
-    String? postalCode,
     String? reference,
     String? iconType,
     bool? isDefault,
@@ -41,7 +38,6 @@ class SavedAddress {
       name: name ?? this.name,
       address: address ?? this.address,
       city: city ?? this.city,
-      postalCode: postalCode ?? this.postalCode,
       reference: reference ?? this.reference,
       iconType: iconType ?? this.iconType,
       isDefault: isDefault ?? this.isDefault,
@@ -56,7 +52,6 @@ class SavedAddress {
       name: json['name']?.toString() ?? '',
       address: json['address']?.toString() ?? '',
       city: json['city']?.toString(),
-      postalCode: json['postal_code']?.toString(),
       reference: json['reference']?.toString(),
       iconType: json['icon_type']?.toString() ?? 'home',
       isDefault: json['is_default'] ?? false,
@@ -73,7 +68,6 @@ class SavedAddress {
       'name': name,
       'address': address,
       'city': city,
-      'postal_code': postalCode,
       'reference': reference,
       'icon_type': iconType,
       'is_default': isDefault,
@@ -87,7 +81,6 @@ class SavedAddress {
       'name': name,
       'address': address,
       'city': city,
-      'postal_code': postalCode,
       'reference': reference,
       'icon_type': iconType,
       'is_default': isDefault,
@@ -97,7 +90,6 @@ class SavedAddress {
   String get fullAddress {
     final parts = <String>[address];
     if (city != null && city!.isNotEmpty) parts.add(city!);
-    if (postalCode != null && postalCode!.isNotEmpty) parts.add(postalCode!);
     return parts.join(', ');
   }
 

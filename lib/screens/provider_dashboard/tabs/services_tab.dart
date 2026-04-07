@@ -124,7 +124,7 @@ class _ServicesTabState extends State<ServicesTab> {
                   padding: const EdgeInsets.all(16),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.75,
+                    childAspectRatio: 0.70,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                   ),
@@ -446,12 +446,12 @@ class ModernServiceCard extends StatelessWidget {
                       service.title,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 13,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     // Category
                     Text(
                       service.category,
@@ -464,20 +464,25 @@ class ModernServiceCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     // Price
-                    Text(
-                      '${service.currency} ${service.price.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0065FC),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        '${service.currency} ${service.price.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0065FC),
+                        ),
                       ),
                     ),
                     Text(
                       'por ${service.timeUnit}',
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 9,
                         color: Colors.grey.shade600,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -486,7 +491,7 @@ class ModernServiceCard extends StatelessWidget {
 
             // Action Buttons
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
                 borderRadius:

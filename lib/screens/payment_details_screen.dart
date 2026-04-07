@@ -16,10 +16,10 @@ class PaymentDetailsScreen extends StatefulWidget {
   final bool isAdvancePayment;
 
   const PaymentDetailsScreen({
-    Key? key,
+    super.key,
     required this.service,
     this.isAdvancePayment = true,
-  }) : super(key: key);
+  });
 
   @override
   State<PaymentDetailsScreen> createState() => _PaymentDetailsScreenState();

@@ -4,7 +4,7 @@ import 'package:fixy_home_service/providers/provider_onboarding_provider.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class ConfirmationStep extends StatelessWidget {
-  const ConfirmationStep({Key? key}) : super(key: key);
+  const ConfirmationStep({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -180,12 +180,11 @@ class _SectionCard extends StatelessWidget {
   final List<Widget> children;
 
   const _SectionCard({
-    Key? key,
     required this.title,
     required this.icon,
     required this.onEdit,
     required this.children,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -237,10 +236,9 @@ class _InfoRow extends StatelessWidget {
   final String value;
 
   const _InfoRow({
-    Key? key,
     required this.label,
     required this.value,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

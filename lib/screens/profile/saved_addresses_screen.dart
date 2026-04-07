@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fixy_home_service/models/saved_address_model.dart';
 import 'package:fixy_home_service/services/address_service.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:uuid/uuid.dart';
 
 class SavedAddressesScreen extends StatefulWidget {
-  const SavedAddressesScreen({Key? key}) : super(key: key);
+  const SavedAddressesScreen({super.key});
 
   @override
   State<SavedAddressesScreen> createState() => _SavedAddressesScreenState();
@@ -89,8 +90,8 @@ class _SavedAddressesScreenState extends State<SavedAddressesScreen> {
           Text(
             'Agrega una dirección para usarla en tus reservas',
             style: AppTheme.textTheme.bodySmall?.copyWith(
-                  color: AppTheme.textSecondary,
-                ),
+              color: AppTheme.textSecondary,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -187,11 +188,10 @@ class _SavedAddressesScreenState extends State<SavedAddressesScreen> {
                 fontSize: 14,
               ),
             ),
-            if (address.city != null || address.postalCode != null)
+            if (address.city != null)
               Text(
                 [
                   if (address.city != null) address.city!,
-                  if (address.postalCode != null) address.postalCode!,
                 ].join(', '),
                 style: TextStyle(
                   color: Colors.grey[500],
@@ -324,22 +324,33 @@ class _SavedAddressesScreenState extends State<SavedAddressesScreen> {
       builder: (context) => AddressFormBottomSheet(
         address: address,
         onSave: (savedAddress) async {
-          if (address == null) {
-            await _addressService.addAddress(savedAddress);
-          } else {
-            await _addressService.updateAddress(savedAddress);
-          }
-          _loadAddresses();
-          if (mounted) {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(address == null
-                    ? 'Dirección agregada'
-                    : 'Dirección actualizada'),
-                backgroundColor: Colors.green,
-              ),
-            );
+          try {
+            if (address == null) {
+              await _addressService.addAddress(savedAddress);
+            } else {
+              await _addressService.updateAddress(savedAddress);
+            }
+            _loadAddresses();
+            if (mounted) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(address == null
+                      ? 'Dirección agregada'
+                      : 'Dirección actualizada'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error al guardar: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           }
         },
       ),
@@ -352,14 +363,13 @@ class AddressFormBottomSheet extends StatefulWidget {
   final Function(SavedAddress) onSave;
 
   const AddressFormBottomSheet({
-    Key? key,
+    super.key,
     this.address,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
-  State<AddressFormBottomSheet> createState() =>
-      _AddressFormBottomSheetState();
+  State<AddressFormBottomSheet> createState() => _AddressFormBottomSheetState();
 }
 
 class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
@@ -367,7 +377,6 @@ class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
   late final TextEditingController _nameController;
   late final TextEditingController _addressController;
   late final TextEditingController _cityController;
-  late final TextEditingController _postalCodeController;
   late final TextEditingController _referenceController;
   late String _selectedIcon;
   late bool _isDefault;
@@ -378,10 +387,7 @@ class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
     _nameController = TextEditingController(text: widget.address?.name ?? '');
     _addressController =
         TextEditingController(text: widget.address?.address ?? '');
-    _cityController =
-        TextEditingController(text: widget.address?.city ?? '');
-    _postalCodeController =
-        TextEditingController(text: widget.address?.postalCode ?? '');
+    _cityController = TextEditingController(text: widget.address?.city ?? '');
     _referenceController =
         TextEditingController(text: widget.address?.reference ?? '');
     _selectedIcon = widget.address?.iconType ?? 'home';
@@ -446,26 +452,11 @@ class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
                       value?.isEmpty ?? true ? 'Ingresa la dirección' : null,
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildTextField(
-                        controller: _cityController,
-                        label: 'Ciudad',
-                        hint: 'Ej: Lima',
-                        icon: Icons.location_city,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildTextField(
-                        controller: _postalCodeController,
-                        label: 'Código Postal',
-                        hint: 'Ej: 15001',
-                        icon: Icons.local_post_office,
-                      ),
-                    ),
-                  ],
+                _buildTextField(
+                  controller: _cityController,
+                  label: 'Ciudad',
+                  hint: 'Ej: Lima',
+                  icon: Icons.location_city,
                 ),
                 const SizedBox(height: 16),
                 _buildTextField(
@@ -490,7 +481,8 @@ class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
                     _buildIconOption('work', Icons.business, 'Trabajo'),
                     _buildIconOption('apartment', Icons.apartment, 'Dpto'),
                     _buildIconOption('store', Icons.store, 'Tienda'),
-                    _buildIconOption('family', Icons.family_restroom, 'Familiar'),
+                    _buildIconOption(
+                        'family', Icons.family_restroom, 'Familiar'),
                     _buildIconOption('other', Icons.location_on, 'Otro'),
                   ],
                 ),
@@ -557,7 +549,7 @@ class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+          borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
         ),
         filled: true,
         fillColor: Colors.grey[50],
@@ -573,7 +565,9 @@ class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : Colors.grey[100],
+          color: isSelected
+              ? AppTheme.primaryColor.withValues(alpha: 0.1)
+              : Colors.grey[100],
           border: Border.all(
             color: isSelected ? AppTheme.primaryColor : Colors.transparent,
             width: 2,
@@ -605,13 +599,13 @@ class _AddressFormBottomSheetState extends State<AddressFormBottomSheet> {
 
   void _save() {
     if (_formKey.currentState?.validate() ?? false) {
+      final currentUser = Supabase.instance.client.auth.currentUser;
       final address = SavedAddress(
         id: widget.address?.id ?? const Uuid().v4(),
-        userId: widget.address?.userId ?? '',
+        userId: widget.address?.userId ?? currentUser?.id ?? '',
         name: _nameController.text.trim(),
         address: _addressController.text.trim(),
         city: _cityController.text.trim(),
-        postalCode: _postalCodeController.text.trim(),
         reference: _referenceController.text.trim(),
         iconType: _selectedIcon,
         isDefault: _isDefault,

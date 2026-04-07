@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,10 +17,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 /// Service for handling Firebase Cloud Messaging (FCM) notifications
 class FCMService {
-  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  static final FlutterLocalNotificationsPlugin _localNotifications = 
+  static final FirebaseMessaging _firebaseMessaging =
+      FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
-  
+
   static bool _initialized = false;
 
   /// Initialize FCM service
@@ -39,7 +39,8 @@ class FCMService {
       debugPrint('🔔 [FCM] Permission status: ${settings.authorizationStatus}');
 
       // Set up background handler
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
 
       // Set up foreground message handler
       FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
@@ -66,10 +67,11 @@ class FCMService {
 
   /// Initialize local notification plugin
   static Future<void> _initLocalNotifications() async {
-    const AndroidInitializationSettings androidSettings = 
+    const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    
-    final DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
+
+    final DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
@@ -95,7 +97,8 @@ class FCMService {
     );
 
     await _localNotifications
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 
@@ -132,7 +135,7 @@ class FCMService {
     debugPrint('🔔 [FCM] Foreground message received: ${message.messageId}');
     debugPrint('📨 [FCM] Title: ${message.notification?.title}');
     debugPrint('📝 [FCM] Body: ${message.notification?.body}');
-    
+
     // Show local notification even when app is in foreground
     await _showLocalNotification(message);
   }
@@ -141,7 +144,7 @@ class FCMService {
   static void _handleMessageOpenedApp(RemoteMessage message) {
     debugPrint('🔔 [FCM] Message opened app: ${message.messageId}');
     debugPrint('📊 [FCM] Data: ${message.data}');
-    
+
     // Handle navigation based on notification type
     _handleNotificationNavigation(message.data);
   }
@@ -194,7 +197,7 @@ class FCMService {
   /// Navigate based on notification type
   static void _handleNotificationNavigation(Map<String, dynamic> data) {
     final type = data['type'] as String?;
-    
+
     switch (type) {
       case 'order':
         final orderId = data['order_id'];

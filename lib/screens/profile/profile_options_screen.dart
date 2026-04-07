@@ -23,7 +23,7 @@ import 'package:fixy_home_service/supabase/supabase_config.dart';
 import 'package:fixy_home_service/screens/auth_wrapper.dart';
 
 class ProfileOptionsScreen extends StatefulWidget {
-  const ProfileOptionsScreen({Key? key}) : super(key: key);
+  const ProfileOptionsScreen({super.key});
 
   @override
   State<ProfileOptionsScreen> createState() => ProfileOptionsScreenState();
@@ -572,7 +572,7 @@ class ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
                         children: [
                           ...options.map((option) {
                             return _buildOptionItem(option);
-                          }).toList(),
+                          }),
                         ],
                       )
                     : const SizedBox.shrink(),
@@ -754,37 +754,37 @@ class ProfileOptionsScreenState extends State<ProfileOptionsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('¿Cómo funciona?'),
-        content: SingleChildScrollView(
+        content: const SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Conviértete en proveedor y empieza a ofrecer tus servicios:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               _InfoStep(
                 number: '1',
                 title: 'Regístrate',
                 description:
                     'Completa el formulario con tu información profesional',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _InfoStep(
                 number: '2',
                 title: 'Verificación',
                 description:
                     'Nuestro equipo revisará tu solicitud en 24-48 horas',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _InfoStep(
                 number: '3',
                 title: 'Recibe clientes',
                 description:
                     'Una vez aprobado, empezarás a recibir solicitudes de servicios',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _InfoStep(
                 number: '4',
                 title: 'Genera ingresos',
@@ -1463,11 +1463,10 @@ class _InfoStep extends StatelessWidget {
   final String description;
 
   const _InfoStep({
-    Key? key,
     required this.number,
     required this.title,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1477,7 +1476,7 @@ class _InfoStep extends StatelessWidget {
         Container(
           width: 32,
           height: 32,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: AppTheme.primaryColor,
             shape: BoxShape.circle,
           ),

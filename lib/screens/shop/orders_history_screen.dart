@@ -6,7 +6,7 @@ import 'package:fixy_home_service/utils/page_transitions.dart';
 import 'package:intl/intl.dart';
 
 class OrdersHistoryScreen extends StatefulWidget {
-  const OrdersHistoryScreen({Key? key}) : super(key: key);
+  const OrdersHistoryScreen({super.key});
 
   @override
   State<OrdersHistoryScreen> createState() => _OrdersHistoryScreenState();
@@ -56,10 +56,10 @@ class _OrdersHistoryScreenState extends State<OrdersHistoryScreen> {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2D3748)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           'Mis Pedidos',
           style: TextStyle(
-            color: const Color(0xFF2D3748),
+            color: Color(0xFF2D3748),
             fontSize: 18,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.3,
@@ -226,13 +226,13 @@ class _OrdersHistoryScreenState extends State<OrdersHistoryScreen> {
                   );
                 },
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: AppTheme.primaryColor),
+                  side: const BorderSide(color: AppTheme.primaryColor),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                 ),
-                child: Text(
+                child: const Text(
                   'Ver Detalle',
                   style: TextStyle(
                     color: AppTheme.primaryColor,

@@ -6,7 +6,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 class CartBadge extends StatelessWidget {
   final VoidCallback onTap;
 
-  const CartBadge({Key? key, required this.onTap}) : super(key: key);
+  const CartBadge({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class CartBadge extends StatelessWidget {
                       width: 1,
                     ),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.shopping_cart_outlined,
                     color: AppTheme.textPrimary,
                     size: 22,

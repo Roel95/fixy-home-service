@@ -6,7 +6,7 @@ import 'package:fixy_home_service/models/review_model.dart';
 import 'package:intl/intl.dart';
 
 class ReviewsTab extends StatelessWidget {
-  const ReviewsTab();
+  const ReviewsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +130,7 @@ class ReviewsTab extends StatelessWidget {
                             style: AppTheme.textTheme.bodySmall,
                           ),
                           const SizedBox(width: 4),
-                          Icon(
+                          const Icon(
                             Icons.star,
                             size: 12,
                             color: AppTheme.starColor,
@@ -201,7 +201,7 @@ class ReviewsTab extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
-                child: Icon(
+                child: const Icon(
                   Icons.person,
                   color: AppTheme.primaryColor,
                   size: 20,

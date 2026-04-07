@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fixy_home_service/providers/provider_dashboard_provider.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
-import 'package:fixy_home_service/models/provider_booking_model.dart';
+import 'package:fixy_home_service/models/reservation_status_model.dart';
 import 'package:intl/intl.dart';
 
 class BookingsTab extends StatelessWidget {
-  const BookingsTab();
+  const BookingsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +17,15 @@ class BookingsTab extends StatelessWidget {
         }
 
         final newBookings = provider.bookings
-            .where((b) => b.status == ProviderBookingStatus.newBooking)
+            .where((b) => b.status == ReservationStatus.confirmed)
             .toList();
         final activeBookings = provider.bookings
-            .where((b) => b.status == ProviderBookingStatus.accepted)
+            .where((b) =>
+                b.status == ReservationStatus.inProgress ||
+                b.status == ReservationStatus.onTheWay)
             .toList();
         final completedBookings = provider.bookings
-            .where((b) => b.status == ProviderBookingStatus.completed)
+            .where((b) => b.status == ReservationStatus.completed)
             .toList();
 
         return RefreshIndicator(
@@ -117,7 +119,7 @@ class BookingsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildBookingCard(BuildContext context, ProviderBookingModel booking,
+  Widget _buildBookingCard(BuildContext context, ReservationStatusModel booking,
       ProviderDashboardProvider provider) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -148,7 +150,7 @@ class BookingsTab extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        booking.statusLabel,
+                        booking.getStatusDisplayName(),
                         style: AppTheme.textTheme.bodySmall?.copyWith(
                           color: _getStatusColor(booking.status),
                           fontWeight: FontWeight.w600,
@@ -157,7 +159,7 @@ class BookingsTab extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(
-                      DateFormat('dd/MM/yyyy').format(booking.createdAt),
+                      DateFormat('dd/MM/yyyy').format(booking.scheduledDate),
                       style: AppTheme.textTheme.bodySmall,
                     ),
                   ],
@@ -165,7 +167,7 @@ class BookingsTab extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.receipt_long,
                       size: 20,
                       color: AppTheme.textSecondary,
@@ -179,7 +181,7 @@ class BookingsTab extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (booking.providerNotes != null) ...[
+                if (booking.notes != null) ...[
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(10),
@@ -190,7 +192,7 @@ class BookingsTab extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.note_outlined,
                           size: 16,
                           color: AppTheme.textSecondary,
@@ -198,7 +200,7 @@ class BookingsTab extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            booking.providerNotes!,
+                            booking.notes!,
                             style: AppTheme.textTheme.bodySmall,
                           ),
                         ),
@@ -209,12 +211,12 @@ class BookingsTab extends StatelessWidget {
               ],
             ),
           ),
-          if (booking.status == ProviderBookingStatus.newBooking)
+          if (booking.status == ReservationStatus.confirmed)
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppTheme.backgroundColor,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(12),
                   bottomRight: Radius.circular(12),
                 ),
@@ -270,22 +272,22 @@ class BookingsTab extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(ProviderBookingStatus status) {
+  Color _getStatusColor(ReservationStatus status) {
     switch (status) {
-      case ProviderBookingStatus.newBooking:
+      case ReservationStatus.confirmed:
         return Colors.blue;
-      case ProviderBookingStatus.accepted:
+      case ReservationStatus.onTheWay:
+        return Colors.orange;
+      case ReservationStatus.inProgress:
         return Colors.green;
-      case ProviderBookingStatus.rejected:
-        return Colors.red;
-      case ProviderBookingStatus.completed:
+      case ReservationStatus.completed:
         return Colors.purple;
-      case ProviderBookingStatus.cancelled:
+      case ReservationStatus.cancelled:
         return Colors.grey;
     }
   }
 
-  void _showRejectDialog(BuildContext context, ProviderBookingModel booking,
+  void _showRejectDialog(BuildContext context, ReservationStatusModel booking,
       ProviderDashboardProvider provider) {
     final reasonController = TextEditingController();
 

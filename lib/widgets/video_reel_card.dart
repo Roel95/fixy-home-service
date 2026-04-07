@@ -7,10 +7,10 @@ class VideoReelCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const VideoReelCard({
-    Key? key,
+    super.key,
     required this.video,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   String _formatDuration(int seconds) {
     final minutes = seconds ~/ 60;
@@ -62,7 +62,7 @@ class VideoReelCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Text(
                             video.title,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: AppTheme.textPrimary,

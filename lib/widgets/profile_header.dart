@@ -9,11 +9,11 @@ class ProfileHeader extends StatelessWidget {
   final VoidCallback onProfileTap;
 
   const ProfileHeader({
-    Key? key,
+    super.key,
     required this.user,
     required this.onNotificationTap,
     required this.onProfileTap,
-  }) : super(key: key);
+  });
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -91,7 +91,7 @@ class ProfileHeader extends StatelessWidget {
                   'assets/images/notificaciones.svg',
                   width: 28,
                   height: 28,
-                  colorFilter: ColorFilter.mode(
+                  colorFilter: const ColorFilter.mode(
                     AppTheme.textPrimary,
                     BlendMode.srcIn,
                   ),

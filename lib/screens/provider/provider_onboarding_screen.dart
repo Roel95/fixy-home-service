@@ -9,7 +9,7 @@ import 'package:fixy_home_service/screens/provider/steps/confirmation_step.dart'
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class ProviderOnboardingScreen extends StatelessWidget {
-  const ProviderOnboardingScreen({Key? key}) : super(key: key);
+  const ProviderOnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class ProviderOnboardingScreen extends StatelessWidget {
 }
 
 class _ProviderOnboardingContent extends StatelessWidget {
-  const _ProviderOnboardingContent({Key? key}) : super(key: key);
+  const _ProviderOnboardingContent();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class _ProviderOnboardingContent extends StatelessWidget {
 class _StepIndicator extends StatelessWidget {
   final int currentStep;
 
-  const _StepIndicator({Key? key, required this.currentStep}) : super(key: key);
+  const _StepIndicator({required this.currentStep});
 
   @override
   Widget build(BuildContext context) {

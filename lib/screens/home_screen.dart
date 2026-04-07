@@ -375,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen>
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 18),
+                          horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE8ECF3),
                         borderRadius: BorderRadius.circular(16),
@@ -398,11 +398,11 @@ class _HomeScreenState extends State<HomeScreen>
                       child: Row(
                         children: [
                           Container(
-                            width: 40,
-                            height: 40,
+                            width: 36,
+                            height: 36,
                             decoration: BoxDecoration(
                               color: const Color(0xFFE8ECF3),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 const BoxShadow(
                                   color: Color(0xFFFFFFFF),
@@ -422,15 +422,15 @@ class _HomeScreenState extends State<HomeScreen>
                             child: const Icon(
                               Icons.auto_awesome,
                               color: Color(0xFF667EEA),
-                              size: 20,
+                              size: 18,
                             ),
                           ),
-                          const SizedBox(width: 14),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               'Describe tu problema...',
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 14,
                                 color: const Color(0xFF2D3748)
                                     .withValues(alpha: 0.5),
                                 fontWeight: FontWeight.w600,
@@ -441,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Icons.mic,
                             color:
                                 const Color(0xFF2D3748).withValues(alpha: 0.4),
-                            size: 22,
+                            size: 20,
                           ),
                         ],
                       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
-  const PrivacyPolicyScreen({Key? key}) : super(key: key);
+  const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +191,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Icon(Icons.security, color: Colors.green, size: 32),
+                  const Icon(Icons.security, color: Colors.green, size: 32),
                   const SizedBox(height: 12),
                   Text(
                     'Su Privacidad es Importante',

@@ -5,7 +5,7 @@ import 'package:fixy_home_service/models/provider_model.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class AvailabilityStep extends StatelessWidget {
-  const AvailabilityStep({Key? key}) : super(key: key);
+  const AvailabilityStep({super.key});
 
   static const Map<String, String> dayNames = {
     'monday': 'Lunes',
@@ -71,12 +71,11 @@ class _DayAvailabilityCard extends StatelessWidget {
   final Function(DayAvailability) onChanged;
 
   const _DayAvailabilityCard({
-    Key? key,
     required this.dayKey,
     required this.dayName,
     required this.availability,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -148,11 +147,10 @@ class _TimePicker extends StatelessWidget {
   final Function(String) onTimeSelected;
 
   const _TimePicker({
-    Key? key,
     required this.label,
     required this.time,
     required this.onTimeSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

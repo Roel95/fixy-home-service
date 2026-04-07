@@ -5,7 +5,7 @@ import 'package:fixy_home_service/supabase/supabase_config.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  const NotificationsScreen({Key? key}) : super(key: key);
+  const NotificationsScreen({super.key});
 
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
@@ -226,7 +226,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           if (unreadCount > 0)
             TextButton(
               onPressed: _markAllAsRead,
-              child: Text(
+              child: const Text(
                 'Marcar todo',
                 style: TextStyle(
                   color: AppTheme.primaryColor,
@@ -291,7 +291,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               color: AppTheme.primaryColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.notifications_none,
               size: 50,
               color: AppTheme.primaryColor,

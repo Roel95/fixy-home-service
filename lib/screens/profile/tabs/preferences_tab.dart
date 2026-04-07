@@ -5,7 +5,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/models/profile_models.dart';
 
 class PreferencesTab extends StatefulWidget {
-  const PreferencesTab({Key? key}) : super(key: key);
+  const PreferencesTab({super.key});
 
   @override
   State<PreferencesTab> createState() => _PreferencesTabState();

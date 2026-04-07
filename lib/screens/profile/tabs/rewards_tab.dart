@@ -6,7 +6,7 @@ import 'package:fixy_home_service/theme/app_theme.dart';
 import 'package:fixy_home_service/models/profile_models.dart';
 
 class RewardsTab extends StatefulWidget {
-  const RewardsTab({Key? key}) : super(key: key);
+  const RewardsTab({super.key});
 
   @override
   State<RewardsTab> createState() => _RewardsTabState();
@@ -360,7 +360,7 @@ class _RewardsTabState extends State<RewardsTab>
                         const SizedBox(width: 4),
                         Text(
                           '${reward.pointsCost}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,

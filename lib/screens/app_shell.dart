@@ -11,7 +11,7 @@ import 'package:fixy_home_service/providers/reservation_provider.dart';
 import 'package:fixy_home_service/providers/cart_provider.dart';
 
 class AppShell extends StatefulWidget {
-  const AppShell({Key? key}) : super(key: key);
+  const AppShell({super.key});
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -70,8 +70,9 @@ class _AppShellState extends State<AppShell> {
             index: _currentIndex,
             children: _screens,
           ),
-          // Botón flotante de IA (oculto en pantalla de perfil)
-          if (_currentIndex != 3) const FloatingAIButton(),
+          // Botón flotante de IA (oculto en pantalla de perfil y reservas)
+          if (_currentIndex != 2 && _currentIndex != 3)
+            const FloatingAIButton(),
         ],
       ),
       bottomNavigationBar: CustomBottomNav(

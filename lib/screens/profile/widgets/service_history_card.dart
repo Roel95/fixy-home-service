@@ -10,12 +10,12 @@ class ServiceHistoryCard extends StatelessWidget {
   final Function(ServiceHistory) onViewInvoice;
 
   const ServiceHistoryCard({
-    Key? key,
+    super.key,
     required this.service,
     required this.onReschedule,
     required this.onCancel,
     required this.onViewInvoice,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

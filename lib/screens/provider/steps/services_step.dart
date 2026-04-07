@@ -4,7 +4,7 @@ import 'package:fixy_home_service/providers/provider_onboarding_provider.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class ServicesStep extends StatefulWidget {
-  const ServicesStep({Key? key}) : super(key: key);
+  const ServicesStep({super.key});
 
   @override
   State<ServicesStep> createState() => _ServicesStepState();
@@ -172,7 +172,7 @@ class _ServicesStepState extends State<ServicesStep> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Seleccionados',
                       style: TextStyle(
                         fontSize: 14,
@@ -196,8 +196,9 @@ class _ServicesStepState extends State<ServicesStep> {
                           backgroundColor:
                               AppTheme.primaryColor.withValues(alpha: 0.1),
                           side: BorderSide(
-                              color: AppTheme.primaryColor.withValues(alpha: 0.2)),
-                          labelStyle: TextStyle(
+                              color:
+                                  AppTheme.primaryColor.withValues(alpha: 0.2)),
+                          labelStyle: const TextStyle(
                             fontSize: 12,
                             color: AppTheme.primaryColor,
                             fontWeight: FontWeight.w500,
@@ -223,12 +224,11 @@ class _ServiceCategoryCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const _ServiceCategoryCard({
-    Key? key,
     required this.name,
     required this.imageUrl,
     required this.isSelected,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -284,10 +284,9 @@ class _CategoryVisual extends StatelessWidget {
   final Color highlightColor;
 
   const _CategoryVisual({
-    Key? key,
     required this.imageUrl,
     required this.highlightColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

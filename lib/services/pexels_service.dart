@@ -172,19 +172,26 @@ class PexelsService {
 
   /// Determina la categoría basándose en los tags
   static String _determineCategory(List<String> tags) {
-    if (tags.any((tag) => tag.toLowerCase().contains('kitchen')))
+    if (tags.any((tag) => tag.toLowerCase().contains('kitchen'))) {
       return 'Cocinas';
-    if (tags.any((tag) => tag.toLowerCase().contains('bathroom')))
+    }
+    if (tags.any((tag) => tag.toLowerCase().contains('bathroom'))) {
       return 'Baños';
+    }
     if (tags.any((tag) => tag.toLowerCase().contains('floor'))) return 'Pisos';
     if (tags.any((tag) =>
         tag.toLowerCase().contains('design') ||
-        tag.toLowerCase().contains('interior'))) return 'Diseño';
+        tag.toLowerCase().contains('interior'))) {
+      return 'Diseño';
+    }
     if (tags.any((tag) =>
         tag.toLowerCase().contains('construction') ||
-        tag.toLowerCase().contains('building'))) return 'Construcción';
-    if (tags.any((tag) => tag.toLowerCase().contains('material')))
+        tag.toLowerCase().contains('building'))) {
+      return 'Construcción';
+    }
+    if (tags.any((tag) => tag.toLowerCase().contains('material'))) {
       return 'Materiales';
+    }
     return 'Remodelación';
   }
 

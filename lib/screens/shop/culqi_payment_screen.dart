@@ -11,13 +11,13 @@ class CulqiPaymentScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onPaymentSuccess;
 
   const CulqiPaymentScreen({
-    Key? key,
+    super.key,
     required this.amount,
     required this.currency,
     required this.description,
     required this.email,
     required this.onPaymentSuccess,
-  }) : super(key: key);
+  });
 
   @override
   State<CulqiPaymentScreen> createState() => _CulqiPaymentScreenState();
@@ -103,10 +103,10 @@ class _CulqiPaymentScreenState extends State<CulqiPaymentScreen> {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2D3748)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           'Pago con Tarjeta',
           style: TextStyle(
-            color: const Color(0xFF2D3748),
+            color: Color(0xFF2D3748),
             fontSize: 18,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.3,
@@ -125,7 +125,7 @@ class _CulqiPaymentScreenState extends State<CulqiPaymentScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -182,14 +182,14 @@ class _CulqiPaymentScreenState extends State<CulqiPaymentScreen> {
                 ],
                 decoration: InputDecoration(
                   hintText: '1234 5678 9012 3456',
-                  prefixIcon:
-                      Icon(Icons.credit_card, color: AppTheme.primaryColor),
+                  prefixIcon: const Icon(Icons.credit_card,
+                      color: AppTheme.primaryColor),
                   suffixIcon: _cardBrand.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.all(12),
                           child: Text(
                             _cardBrand,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -245,7 +245,7 @@ class _CulqiPaymentScreenState extends State<CulqiPaymentScreen> {
                           ],
                           decoration: InputDecoration(
                             hintText: 'MM/YY',
-                            prefixIcon: Icon(Icons.calendar_today,
+                            prefixIcon: const Icon(Icons.calendar_today,
                                 color: AppTheme.primaryColor),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -292,8 +292,8 @@ class _CulqiPaymentScreenState extends State<CulqiPaymentScreen> {
                           ],
                           decoration: InputDecoration(
                             hintText: '123',
-                            prefixIcon:
-                                Icon(Icons.lock, color: AppTheme.primaryColor),
+                            prefixIcon: const Icon(Icons.lock,
+                                color: AppTheme.primaryColor),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -381,15 +381,15 @@ class _CulqiPaymentScreenState extends State<CulqiPaymentScreen> {
               const SizedBox(height: 16),
 
               // Powered by Culqi
-              Center(
+              const Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'Procesado por',
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       'Culqi',
                       style: TextStyle(

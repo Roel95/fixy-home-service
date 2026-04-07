@@ -9,10 +9,10 @@ class OrderSuccessScreen extends StatefulWidget {
   final String paymentMethod;
 
   const OrderSuccessScreen({
-    Key? key,
+    super.key,
     required this.orderId,
     required this.paymentMethod,
-  }) : super(key: key);
+  });
 
   @override
   State<OrderSuccessScreen> createState() => _OrderSuccessScreenState();
@@ -244,13 +244,13 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                                 .popUntil((route) => route.isFirst);
                           },
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(
+                            side: const BorderSide(
                                 color: AppTheme.primaryColor, width: 2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Volver al Inicio',
                             style: TextStyle(
                               fontSize: 16,

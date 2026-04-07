@@ -9,13 +9,13 @@ class AnimatedOptionCard extends StatefulWidget {
   final bool initiallyExpanded;
 
   const AnimatedOptionCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.options,
     this.initiallyExpanded = false,
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedOptionCard> createState() => _AnimatedOptionCardState();
@@ -149,9 +149,7 @@ class _AnimatedOptionCardState extends State<AnimatedOptionCard>
               child: Column(
                 children: [
                   const Divider(height: 1),
-                  ...widget.options
-                      .map((option) => _buildOptionItem(option))
-                      .toList(),
+                  ...widget.options.map((option) => _buildOptionItem(option)),
                 ],
               ),
             ),
@@ -207,7 +205,7 @@ class _AnimatedOptionCardState extends State<AnimatedOptionCard>
               ),
               const SizedBox(width: 8),
             ],
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               color: AppTheme.textLight,
               size: 14,

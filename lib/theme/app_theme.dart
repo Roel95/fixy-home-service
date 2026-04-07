@@ -25,7 +25,7 @@ class AppTheme {
   );
 
   // Text Styles
-  static TextTheme textTheme = TextTheme(
+  static TextTheme textTheme = const TextTheme(
     displayLarge: TextStyle(
       fontFamily: 'Lufga',
       fontSize: 24,
@@ -70,7 +70,7 @@ class AppTheme {
   // Theme Data
   static ThemeData lightTheme = ThemeData(
     scaffoldBackgroundColor: backgroundColor,
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
       surface: backgroundColor,

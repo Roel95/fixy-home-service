@@ -201,7 +201,9 @@ class CulqiService {
     if (cleanNumber.startsWith(RegExp(r'^5[1-5]'))) return 'Mastercard';
     if (cleanNumber.startsWith(RegExp(r'^3[47]'))) return 'Amex';
     if (cleanNumber.startsWith('6011') ||
-        cleanNumber.startsWith(RegExp(r'^65'))) return 'Discover';
+        cleanNumber.startsWith(RegExp(r'^65'))) {
+      return 'Discover';
+    }
     if (cleanNumber.startsWith(RegExp(r'^35'))) return 'JCB';
 
     return 'Desconocida';

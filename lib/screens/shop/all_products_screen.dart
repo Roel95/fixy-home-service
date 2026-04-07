@@ -12,7 +12,7 @@ import 'package:fixy_home_service/widgets/advanced_filters_sheet.dart';
 import 'package:fixy_home_service/services/product_service.dart';
 
 class AllProductsScreen extends StatefulWidget {
-  const AllProductsScreen({Key? key}) : super(key: key);
+  const AllProductsScreen({super.key});
 
   @override
   State<AllProductsScreen> createState() => _AllProductsScreenState();
@@ -81,10 +81,13 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
     setState(() {
       // Apply filters
       _filteredProducts = _products.where((p) {
-        if (p.price < _filters.minPrice || p.price > _filters.maxPrice)
+        if (p.price < _filters.minPrice || p.price > _filters.maxPrice) {
           return false;
+        }
         if (_filters.selectedBrands.isNotEmpty &&
-            !_filters.selectedBrands.contains(p.brand)) return false;
+            !_filters.selectedBrands.contains(p.brand)) {
+          return false;
+        }
         if (p.rating < _filters.minRating) return false;
         if (_filters.onlyInStock && !p.isInStock) return false;
         if (_filters.onlyOnSale && !p.isOnSale) return false;
@@ -237,7 +240,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Todos los Productos',
               style: TextStyle(
                 color: AppTheme.textPrimary,
@@ -247,7 +250,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
             ),
             Text(
               '${_filteredProducts.length} de ${_products.length} productos',
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.textSecondary,
                 fontSize: 13,
               ),
@@ -306,14 +309,14 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.filter_list,
+                          const Icon(Icons.filter_list,
                               size: 20, color: AppTheme.primaryColor),
                           const SizedBox(width: 8),
                           Text(
                             _filters.hasActiveFilters
                                 ? 'Filtros (${_getActiveFiltersCount()})'
                                 : 'Filtros',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -336,12 +339,12 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.sort,
                               size: 20, color: AppTheme.primaryColor),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             'Ordenar',
                             style: TextStyle(
@@ -381,7 +384,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                                       Icon(Icons.inventory_2_outlined,
                                           size: 80, color: Colors.grey[300]),
                                       const SizedBox(height: 16),
-                                      Text(
+                                      const Text(
                                         'No hay productos disponibles',
                                         style: TextStyle(
                                           color: AppTheme.textSecondary,
@@ -575,7 +578,7 @@ class _ProductGridItem extends StatelessWidget {
                   children: [
                     Text(
                       product.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppTheme.textPrimary,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -591,7 +594,7 @@ class _ProductGridItem extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           '${product.rating}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.textPrimary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -600,7 +603,7 @@ class _ProductGridItem extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           '(${product.reviewCount})',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.textSecondary,
                             fontSize: 11,
                           ),
@@ -618,7 +621,7 @@ class _ProductGridItem extends StatelessWidget {
                                   product.originalPrice != null)
                                 Text(
                                   'S/ ${product.originalPrice!.toStringAsFixed(2)}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppTheme.textSecondary,
                                     fontSize: 11,
                                     decoration: TextDecoration.lineThrough,
@@ -626,7 +629,7 @@ class _ProductGridItem extends StatelessWidget {
                                 ),
                               Text(
                                 'S/ ${product.price.toStringAsFixed(2)}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppTheme.primaryColor,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -689,8 +692,9 @@ class _SortOption extends StatelessWidget {
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
-      trailing:
-          isSelected ? Icon(Icons.check, color: AppTheme.primaryColor) : null,
+      trailing: isSelected
+          ? const Icon(Icons.check, color: AppTheme.primaryColor)
+          : null,
       onTap: onTap,
     );
   }

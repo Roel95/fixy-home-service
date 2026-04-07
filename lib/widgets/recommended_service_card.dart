@@ -7,10 +7,10 @@ class RecommendedServiceCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const RecommendedServiceCard({
-    Key? key,
+    super.key,
     required this.service,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +71,9 @@ class RecommendedServiceCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(Icons.thumb_up, color: Colors.white, size: 12),
                         SizedBox(width: 4),
                         Text(

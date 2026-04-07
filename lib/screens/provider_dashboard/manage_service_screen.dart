@@ -274,7 +274,7 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
           padding: const EdgeInsets.all(20),
           children: [
             // Información Básica Section
-            _SectionTitle(title: '📝 Información Básica'),
+            const _SectionTitle(title: '📝 Información Básica'),
             const SizedBox(height: 16),
             _ModernTextField(
               controller: _titleController,
@@ -318,7 +318,7 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
             const SizedBox(height: 32),
 
             // Precio y Disponibilidad Section
-            _SectionTitle(title: '💰 Precio y Disponibilidad'),
+            const _SectionTitle(title: '💰 Precio y Disponibilidad'),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -356,7 +356,7 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.currency_exchange,
+                        const Icon(Icons.currency_exchange,
                             color: AppTheme.primaryColor, size: 20),
                         const SizedBox(width: 8),
                         Text(
@@ -375,7 +375,7 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
                   child: _ModernDropdown(
                     value: _selectedTimeUnit,
                     label: 'Unidad',
-                    items: ['hr', 'día', 'visita'],
+                    items: const ['hr', 'día', 'visita'],
                     onChanged: (v) => setState(() => _selectedTimeUnit = v!),
                   ),
                 ),
@@ -384,7 +384,7 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
             const SizedBox(height: 32),
 
             // Ubicación e Imagen Section
-            _SectionTitle(title: '📍 Ubicación e Imagen'),
+            const _SectionTitle(title: '📍 Ubicación e Imagen'),
             const SizedBox(height: 16),
             _ModernTextField(
               controller: _locationController,
@@ -404,7 +404,7 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
             const SizedBox(height: 32),
 
             // Días Disponibles Section
-            _SectionTitle(title: '📅 Días Disponibles'),
+            const _SectionTitle(title: '📅 Días Disponibles'),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
@@ -429,7 +429,7 @@ class _ManageServiceScreenState extends State<ManageServiceScreen> {
             const SizedBox(height: 32),
 
             // Horario de Atención Section
-            _SectionTitle(title: '⏰ Horario de Atención'),
+            const _SectionTitle(title: '⏰ Horario de Atención'),
             const SizedBox(height: 16),
             Row(
               children: [

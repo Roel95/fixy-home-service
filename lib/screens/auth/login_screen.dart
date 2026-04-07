@@ -7,7 +7,7 @@ import 'package:fixy_home_service/screens/app_shell.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();

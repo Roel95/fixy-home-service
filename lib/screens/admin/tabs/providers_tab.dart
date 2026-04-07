@@ -5,7 +5,7 @@ import 'package:fixy_home_service/supabase/supabase_config.dart';
 import 'package:fixy_home_service/theme/app_theme.dart';
 
 class ProvidersTab extends StatefulWidget {
-  const ProvidersTab({Key? key}) : super(key: key);
+  const ProvidersTab({super.key});
 
   @override
   State<ProvidersTab> createState() => _ProvidersTabState();

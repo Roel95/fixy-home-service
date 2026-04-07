@@ -15,7 +15,6 @@ class _UsersTabState extends State<UsersTab> {
 
   List<Map<String, dynamic>> _users = [];
   bool _isLoading = true;
-  String _searchQuery = '';
 
   @override
   void initState() {
